@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react';
-
-import { authenticate, isAuth } from './auth';
+import { authenticate, isAuth } from '../../components/auth/auth';
 import Router from 'next/router';
 import styles from '../../styles/Home.module.scss';
-
 import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -15,175 +13,190 @@ import IconButton from '@material-ui/core/IconButton';
 
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import axios from 'axios';
-import { useIntl } from 'react-intl';
-
-// const loadData = async (locale) => {
-// 	const response = await fetch("/api/hello", {
-// 		headers: { "Accept-Language": locale },
-// 	});
-// 	const data = await response.json();
-// 	return data;
-// };
+import axios from 'axios'
+import { useIntl } from "react-intl";
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from "react-hook-form";
 
 const SigninComponent = () => {
-	//const { data } = useSWR([locale, "hello"], loadData);
-	const { formatMessage: f } = useIntl();
+    const { formatMessage: f } = useIntl();
+    const [isError,setIsError]=useState(false)
+    const [ErMessage,setErMessage]=useState("")
 
-	const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    let schema = yup.object().shape({
+        email: yup.string().email().required(),
+        password: yup.string().required().min(8).max(16),
 
-	const [values, setValues] = useState({
-		email: '',
-		password: '',
-		// email: 'din@gmail.com',
-		// password: 'password',
-		error: '',
-		loading: false,
-		message: '',
-		showForm: true,
-	});
+    });
+     //error style
+    let errorStyle = {
+        color: 'red',
+        content: "⚠ ",
+    };
+    const { register, handleSubmit, formState:{ errors } } = useForm({
+        resolver: yupResolver(schema)
+      });
 
-	const { email, password, error, loading, message, showForm } = values;
+    
 
-	useEffect(() => {
-		isAuth();
-	}, []);
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		// console.table({ name, email, password, error, loading, message, showForm });
-		setValues({ ...values, loading: true, error: false });
-		const user = { email, password };
+    const [values, setValues] = useState({
+        email: '',
+        password: '',
+        // email: 'din@gmail.com',
+        // password: 'password',
+        error: '',
+        loading: false,
+        message: '',
+        showForm: true
+    });
 
-		axios.post(`/api/auth/signin`, user).then(function (response) {
-			if (response.data.error) {
-				setValues({ ...values, error: data.error, loading: false });
-			} else {
-				authenticate(response.data, () => {
-					Router.push(`/`);
-				});
+    const { error, loading, message, showForm } = values;
 
-				authenticate(response.data, () => {
-					if (isAuth() && isAuth().role === '1') {
-						Router.push(`/admin`);
-					} else {
-						Router.push(`/user`);
-					}
-				});
-			}
-		});
+    useEffect(() => {
+        isAuth() && Router.push("/");
 
-		// signin(user).then(res => {
-		// 	console.log("test data check--->",res)
-		//     if (res.data.error) {
-		//         setValues({ ...values, error: data.error, loading: false });
-		//     } else {
-		//         // save user token to cookie
-		//         // save user info to localstorage
-		//         // authenticate user
-		//         authenticate(res.data, () => {
-		//             Router.push(`/`);
-		//         });
+    }, [])
+    const onSubmit = (data) => {
+            setValues({ ...values, loading: true, error: false });
+                 axios.post(`/api/auth/signin`, data)
+            .then(function (response) {
+                if (response.data.error) {
+                    setValues({ ...values, error: data.error, loading: false });
+                } 
+                else if(response.data.errorCode === 1){
+                    setValues({ ...values, loading: false });
+                    showTest(true,response.data.message)
+                }
+                 else {
+                    authenticate(response.data, () => {
+                        Router.push(`/`);
+                    });
 
-		//         authenticate(res.data, () => {
-		//             if (isAuth() && isAuth().role === "1") {
-		//                 Router.push(`/admin`);
-		//             } else {
-		//                 Router.push(`/user`);
-		//             }
-		//         });
+                    authenticate(response.data, () => {
+                        if (isAuth() && isAuth().role === "1") {
+                            Router.push(`/admin`);
+                        } else {
+                            Router.push(`/user`);
+                        }
+                    });
+                }
+            });
+}
 
-		//     }
-		// });
-	};
+ const showTest = (flag,data) =>{
+    setErMessage(data)
+   setIsError(flag)
+    setTimeout ( ()=>{
+        setIsError(false)
+    }, 3000 );
+  }
+   
+    const handleClickShowPassword = () => {
+        setShowPassword(!showPassword);
+    };
 
-	const handleChange = (name) => (e) => {
-		setValues({ ...values, error: false, [name]: e.target.value });
-	};
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
 
-	const handleClickShowPassword = () => {
-		setShowPassword(!showPassword);
-	};
 
-	const handleMouseDownPassword = (event) => {
-		event.preventDefault();
-	};
+    const showLoading = () => (loading ? <div className="alert alert-info">Loading...</div> : '');
+    const showError = () => (error ? <div className="alert alert-danger">{error}</div> : '');
+    const showMessage = () => (message ? <div className="alert alert-info">{message}</div> : '');
 
-	const showLoading = () => (loading ? <div className='alert alert-info'>Loading...</div> : '');
-	const showError = () => (error ? <div className='alert alert-danger'>{error}</div> : '');
-	const showMessage = () => (message ? <div className='alert alert-info'>{message}</div> : '');
+    const signinForm = () => {
+        return (
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className={styles.login_flex_container}>
+                    <div className={styles.login_caps}>
+                        <div className='academy__name'>
+                            <h4>{f({ id: "APP_NAME" })}</h4>
 
-	const signinForm = () => {
-		return (
-			<form onSubmit={handleSubmit}>
-				<div className={styles.login_flex_container}>
-					<div className={styles.login_caps}>
-						{/* logo to be here */}
-						{/* <img
-								src={hallacademylogo}
-								alt='hallmark academy logo'
-								className='imgstyle'
-							/> */}
-						<div className='academy__name'>
-							<h4>{f({ id: 'APP_NAME' })}</h4>
-						</div>
-					</div>
+                        </div>
+                    </div>
 
-					<TextField type='text' label='Enter Email' fullWidth margin='dense' name='email' value={email} onChange={handleChange('email')} />
 
-					<FormControl fullWidth>
-						<InputLabel htmlFor='standard-adornment-password'>Password</InputLabel>
-						<Input
-							id='standard-adornment-password'
-							type={showPassword ? 'text' : 'password'}
-							name='password'
-							fullWidth
-							margin='dense'
-							value={password}
-							onChange={handleChange('password')}
-							endAdornment={
-								<InputAdornment position='end'>
-									<IconButton aria-label='toggle password visibility' onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword}>
-										{showPassword ? <Visibility /> : <VisibilityOff />}
-									</IconButton>
-								</InputAdornment>
-							}
-						/>
-					</FormControl>
 
-					<div className={styles.fgt_pass}>
-						<div className={styles.login_rememberme}>&nbsp;</div>
-						<div className={styles.login_forgotpass}>
-							<Link href='/signup'>
-								<a>Forgot Password</a>
-							</Link>
-						</div>
-					</div>
+                    <TextField
+                        type='text'
+                        label='Enter Email'
+                        fullWidth
+                        margin='dense'
+                        name='email'
+                        // value={email}
+                        // onChange={handleChange('email')}
+                        {...register("email")}
+                    />
+                    <p style={errorStyle}>{errors.email?.message}</p>
 
-					<div className={styles.styl_center}>
-						<Button type='submit' variant='contained' color='primary'>
+                    <FormControl fullWidth>
+                        <InputLabel htmlFor='standard-adornment-password'>
+							Password
+                        </InputLabel>
+                        <Input
+                            id='standard-adornment-password'
+                            type={showPassword ? 'text' : 'password'}
+                            name='password'
+                            fullWidth
+                            margin='dense'
+                            // value={password}
+                            // onChange={handleChange('password')}
+                            {...register("password")}
+                            endAdornment={
+                                <InputAdornment position='end'>
+                                    <IconButton
+                                        aria-label='toggle password visibility'
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}>
+                                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                        />
+                     <p style={errorStyle}>{errors.password?.message}</p>
+
+                    </FormControl>
+
+                    <div className={styles.fgt_pass}>
+                        <div className={styles.login_rememberme}>&nbsp;</div>
+                        <div className={styles.login_forgotpass}>
+                            <Link href='/signup'>
+                                <a>Forgot Password</a>
+                            </Link>
+                        </div>
+                    </div>
+
+                    <div className={styles.styl_center}>
+                        <Button type='submit' variant='contained' color='primary'>
 							Sign In
-						</Button>
-					</div>
-					<div>
-						{f({ id: 'NOT_A_MEMBER' })}{' '}
-						<Link href='/signup'>
-							<a>Signup</a>
-						</Link>
-					</div>
-				</div>
-			</form>
-		);
-	};
+                        </Button>
 
-	return (
-		<>
-			{showError()}
-			{showLoading()}
-			{showMessage()}
-			{showForm && signinForm()}
-		</>
-	);
+                       {isError && <p style={errorStyle}>{ErMessage}</p>}
+                    </div>
+                    <div>
+                        {f({ id: "NOT_A_MEMBER" })} <Link href='/signup'>
+                            <a>Signup</a>
+                        </Link>
+                    </div>
+                    <div> <a href="/api/glogin">Click me to log in using Google</a></div>
+
+
+                </div>
+            </form>
+        );
+    };
+
+    return (
+        <>
+            {showError()}
+            {showLoading()}
+            {showMessage()}
+            {showForm && signinForm()}
+        </>
+    );
 };
 
 export default SigninComponent;

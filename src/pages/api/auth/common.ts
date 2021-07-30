@@ -1,8 +1,5 @@
-//const db=require('../helper/db');
 import { getDB } from '../../../dbconfig/db';
-
 const { db } = getDB();
-
 const { nanoid } = require('nanoid');
 const { encryptPassword } = require('../../../dbconfig/utils');
 

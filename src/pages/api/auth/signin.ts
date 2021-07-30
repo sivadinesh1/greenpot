@@ -27,10 +27,10 @@ export default handler.post(async (req, res) => {
             // success
         } else {
             // failure
-            res.json({ message: 'Password match failed' });
+            res.json({ message: 'Password match failed' ,errorCode:1});
         }
     } else {
-        res.json({ message: 'User Not Found' });
+        res.json({ message: 'User Not Found' ,errorCode:1});
     }
 });
 
