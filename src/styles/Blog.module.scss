@@ -1,0 +1,89 @@
+.blog_wrap {
+	display: grid;
+	height: 100vh;
+
+	.left {
+		background-color: #4d54b9;
+		padding: 2rem;
+		margin-top: 53px;
+		height: calc(100% - 53px);
+		width: 400px;
+		position: fixed;
+		z-index: 1;
+		top: 0;
+		left: 0;
+
+		.title {
+			font-size: 1rem;
+			color: #fff;
+			font-weight: 400;
+		}
+	}
+	.right {
+		background-color: #f5f5f5;
+		padding: 2rem;
+		margin-left: 400px;
+		margin-top: 53px;
+		width: calc(100% - 400px);
+		height: calc(100% - 53px);
+	}
+}
+
+.formGap {
+	padding: 2rem 0;
+}
+
+.textCenter {
+	text-align: center;
+}
+
+.blogList {
+	display: flex;
+	justify-content: space-between;
+	width: 80%;
+	background-color: #fff;
+	padding: 0.2rem 1rem;
+	font-size: 0.9rem;
+	font-weight: normal;
+	border-radius: 4px;
+	margin: 0.4rem;
+}
+
+.blogList:hover {
+	background-color: #f8fcff;
+	cursor: pointer;
+}
+
+.blogName {
+	font-size: 0.9rem;
+	color: #000;
+}
+.slug {
+	font-size: 0.8rem;
+	opacity: 0.8;
+}
+.blogListTitle {
+	background-color: lavender;
+	font-size: 1rem;
+
+	position: sticky;
+	top: 53px;
+	background-color: #fff;
+	padding: 1rem;
+	width: 80%;
+	margin: 0.4rem;
+}
+
+.blogDel {
+	padding: 0.2rem;
+}
+
+.backToAdd {
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	padding: 0.5rem;
+	color: #fff;
+	opacity: 0.8;
+	cursor: pointer;
+}

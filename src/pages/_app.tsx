@@ -1,0 +1,111 @@
+// import '../styles/globals.css';
+
+// function MyApp({ Component, pageProps }) {
+// 	return <Component {...pageProps} />;
+// }
+
+// export default MyApp;
+
+import React from 'react';
+import PropTypes from 'prop-types';
+import Head from 'next/head';
+import { ThemeProvider } from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import theme from '../theme';
+import '../styles/globals.css';
+
+import '@fortawesome/fontawesome-svg-core/styles.css'; // import Font Awesome CSS
+import { config } from '@fortawesome/fontawesome-svg-core';
+
+import { SWRConfig } from 'swr';
+import axios from 'axios';
+import Router, { useRouter } from 'next/router';
+import { IntlProvider } from 'react-intl';
+// import { useEffect, useState } from 'react';
+
+import messages from '../i18n';
+import 'nprogress/nprogress.css';
+import NProgress from 'nprogress';
+
+config.autoAddCss = false;
+
+// const messages = {
+// 	en: { name: 'Name' },
+// 	fr: { name: 'Nom' },
+// 	es: { name: 'Nombre' },
+// };
+
+Router.events.on('routeChangeStart', () => NProgress.start());
+
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
+
+export default function MyApp(props) {
+	const { Component, pageProps } = props;
+	const { locale } = useRouter();
+
+	const router = useRouter();
+
+	// const [state, setState] = useState({
+	// 	isRouteChanging: false,
+	// 	loadingKey: 0,
+	// });
+
+	// useEffect(() => {
+	// 	const handleRouteChangeStart = () => {
+	// 		setState((prevState) => ({
+	// 			...prevState,
+	// 			isRouteChanging: true,
+	// 			loadingKey: prevState.loadingKey ^ 1,
+	// 		}));
+	// 	};
+
+	// 	const handleRouteChangeEnd = () => {
+	// 		setState((prevState) => ({
+	// 			...prevState,
+	// 			isRouteChanging: false,
+	// 		}));
+	// 	};
+
+	// 	router.events.on('routeChangeStart', handleRouteChangeStart);
+	// 	router.events.on('routeChangeComplete', handleRouteChangeEnd);
+	// 	router.events.on('routeChangeError', handleRouteChangeEnd);
+
+	// 	return () => {
+	// 		router.events.off('routeChangeStart', handleRouteChangeStart);
+	// 		router.events.off('routeChangeComplete', handleRouteChangeEnd);
+	// 		router.events.off('routeChangeError', handleRouteChangeEnd);
+	// 	};
+	// }, [router.events]);
+
+	React.useEffect(() => {
+		// Remove the server-side injected CSS.
+		const jssStyles = document.querySelector('#jss-server-side');
+		if (jssStyles) {
+			jssStyles.parentElement.removeChild(jssStyles);
+		}
+	}, []);
+
+	return (
+		<React.Fragment>
+			{/* <Loading isRouteChanging={state.isRouteChanging} key={state.loadingKey} /> */}
+			<IntlProvider locale={locale} messages={messages[locale]}>
+				<Head>
+					<title>Red Apple Content Management System</title>
+					<meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
+				</Head>
+				<ThemeProvider theme={theme}>
+					<CssBaseline />
+					<SWRConfig value={{ fetcher: (url: string) => axios(url).then((r) => r.data) }}>
+						<Component {...pageProps} />
+					</SWRConfig>
+				</ThemeProvider>
+			</IntlProvider>
+		</React.Fragment>
+	);
+}
+
+MyApp.propTypes = {
+	Component: PropTypes.elementType.isRequired,
+	pageProps: PropTypes.object.isRequired,
+};

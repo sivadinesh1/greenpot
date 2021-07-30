@@ -1,20 +1,63 @@
 {
-  "name": "greenpot",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "11.0.1",
-    "react": "17.0.2",
-    "react-dom": "17.0.2"
-  },
-  "devDependencies": {
-    "eslint": "7.31.0",
-    "eslint-config-next": "11.0.1"
-  }
+	"name": "greenpot",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint",
+		"prepare": "husky install"
+	},
+	"dependencies": {
+		"@fortawesome/fontawesome-svg-core": "^1.2.35",
+		"@fortawesome/free-solid-svg-icons": "^5.15.3",
+		"@fortawesome/react-fontawesome": "^0.1.14",
+		"@hookform/resolvers": "^2.6.1",
+		"@material-ui/core": "^4.12.2",
+		"@material-ui/icons": "^4.11.2",
+		"@material-ui/lab": "^4.0.0-alpha.57",
+		"@prisma/client": "^2.28.0",
+		"axios": "^0.21.1",
+		"bcrypt": "^5.0.1",
+		"cookie": "^0.4.1",
+		"eslint-plugin-prettier": "^3.4.0",
+		"formidable": "^1.2.2",
+		"js-cookie": "^3.0.0",
+		"jsonwebtoken": "^8.5.1",
+		"lint-staged": "^11.1.1",
+		"nanoid": "^3.1.23",
+		"next": "11.0.1",
+		"next-connect": "^0.10.1",
+		"nprogress": "^0.2.0",
+		"pg-promise": "^10.10.2",
+		"prettier": "^2.3.2",
+		"react": "17.0.2",
+		"react-dom": "17.0.2",
+		"react-hook-form": "^7.12.1",
+		"react-intl": "^5.20.6",
+		"react-loading-skeleton": "^2.2.0",
+		"sass": "^1.36.0",
+		"slugify": "^1.6.0",
+		"styled-components": "^5.3.0",
+		"suneditor": "^2.41.3",
+		"suneditor-react": "^3.3.0",
+		"swr": "^0.5.6",
+		"yup": "^0.32.9"
+	},
+	"devDependencies": {
+		"@types/node": "^15.12.2",
+		"@types/react": "^17.0.15",
+		"babel-plugin-styled-components": "^1.13.2",
+		"eslint": "7.31.0",
+		"eslint-config-next": "^11.0.1",
+		"eslint-config-prettier": "^8.3.0",
+		"husky": "^7.0.1",
+		"prisma": "^2.28.0",
+		"typescript": "^4.3.5"
+	},
+	"volta": {
+		"node": "15.2.1",
+		"npm": "7.20.0"
+	}
 }

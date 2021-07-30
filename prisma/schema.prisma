@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DEV_DATABASE_URL")
+}
+
+model tags {
+  id        BigInt  @id @default(autoincrement())
+  name      String? @db.VarChar(50)
+  slug      String? @db.VarChar(300)
+  companyid BigInt?
+
+  @@unique([name, companyid], name: "tag_unique")
+}
+
+model blog {
+  id            BigInt    @id @default(autoincrement())
+  title         String?   @db.VarChar(80)
+  slug          String?   @db.VarChar(300)
+  body          String
+  excerpt       String?   @db.VarChar(350)
+  mtitle        String?   @db.VarChar(80)
+  mdesc         String?   @db.VarChar(200)
+  categories    Int[]
+  tags          Int[]
+  created_by    Int?
+  created_date  DateTime  @default(now()) @db.Timestamp(6)
+  modified_by   Int?
+  modified_date DateTime? @db.Timestamp(6)
+  companyid     BigInt ?
+  isdelete      String?   @db.VarChar(5)
+
+  @@unique([title, companyid], name: "blog_unique")
+}
+
+model categories {
+  id        BigInt  @id @default(autoincrement())
+  name      String? @db.VarChar(50)
+  slug      String? @db.VarChar(300)
+  companyid BigInt?
+
+  @@unique([name, companyid], name: "category_unique")
+}
+
+model company {
+  id          Int       @id @default(autoincrement())
+  name        String?   @db.VarChar(60)
+  status      String?   @db.VarChar(10)
+  isdelete    Boolean?
+  createddate DateTime? @db.Timestamp(6)
+  updateddate DateTime? @db.Timestamp(6)
+  slug        String?   @db.VarChar(60)
+}
+
+model role {
+  id          BigInt      @id
+  name        String?     @db.VarChar(50)
+  description String?     @db.VarChar(50)
+  user_role   user_role[]
+}
+
+model test {
+  id   BigInt  @id @default(autoincrement())
+  name String? @db.VarChar(50)
+}
+
+model user_role {
+  id      BigInt @default(autoincrement())
+  role_id BigInt
+  user_id BigInt
+  role    role   @relation(fields: [role_id], references: [id])
+  users   users  @relation(fields: [user_id], references: [id])
+
+  @@id([role_id, user_id])
+}
+
+model users {
+  id                BigInt      @id @default(autoincrement())
+  first_name        String      @db.VarChar(100)
+  email             String      @unique @db.VarChar(320)
+  last_login_date   DateTime?   @db.Timestamp(6)
+  profile_pic       String?     @db.VarChar(100)
+  reset_token       String?     @db.VarChar(45)
+  salt              String?     @db.VarChar(255)
+  hashed_password   String?     @db.VarChar(255)
+  resetpasswordlink String?     @db.VarChar(500)
+  created_by        Int?
+  created_date      DateTime    @default(now()) @db.Timestamp(6)
+  modified_by       Int?
+  modified_date     DateTime?   @db.Timestamp(6)
+  last_name         String?     @db.VarChar(100)
+  phone             String?     @db.VarChar(20)
+  status            String?     @db.VarChar(10)
+  profile_url       String?     @db.VarChar(300)
+  companyid         BigInt?
+  user_role         user_role[]
+}
