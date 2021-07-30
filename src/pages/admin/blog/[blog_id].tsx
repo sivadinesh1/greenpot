@@ -26,7 +26,7 @@ export default function Index({ blog }: BlogProps) {
 					<div className={styles.left}></div>
 
 					<div className={styles.right}>
-						<BlogView blog={blog} />
+						<BlogView blog={blog[0]} />
 					</div>
 				</div>
 			</Admin>
@@ -37,7 +37,6 @@ export default function Index({ blog }: BlogProps) {
 // Step 2: during build every id will get called and page gets cached
 export const getStaticProps = async (ctx) => {
 	const blog_id = ctx.params.blog_id as string;
-
 	const blog = await getBlogById(blog_id);
 	return {
 		props: { blog },

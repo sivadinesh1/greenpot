@@ -9,6 +9,8 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import styles from '../../../styles/Category.module.scss';
 import BlogList from '../../../components/crud/Blog/blog-list';
 import { getAllBlogs, getBlogsByCompany } from '../../api/blog/[...crud]';
+import BlogAdd from '../../../components/crud/Blog/blog-add';
+
 
 import axios from 'axios';
 import useSWR, { mutate, trigger } from 'swr';
@@ -28,9 +30,7 @@ export interface BlogProps {
 export default function Index({ blogs }: BlogProps) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
-	// const [mode, setMode] = useState('add');
-	// const [, forceRender] = useReducer((s) => s + 1, 0);
-	// const [editRowItem, setEditRowItem] = useState<Blog>();
+	const [mode, setMode] = useState('list');
 	var companyId = getCompany();
 	const { data: result } = useSWR(`/api/blog/crud/company/${companyId}`, { initialData: blogs, revalidateOnMount: true });
 
@@ -47,13 +47,10 @@ export default function Index({ blogs }: BlogProps) {
 		trigger(`/api/blog/crud/company/${companyId}`);
 	};
 
-	// const chooseMode = (mode: string) => {
-	// 	setMode(mode);
-	// };
+	const chooseMode = (mode: string) => {
+		setMode(mode);
+	};
 
-	// const editRow = (item: Blog) => {
-	// 	setEditRowItem(item);
-	// };
 
 	return (
 		<Layout>
@@ -62,7 +59,12 @@ export default function Index({ blogs }: BlogProps) {
 					<div className={styles.left}></div>
 
 					<div className={styles.right}>
-						<BlogList blogs={blogsList} onReloadBlogList={reloadBlogList} handleSnackOpen={handleSnackOpen} />
+					{ mode ==='list'&&
+						<BlogList blogs={blogsList} onReloadBlogList={reloadBlogList} handleSnackOpen={handleSnackOpen} onMode={chooseMode} />
+					}
+					{ mode ==='add'&&
+						<BlogAdd onMode={chooseMode} blogs={blogsList} handleSnackOpen={handleSnackOpen} onReloadBlogList={reloadBlogList}/>
+						}
 					</div>
 				</div>
 			</Admin>

@@ -7,11 +7,13 @@ import ConfirmDialog from '../../elements/ui/Dialog/ConfirmDialog';
 import { mutate } from 'swr';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import {Button} from '@material-ui/core'
 
-export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen }) {
+export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen ,onMode}) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
-
+	const router = useRouter();
 	var companyId = getCompany();
 
 	const handleConfirm = async () => {
@@ -30,11 +32,6 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen }) {
 		}
 	};
 
-	// const handleEdit = (item) => {
-	// 	onMode('edit');
-	// 	onEditRow(item);
-	// };
-
 	const deleteRow = (id: string, event: any) => {
 		event.stopPropagation();
 
@@ -42,10 +39,19 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen }) {
 		setOpenDialog(true);
 	};
 
+
+	const handleAdd= () =>{
+		onMode('add');
+		console.log("calling add")
+	}
+
 	return (
 		<div>
 			<div className={styles.blogListTitle}>
-				Blogs (<span>{blogs.length}</span>)
+				<div>Blogs (<span>{blogs.length}</span>)</div>
+				<div className={styles.blogAdd}><Button onClick={()=>handleAdd()} type='button' variant='outlined' color='primary'>
+								+Add
+							</Button></div>
 			</div>
 			{blogs &&
 				blogs?.map((item, index) => {
@@ -56,12 +62,25 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen }) {
 								<div className={styles.blogList}>
 									<div>
 										<div className={styles.blogName}>
-											<Link href={`/admin/blog/${item.id}`}>{item.title}</Link>
+											<div >{item.title}</div>
 										</div>
 									</div>
-									<div className={styles.blogDel} onClick={(event) => deleteRow(item.id, event)}>
-										<Image src='/static/images/close.svg' alt='close' width='12px' height='12px' />
+									<div className={styles.blogDel}>
+									<div className={styles.btnGroup}>
+										<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />					
 									</div>
+									<div className={styles.btnGroup} onClick={() => router.push(`/admin/blog/${item.id}`)}>
+										<Image src='/static/images/preview.svg' alt='preview' width='15px' height='15px' />
+									{/* <Link href={`/admin/blog/${item.id}`}>
+									</Link> */}
+										
+									</div>
+									<div className={styles.btnGroup} onClick={(event) => deleteRow(item.id, event)}>
+										<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
+									</div>
+									
+									</div>
+									
 								</div>
 							</div>
 						</div>

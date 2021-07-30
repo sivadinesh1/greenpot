@@ -63,9 +63,10 @@
 	opacity: 0.8;
 }
 .blogListTitle {
+	display: flex;
+	justify-content: space-between;
 	background-color: lavender;
 	font-size: 1rem;
-
 	position: sticky;
 	top: 53px;
 	background-color: #fff;
@@ -86,4 +87,18 @@
 	color: #fff;
 	opacity: 0.8;
 	cursor: pointer;
+}
+
+.btnGroup {
+	text-align: center;
+	padding: 10px;
+	float: left;
+ }
+
+ .blogAdd {
+	padding: 0.2rem;
+}
+
+.rowGap {
+	padding: 1rem 0;
 }
