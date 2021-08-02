@@ -7,13 +7,13 @@ import ConfirmDialog from '../../elements/ui/Dialog/ConfirmDialog';
 import { mutate } from 'swr';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import {Button} from '@material-ui/core'
+// import { useRouter } from 'next/router';
+import { Button } from '@material-ui/core';
 
-export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen ,onMode}) {
+export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
-	const router = useRouter();
+	//	const router = useRouter();
 	var companyId = getCompany();
 
 	const handleConfirm = async () => {
@@ -39,19 +39,17 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen ,onM
 		setOpenDialog(true);
 	};
 
-
-	const handleAdd= () =>{
+	const handleAdd = () => {
 		onMode('add');
-		console.log("calling add")
-	}
+		console.log('calling add');
+	};
 
 	return (
 		<div>
 			<div className={styles.blogListTitle}>
-				<div>Blogs (<span>{blogs.length}</span>)</div>
-				<div className={styles.blogAdd}><Button onClick={()=>handleAdd()} type='button' variant='outlined' color='primary'>
-								+Add
-							</Button></div>
+				<div>
+					Blogs (<span>{blogs.length}</span>)
+				</div>
 			</div>
 			{blogs &&
 				blogs?.map((item, index) => {
@@ -62,25 +60,27 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen ,onM
 								<div className={styles.blogList}>
 									<div>
 										<div className={styles.blogName}>
-											<div >{item.title}</div>
+											<div>{item.title}</div>
 										</div>
 									</div>
 									<div className={styles.blogDel}>
-									<div className={styles.btnGroup}>
-										<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />					
+										<div className={styles.btnGroup}>
+											<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
+										</div>
+										<div
+											className={styles.btnGroup}
+											// onClick={() => router.push(`/admin/blog/${item.id}`)}
+										>
+											<Link href={`/admin/blog/${item.id}`}>
+												<a>
+													<Image src='/static/images/preview.svg' alt='preview' width='15px' height='15px' />
+												</a>
+											</Link>
+										</div>
+										<div className={styles.btnGroup} onClick={(event) => deleteRow(item.id, event)}>
+											<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
+										</div>
 									</div>
-									<div className={styles.btnGroup} onClick={() => router.push(`/admin/blog/${item.id}`)}>
-										<Image src='/static/images/preview.svg' alt='preview' width='15px' height='15px' />
-									{/* <Link href={`/admin/blog/${item.id}`}>
-									</Link> */}
-										
-									</div>
-									<div className={styles.btnGroup} onClick={(event) => deleteRow(item.id, event)}>
-										<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
-									</div>
-									
-									</div>
-									
 								</div>
 							</div>
 						</div>

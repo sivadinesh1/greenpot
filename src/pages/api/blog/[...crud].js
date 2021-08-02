@@ -5,7 +5,6 @@ const { stripHtml } = require('string-strip-html');
 import prisma from '../../../dbconfig/prisma';
 const slugify = require('slugify');
 
-
 export default handler
 	// without parameters
 	.get('/api/blog/crud/users', async (req, res) => {
@@ -42,7 +41,8 @@ export default handler
 		var returnValue = bigIntToString(result);
 
 		res.send(returnValue);
-	}).post(async (req, res) => {
+	})
+	.post(async (req, res) => {
 		console.log('blog create method call----> ', req.body);
 
 		const { title, categories, tags, body, companyId } = req.body;
@@ -55,7 +55,7 @@ export default handler
 		let slug = slugify(title).toLowerCase();
 		let mtitle = `${title} | ${process.env.APP_NAME}`;
 
-		 let mdesc = stripHtml(body).result.substring(0, 160);
+		let mdesc = stripHtml(body).result.substring(0, 160);
 
 		let excerpt = smartTrim(body, 320, '', ' ...');
 
@@ -65,7 +65,7 @@ export default handler
 			companyid = Number(companyId);
 		}
 
-		console.log("test company id------>",companyid)
+		console.log('test company id------>', companyid);
 		const result = await prisma.blog.create({
 			data: {
 				title: title,
@@ -77,12 +77,11 @@ export default handler
 				categories: arrayOfCategories,
 				tags: arrayOfTags,
 				companyid: companyid,
-				isdelete:'N'
+				isdelete: 'N',
 			},
 		});
 		res.status(201).send({ title: result.title, message: 'success' });
-	})
-;
+	});
 
 // const checkDuplicateTitles = async (title, companyid) => {
 //     const result = await prisma.blog.count({
@@ -110,9 +109,9 @@ export const getBlogsByCompany = async (companyId) => {
 };
 
 export const getBlogById = async (blogId) => {
-	const result = await prisma.blog.findMany({
+	const result = await prisma.blog.findUnique({
 		where: {
-			AND: [{ id: { equals: Number(blogId) || undefined } }, { isdelete: { equals: 'N' || undefined } }],
+			id: Number(blogId),
 		},
 	});
 	return bigIntToString(result);

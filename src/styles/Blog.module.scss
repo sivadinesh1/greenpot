@@ -1,17 +1,13 @@
 .blog_wrap {
 	display: grid;
-	height: 100vh;
+	min-height: 100vh;
+	grid-template-columns: 50% 50%;
 
 	.left {
-		background-color: #4d54b9;
-		padding: 2rem;
+		background-color: #f5f5f5;
+		padding: 2rem 3rem;
 		margin-top: 53px;
 		height: calc(100% - 53px);
-		width: 400px;
-		position: fixed;
-		z-index: 1;
-		top: 0;
-		left: 0;
 
 		.title {
 			font-size: 1rem;
@@ -20,11 +16,10 @@
 		}
 	}
 	.right {
-		background-color: #f5f5f5;
+		background-color: #fff;
 		padding: 2rem;
-		margin-left: 400px;
+
 		margin-top: 53px;
-		width: calc(100% - 400px);
 		height: calc(100% - 53px);
 	}
 }
@@ -93,9 +88,9 @@
 	text-align: center;
 	padding: 10px;
 	float: left;
- }
+}
 
- .blogAdd {
+.blogAdd {
 	padding: 0.2rem;
 }
 

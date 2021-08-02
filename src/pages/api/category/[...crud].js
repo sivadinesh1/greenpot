@@ -13,7 +13,7 @@ export default handler
 	// with parameters
 	.get('/api/category/crud/company/:id', async (req, res) => {
 		const result = await getAllCategories(req.params.id);
-
+		console.log('result categories ' + result);
 		const returnValue = bigIntToString(result);
 		res.status(200).json(returnValue);
 	})
@@ -109,6 +109,7 @@ const checkDuplicateNames = async (name, companyid) => {
 };
 
 export const getAllCategories = async (company_id) => {
+	console.log('dinesh ' + company_id);
 	const result = await prisma.categories.findMany({
 		where: {
 			companyid: Number(company_id),
