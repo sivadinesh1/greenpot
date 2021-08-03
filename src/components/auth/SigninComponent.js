@@ -68,10 +68,6 @@ const SigninComponent = () => {
 				showTest(true, response.data.message);
 			} else {
 				authenticate(response.data, () => {
-					Router.push(`/`);
-				});
-
-				authenticate(response.data, () => {
 					if (isAuth() && isAuth().role === '1') {
 						Router.push(`/admin`);
 					} else {
