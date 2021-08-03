@@ -1,43 +1,35 @@
-import Layout from '../../../../components/Layout';
-import Admin from '../../../../components/auth/Admin';
 import React, { useRef, useCallback, useState, useEffect } from 'react';
-import styles from '../../../../styles/Blog.module.scss';
-import { signout, isAuth, getCompany } from '../../../../components/auth/auth';
-import TextField from '@material-ui/core/TextField';
-
 import axios from 'axios';
-
-import { useForm, Controller, useWatch } from 'react-hook-form';
-import { makeStyles, useTheme, withStyles } from '@material-ui/core/styles';
-
+import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { getAllCategories } from '../../../api/category/[...crud]';
-import { getAllTags } from '../../../api/tag/[...crud]';
-import InputLabel from '@material-ui/core/InputLabel';
-import Select from '@material-ui/core/Select';
-import MenuItem from '@material-ui/core/MenuItem';
-import Chip from '@material-ui/core/Chip';
-import { Button } from '@material-ui/core';
-import Input from '@material-ui/core/Input';
-
-import theme from '../../../../theme';
-import FormControl from '@material-ui/core/FormControl';
-import ListItemText from '@material-ui/core/ListItemText';
-import Checkbox from '@material-ui/core/Checkbox';
-
-import CancelIcon from '@material-ui/icons/Cancel';
-
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import RemoveIcon from '@material-ui/icons/RemoveCircleOutlineSharp';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import dynamic from 'next/dynamic';
-import BlogPreview from '../../../../components/crud/Blog/blog-preview';
+
+import TextField from '@material-ui/core/TextField';
+import { Button } from '@material-ui/core';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+import { Image } from 'cloudinary-react';
 
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 const SunEditor = dynamic(() => import('suneditor-react'), { ssr: false });
 
 import { options } from '../../../../components/utils/sunEditor';
+import { useDropzone } from 'react-dropzone';
+
+import styles from '../../../../styles/Blog.module.scss';
+import stylesd from '../../../../styles/dropZone.module.css';
+import Layout from '../../../../components/Layout';
+import Admin from '../../../../components/auth/Admin';
+import BlogPreview from '../../../../components/crud/Blog/blog-preview';
+import { getAllCategories } from '../../../api/category/[...crud]';
+import { getAllTags } from '../../../api/tag/[...crud]';
 
 export const getServerSideProps = async (context) => {
 	const company_id = context.params.company_id as string;
@@ -49,39 +41,6 @@ export const getServerSideProps = async (context) => {
 	};
 };
 
-const useStyles = makeStyles((theme) => ({
-	formControl: {
-		margin: theme.spacing(1),
-		minWidth: 120,
-	},
-	chips: {
-		display: 'flex',
-		flexWrap: 'wrap',
-	},
-	chip: {
-		margin: 2,
-	},
-	selectEmpty: {
-		marginTop: theme.spacing(2),
-	},
-	dialogPaper: {
-		height: '400px',
-	},
-	margin: {
-		margin: theme.spacing(1),
-	},
-	TextFieldProps: {
-		color: '#fff',
-		borderBottom: '1px solid #fff',
-	},
-	buttonProps: {
-		fontSize: '1rem',
-		borderRadius: '5em',
-		padding: '8px 50px',
-		textTransform: 'capitalize',
-	},
-}));
-
 interface FormData {
 	title: string;
 	content: string;
@@ -89,10 +48,9 @@ interface FormData {
 	tags: any[];
 }
 
-export default function Index({ categories, tags }) {
-	const classes = useStyles();
-
-	const [blog, setBlog] = useState<FormData>();
+export default function Index({ categories, tags, company_id }) {
+	const [snack, setSnack] = useState(false);
+	const [message, setMessage] = useState('');
 
 	const [selectedTags, setSelectedTags] = useState([]);
 	const [selectedCategorys, setSelectedCategorys] = useState([]);
@@ -104,7 +62,6 @@ export default function Index({ categories, tags }) {
 	const {
 		register,
 		handleSubmit,
-		getValues,
 		watch,
 		formState: { errors },
 	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
@@ -112,6 +69,12 @@ export default function Index({ categories, tags }) {
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 	const [error, setError] = useState(false);
+
+	//dialog box
+	const [openDialog, setOpenDialog] = React.useState(false);
+	const handleOpenDialog = () => {
+		setOpenDialog(true);
+	};
 
 	/**
 	 * @type {React.MutableRefObject<SunEditor>} get type definitions for editor
@@ -133,20 +96,36 @@ export default function Index({ categories, tags }) {
 		setContentBody(content);
 	};
 
+	const handleCloseDialog = () => {
+		setOpenDialog(false);
+	};
+
 	const onSubmit = async (formData, event) => {
+		console.log('submit clicked');
+		debugger;
 		if (submitting) {
 			return false;
 		}
 
 		let tagsarr = [];
+		tags.forEach((e, i) => {
+			if (selectedTags.includes(e.slug)) tagsarr.push(Number(e.id));
+		});
 
+		let categoriessarr = [];
+		categories.forEach((e, i) => {
+			if (selectedCategorys.includes(e.slug)) categoriessarr.push(Number(e.id));
+		});
+
+		formData.content = contentBody;
+		formData.catArray = tagsarr;
+		formData.tagArray = categoriessarr;
 		console.log('test blog data', formData);
 		const values = {
-			// title, categories, tags, body, companyI
 			title: formData.name,
 			categories: formData.catArray,
 			tags: formData.tagArray,
-			// companyId: companyId,
+			companyId: company_id,
 			body: formData.content,
 		};
 		console.log('test response value ----->', values);
@@ -162,11 +141,46 @@ export default function Index({ categories, tags }) {
 
 		setSubmitting(false);
 		if (response.status === 201) {
-			// onReloadBlogList();
-			// handleSnackOpen('blog Successfully Added');
+			setSnack(true);
+			setMessage('blog Successfully Added');
+
 			event.target.reset();
 		}
 	};
+
+	//cloudinary
+	const [uploadedFiles, setUploadedFiles] = useState([]);
+
+	const onDrop = useCallback(async (acceptedFiles) => {
+		let path = 'company';
+		const { signature, timestamp } = await getSignature(path);
+		const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+
+		acceptedFiles.forEach(async (acceptedFile) => {
+			//login verification
+
+			const formData = new FormData();
+			formData.append('file', acceptedFile);
+			formData.append('signature', signature);
+			formData.append('timestamp', timestamp);
+			formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_KEY);
+			formData.append('folder', path);
+
+			const response = await fetch(url, {
+				method: 'post',
+				body: formData,
+			});
+			const data = await response.json();
+			setUploadedFiles((old) => [...old, data]);
+		});
+	}, []);
+
+	//drop zone
+	const { getRootProps, getInputProps, isDragActive } = useDropzone({
+		onDrop,
+		accept: 'image/*',
+		multiple: false,
+	});
 
 	return (
 		<Layout>
@@ -203,19 +217,19 @@ export default function Index({ categories, tags }) {
 										// imageUploadHandler={imageUploadHandler}
 									/>
 								</div>
-								{/* <div className={styles.rowGap}>
-						<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
-							<input {...getInputProps()} />
-							Drop Zone
-						</div>
-						<span>
-							{uploadedFiles.length > 0 && (
-								<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
-									Show Gallery
-								</Button>
-							)}
-						</span>
-					</div> */}
+								<div className={styles.rowGap}>
+									<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
+										<input {...getInputProps()} />
+										Drop Zone
+									</div>
+									<span>
+										{uploadedFiles.length > 0 && (
+											<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+												Show Gallery
+											</Button>
+										)}
+									</span>
+								</div>
 
 								<div>
 									<Autocomplete
@@ -252,38 +266,39 @@ export default function Index({ categories, tags }) {
 								</div>
 
 								<div className={styles.textCenter}>
-									<Button variant='contained' color='primary' disabled={submitting} className={classes.buttonProps} type='submit'>
+									{/* <Button variant='contained' color='primary' type='button' onClick={onSubmit}>Save</Button> */}
+									<Button variant='contained' color='primary' type='submit'>
 										Add Blog
 									</Button>
 								</div>
 							</form>
 						</div>
 
-						{/* <div>
-				<Dialog
-					classes={{ paper: classes.dialogPaper }}
-					fullWidth={true}
-					maxWidth='lg'
-					open={openDialog}
-					onClose={handleCloseDialog}
-					aria-labelledby='max-width-dialog-title'>
-					<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
-					<DialogContent dividers>
-						<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
-							{uploadedFiles.map((file) => (
-								<div key={file.public_id} style={{ margin: '10px auto' }}>
-									<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
-								</div>
-							))}
+						<div>
+							<Dialog
+								// classes={{ paper: classes.dialogPaper }}
+								fullWidth={true}
+								maxWidth='lg'
+								open={openDialog}
+								onClose={handleCloseDialog}
+								aria-labelledby='max-width-dialog-title'>
+								<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
+								<DialogContent dividers>
+									<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
+										{uploadedFiles.map((file) => (
+											<div key={file.public_id} style={{ margin: '10px auto' }}>
+												<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
+											</div>
+										))}
+									</div>
+								</DialogContent>
+								<DialogActions>
+									<Button onClick={handleCloseDialog} color='primary'>
+										Back
+									</Button>
+								</DialogActions>
+							</Dialog>
 						</div>
-					</DialogContent>
-					<DialogActions>
-						<Button onClick={handleCloseDialog} color='primary'>
-							Back
-						</Button>
-					</DialogActions>
-				</Dialog>
-			</div> */}
 					</div>
 					<div className={styles.right}>
 						<div style={{ color: 'red' }}>PREVIEW</div>
@@ -291,7 +306,20 @@ export default function Index({ categories, tags }) {
 						<BlogPreview title={watch('title')} categories={selectedCategorys} body={contentBody}></BlogPreview>
 					</div>
 				</div>
+
+				<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
+					<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
+						{message}
+					</MuiAlert>
+				</Snackbar>
 			</Admin>
 		</Layout>
 	);
+}
+
+async function getSignature(folderPath) {
+	const response = await fetch(`/api/cloudinary/${folderPath}`);
+	const data = await response.json();
+	const { signature, timestamp } = data;
+	return { signature, timestamp };
 }
