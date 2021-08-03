@@ -4,6 +4,8 @@ import { smartTrim } from '../../../components/utils/util';
 const { stripHtml } = require('string-strip-html');
 import prisma from '../../../dbconfig/prisma';
 const slugify = require('slugify');
+import { getDB } from '../../../dbconfig/db';
+const { db } = getDB();
 
 export default handler
 	// without parameters
@@ -66,6 +68,29 @@ export default handler
 		}
 
 		console.log('test company id------>', companyid);
+
+		let newCatArr = arrayOfCategories.map((e) => {
+			return parseInt(e.id);
+		});
+
+		let newTagArr = arrayOfTags.map((e) => {
+			return parseInt(e.id);
+		});
+
+		console.log('dinesh@ ' + newCatArr);
+		console.log('dinesh# ' + newTagArr);
+
+		// both works do not delete
+
+		// db.one(
+		// 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, companyid) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9) RETURNING id',
+		// 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, companyid],
+		// ).then((data) => {
+		// 	console.log('new inserted BLOG id: ' + data.id); // print new user id;
+		// 	// res.json({ title: title, message: 'success' });
+		// 	res.status(201).send({ title: title, message: 'success' });
+		// });
+
 		const result = await prisma.blog.create({
 			data: {
 				title: title,
@@ -74,25 +99,15 @@ export default handler
 				excerpt: excerpt,
 				mtitle: mtitle,
 				mdesc: mdesc,
-				categories: arrayOfCategories,
-				tags: arrayOfTags,
+				categories: newCatArr,
+				tags: newTagArr,
 				companyid: companyid,
 				isdelete: 'N',
 			},
 		});
-		res.status(201).send({ title: result.title, message: 'success' });
+
+		res.status(201).send({ title: title, message: 'success' });
 	});
-
-// const checkDuplicateTitles = async (title, companyid) => {
-//     const result = await prisma.blog.count({
-//         where: {
-//             title: title,
-//             companyid: Number(companyid),
-//         }
-
-//     })
-//     return result;
-// }
 
 export const getAllBlogs = async () => {
 	const result = await prisma.blog.findMany({});

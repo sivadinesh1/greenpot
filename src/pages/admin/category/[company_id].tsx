@@ -48,7 +48,6 @@ export default function Index({ categorys }: CategoryProps) {
 	//let categorysList: Category[] = data;
 
 	const handleSnackOpen = (message) => {
-		debugger;
 		setSnack(true);
 		setMessage(message);
 	};

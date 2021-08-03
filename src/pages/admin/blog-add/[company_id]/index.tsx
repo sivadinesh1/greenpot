@@ -1,4 +1,5 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
+import Router from 'next/router';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
@@ -37,7 +38,7 @@ export const getServerSideProps = async (context) => {
 	const tags = await getAllTags(company_id);
 
 	return {
-		props: { categories, tags },
+		props: { categories, tags, company_id },
 	};
 };
 
@@ -56,7 +57,11 @@ export default function Index({ categories, tags, company_id }) {
 	const [selectedCategorys, setSelectedCategorys] = useState([]);
 
 	let schema = yup.object().shape({
-		name: yup.string().required().min(3).max(72),
+		title: yup.string().required().min(3).max(72),
+		categories: yup.string().nullable().notRequired(),
+		tags: yup.string().nullable().notRequired(),
+		companyId: yup.string().nullable().notRequired(),
+		body: yup.string().nullable().notRequired(),
 	});
 
 	const {
@@ -64,6 +69,7 @@ export default function Index({ categories, tags, company_id }) {
 		handleSubmit,
 		watch,
 		formState: { errors },
+		reset,
 	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
 
 	const [submitting, setSubmitting] = useState<boolean>(false);
@@ -102,31 +108,18 @@ export default function Index({ categories, tags, company_id }) {
 
 	const onSubmit = async (formData, event) => {
 		console.log('submit clicked');
-		debugger;
+
 		if (submitting) {
 			return false;
 		}
 
-		let tagsarr = [];
-		tags.forEach((e, i) => {
-			if (selectedTags.includes(e.slug)) tagsarr.push(Number(e.id));
-		});
-
-		let categoriessarr = [];
-		categories.forEach((e, i) => {
-			if (selectedCategorys.includes(e.slug)) categoriessarr.push(Number(e.id));
-		});
-
-		formData.content = contentBody;
-		formData.catArray = tagsarr;
-		formData.tagArray = categoriessarr;
 		console.log('test blog data', formData);
 		const values = {
-			title: formData.name,
-			categories: formData.catArray,
-			tags: formData.tagArray,
+			title: formData.title || '',
+			categories: selectedCategorys,
+			tags: selectedTags,
 			companyId: company_id,
-			body: formData.content,
+			body: contentBody || '',
 		};
 		console.log('test response value ----->', values);
 		setSubmitting(true);
@@ -145,6 +138,8 @@ export default function Index({ categories, tags, company_id }) {
 			setMessage('blog Successfully Added');
 
 			event.target.reset();
+			reset();
+			Router.push(`/admin/blogs/${company_id}`);
 		}
 	};
 
@@ -198,9 +193,9 @@ export default function Index({ categories, tags, company_id }) {
 										variant='standard'
 										size='small'
 										fullWidth
+										error={errors?.title ? true : false}
 										{...register('title')}
 									/>
-									{errors.title && <span>{errors.title.message}</span>}
 								</div>
 								<div className={styles.rowGap}>
 									<SunEditor
@@ -266,7 +261,6 @@ export default function Index({ categories, tags, company_id }) {
 								</div>
 
 								<div className={styles.textCenter}>
-									{/* <Button variant='contained' color='primary' type='button' onClick={onSubmit}>Save</Button> */}
 									<Button variant='contained' color='primary' type='submit'>
 										Add Blog
 									</Button>

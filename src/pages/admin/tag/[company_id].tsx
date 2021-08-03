@@ -45,7 +45,6 @@ export default function Index({ tags }: TagProps) {
 	});
 
 	const handleSnackOpen = (message) => {
-		debugger;
 		setSnack(true);
 		setMessage(message);
 	};
