@@ -11,6 +11,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the FontAwesomeIcon component
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const Header = () => {
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -33,6 +34,13 @@ const Header = () => {
 		}
 		setCompanyId(getCompany());
 	}, []);
+
+	const handleSignout = () => {
+		signout();
+		axios.post(`/api/auth/signout`, {}).then(function (response) {
+			Router.push(`/`);
+		});
+	};
 
 	return (
 		<>
@@ -73,7 +81,8 @@ const Header = () => {
 
 							<MenuItem onClick={handleClose}>Profile</MenuItem>
 							<MenuItem onClick={handleClose}>My account</MenuItem>
-							<MenuItem onClick={() => signout(() => Router.replace(`/`))}>Singout</MenuItem>
+							<MenuItem onClick={handleSignout}>Singout</MenuItem>
+							{/* <MenuItem onClick={() => signout(() => Router.replace(`/`))}>Singout</MenuItem> */}
 						</Menu>
 					</div>
 				</div>
