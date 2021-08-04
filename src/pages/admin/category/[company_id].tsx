@@ -1,7 +1,7 @@
 import Layout from '../../../components/Layout';
 import Admin from '../../../components/auth/Admin';
 import React, { useState } from 'react';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 
 // import SnackBar from '../../../components/elements/ui/Dialog/SnackBar';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -24,14 +24,18 @@ export const getServerSideProps = async (context) => {
 
 	const cookie = context?.req?.headers.cookie;
 
-	let json = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
+	let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
 		headers: {
 			cookie: cookie!,
 		},
 	});
 
+	if (resp.status === 401) {
+		Router.replace('/');
+	}
+
 	return {
-		props: { categorys: json.data },
+		props: { categorys: resp.data },
 	};
 };
 

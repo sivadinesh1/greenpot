@@ -5,14 +5,6 @@ import jwt from 'jsonwebtoken';
 
 const slugify = require('slugify');
 
-// Mount a middleware function
-
-// function worseThanUselessMiddleware(req, res, next) {
-// 	console.log('sleepy.');
-// }
-
-// const common = handler.use(worseThanUselessMiddleware);
-
 export default handler
 
 	.use(async (req, res, next) => {
@@ -20,14 +12,24 @@ export default handler
 		console.log('cookie ' + req.cookies.authToken);
 		const token = req.cookies.authToken;
 
-		const isLogged = jwt.verify(req.cookies.authToken, process.env.JWT_SECRET);
-		console.log('cookie json:..' + JSON.stringify(isLogged));
-		// if (isLogged.id === '') {
-		// 	console.log('not admin');
+		// const isLogged = jwt.verify(req.cookies.authToken, process.env.JWT_SECRET);
+		// console.log('cookie json:..' + JSON.stringify(isLogged));
 
-		// }
-		next();
+		jwt.verify(req.cookies.authToken, process.env.JWT_SECRET, async function (err, decoded) {
+			if (err && decoded) {
+				next();
+			} else {
+				res.status(401).json({ message: 'Sorry you are not authenticated' });
+			}
+		});
 	})
+
+	// if (isLogged.id === '') {
+	// 	console.log('not admin');
+
+	// }
+	// 	next();
+	// })
 
 	// without parameters
 	.get('/api/category/crud/users', async (req, res) => {
