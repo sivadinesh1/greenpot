@@ -71,7 +71,7 @@ export const insertUser = async (name, email, password) => {
 	]).then((data) => {
 		db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1]);
 		// .then((data1) => {
-		//     console.log('user role inserted..');
+
 		// });
 	});
 };

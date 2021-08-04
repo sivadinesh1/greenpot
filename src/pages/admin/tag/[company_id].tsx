@@ -50,7 +50,6 @@ export default function Index({ tags }: TagProps) {
 	};
 
 	const reloadTagList = async () => {
-		console.log('this seems towork');
 		mutate();
 	};
 

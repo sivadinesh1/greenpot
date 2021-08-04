@@ -96,7 +96,17 @@ export default function MyApp(props) {
 				</Head>
 				<ThemeProvider theme={theme}>
 					<CssBaseline />
-					<SWRConfig value={{ fetcher: (url: string) => axios(url).then((r) => r.data) }}>
+					<SWRConfig
+						value={{
+							refreshInterval: 0,
+							errorRetryCount: 0,
+							shouldRetryOnError: false,
+							revalidateOnMount: false,
+							revalidateOnFocus: false,
+							revalidateOnReconnect: false,
+							compare: (a, b) => a === b,
+							fetcher: (url: string) => axios(url).then((r) => r.data),
+						}}>
 						<Component {...pageProps} />
 					</SWRConfig>
 				</ThemeProvider>

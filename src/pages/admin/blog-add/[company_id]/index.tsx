@@ -91,7 +91,6 @@ export default function Index({ categories, tags, company_id }) {
 
 	const getSunEditorInstance = (sunEditor) => {
 		editor.current = sunEditor;
-		console.log('dinesh' + editor.current);
 	};
 
 	//sunEditor
@@ -107,13 +106,10 @@ export default function Index({ categories, tags, company_id }) {
 	};
 
 	const onSubmit = async (formData, event) => {
-		console.log('submit clicked');
-
 		if (submitting) {
 			return false;
 		}
 
-		console.log('test blog data', formData);
 		const values = {
 			title: formData.title || '',
 			categories: selectedCategorys,
@@ -121,7 +117,7 @@ export default function Index({ categories, tags, company_id }) {
 			companyId: company_id,
 			body: contentBody || '',
 		};
-		console.log('test response value ----->', values);
+
 		setSubmitting(true);
 		setServerErrors([]);
 		setError(false);

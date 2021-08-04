@@ -6,7 +6,6 @@ import styles from '../styles/Home.module.scss';
 import SigninComponent from '../components/auth/SigninComponent';
 
 export default function Home() {
-	console.log('Home');
 	return (
 		<>
 			<div>

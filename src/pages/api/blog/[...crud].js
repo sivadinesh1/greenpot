@@ -45,8 +45,6 @@ export default handler
 		res.send(returnValue);
 	})
 	.post(async (req, res) => {
-		console.log('blog create method call----> ', req.body);
-
 		const { title, categories, tags, body, companyId } = req.body;
 
 		let arrayOfCategories = categories;
@@ -63,11 +61,8 @@ export default handler
 
 		let companyid = companyId;
 		if (typeof companyId === 'string') {
-			console.log('convertion method call');
 			companyid = Number(companyId);
 		}
-
-		console.log('test company id------>', companyid);
 
 		let newCatArr = arrayOfCategories.map((e) => {
 			return parseInt(e.id);
@@ -77,16 +72,13 @@ export default handler
 			return parseInt(e.id);
 		});
 
-		console.log('dinesh@ ' + newCatArr);
-		console.log('dinesh# ' + newTagArr);
-
 		// both works do not delete
 
 		// db.one(
 		// 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, companyid) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9) RETURNING id',
 		// 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, companyid],
 		// ).then((data) => {
-		// 	console.log('new inserted BLOG id: ' + data.id); // print new user id;
+
 		// 	// res.json({ title: title, message: 'success' });
 		// 	res.status(201).send({ title: title, message: 'success' });
 		// });

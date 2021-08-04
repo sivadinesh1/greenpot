@@ -1,10 +1,34 @@
 import handler from '../handler';
 import { bigIntToString } from '../../../dbconfig/utils';
 import prisma from '../../../dbconfig/prisma';
+import jwt from 'jsonwebtoken';
 
 const slugify = require('slugify');
 
+// Mount a middleware function
+
+// function worseThanUselessMiddleware(req, res, next) {
+// 	console.log('sleepy.');
+// }
+
+// const common = handler.use(worseThanUselessMiddleware);
+
 export default handler
+
+	.use(async (req, res, next) => {
+		console.log('CONSOLING../api/category/crud');
+		console.log('cookie ' + req.cookies.authToken);
+		const token = req.cookies.authToken;
+
+		const isLogged = jwt.verify(req.cookies.authToken, process.env.JWT_SECRET);
+		console.log('cookie json:..' + JSON.stringify(isLogged));
+		// if (isLogged.id === '') {
+		// 	console.log('not admin');
+
+		// }
+		next();
+	})
+
 	// without parameters
 	.get('/api/category/crud/users', async (req, res) => {
 		res.status(200).json({ name: 'John Doe 2' });
@@ -12,9 +36,11 @@ export default handler
 
 	// with parameters
 	.get('/api/category/crud/company/:id', async (req, res) => {
+		console.log('inside get all cat...');
 		const result = await getAllCategories(req.params.id);
-		console.log('result categories ' + result);
+
 		const returnValue = bigIntToString(result);
+		console.log('inside get all cat...' + returnValue);
 		res.status(200).json(returnValue);
 	})
 
@@ -109,7 +135,6 @@ const checkDuplicateNames = async (name, companyid) => {
 };
 
 export const getAllCategories = async (company_id) => {
-	console.log('dinesh ' + company_id);
 	const result = await prisma.categories.findMany({
 		where: {
 			companyid: Number(company_id),
@@ -125,3 +150,21 @@ export const getAllBlog = async () => {
 	const result = await prisma.blog.findMany({});
 	return bigIntToString(result);
 };
+
+// .use(async (req, res, next) => {
+// 	console.log('CONSOLING../api/category/crud');
+// 	console.log('cookie ' + req.cookies.authToken);
+// 	const token = req.cookies.authToken;
+
+// 	if (token === undefined) {
+// 		next(Error('Not Logged in yet!'));
+// 	} else {
+// 		const isLogged = jwt.verify(req.cookies.authToken, process.env.JWT_SECRET);
+// 		console.log('cookie json:..' + JSON.stringify(isLogged));
+// 		// if (isLogged.id === '') {
+// 		// 	console.log('not admin');
+
+// 		// }
+// 		next();
+// 	}
+// })

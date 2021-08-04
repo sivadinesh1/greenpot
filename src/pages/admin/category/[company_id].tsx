@@ -18,10 +18,20 @@ import useSWR from 'swr';
 
 export const getServerSideProps = async (context) => {
 	const company_id = context.params.company_id as string;
-	const categorys = await getAllCategories(company_id);
+
+	// both works dont delete
+	//const categorys = await getAllCategories(company_id);
+
+	const cookie = context?.req?.headers.cookie;
+
+	let json = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
+		headers: {
+			cookie: cookie!,
+		},
+	});
 
 	return {
-		props: { categorys },
+		props: { categorys: json.data },
 	};
 };
 
@@ -42,7 +52,6 @@ export default function Index({ categorys }: CategoryProps) {
 
 	const { data, mutate } = useSWR(`/api/category/crud/company/${company_id}`, {
 		initialData: categorys,
-		revalidateOnMount: true,
 	});
 
 	//let categorysList: Category[] = data;
@@ -53,7 +62,6 @@ export default function Index({ categorys }: CategoryProps) {
 	};
 
 	const reloadCategoryList = async () => {
-		console.log('this seems towork');
 		mutate();
 	};
 

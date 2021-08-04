@@ -17,9 +17,11 @@ export default handler.post(async (req, res) => {
 			});
 			const { id, username, name, email, role, companyid } = user;
 
+			console.log('auth :: ' + token);
+
 			res.setHeader(
 				'Set-Cookie',
-				cookie.serialize('token', 'redapple', {
+				cookie.serialize('authToken', token, {
 					httpOnly: true,
 					secure: process.env.NODE_ENV !== 'development',
 					maxAge: 60 * 60,

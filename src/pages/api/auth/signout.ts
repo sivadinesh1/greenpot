@@ -10,7 +10,7 @@ import { checkEmailExists } from './common';
 export default handler.post(async (req, res) => {
 	res.setHeader(
 		'Set-Cookie',
-		cookie.serialize('token', '', {
+		cookie.serialize('authToken', '', {
 			httpOnly: true,
 			secure: process.env.NODE_ENV !== 'development',
 			maxAge: new Date(0),

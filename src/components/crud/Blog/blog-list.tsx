@@ -41,7 +41,6 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 
 	const handleAdd = () => {
 		onMode('add');
-		console.log('calling add');
 	};
 
 	return (

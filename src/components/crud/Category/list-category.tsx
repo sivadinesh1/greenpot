@@ -14,18 +14,14 @@ export default function CategoryList({ categories, onMode, onEditRow, onReloadCa
 
 	const handleConfirm = async () => {
 		setOpenDialog(false);
-
-		mutate(
-			`/api/category/crud/company/${companyId}`,
-			categories.filter((c) => c.id !== currentId),
-			false,
-		);
-
-		let response = await axios.delete(`/api/category/crud/${currentId}`);
-
-		if (response.status === 200) {
-			handleSnackOpen('Category Successfully Deleted');
-			onReloadCategoryList();
+		try {
+			let response = await axios.delete(`/api/category/crud/${currentId}`);
+			if (response.status === 200) {
+				handleSnackOpen('Category Successfully Deleted');
+				onReloadCategoryList();
+			}
+		} catch (err) {
+			handleSnackOpen('Failed: Category deletion!');
 		}
 	};
 
@@ -52,9 +48,8 @@ export default function CategoryList({ categories, onMode, onEditRow, onReloadCa
 						<div key={index}>
 							<div className={styles.catRow}>
 								<div className={styles.catList} onClick={() => handleEdit(item)}>
-									<div>
-										<div className={styles.catName}>{item.name}</div>
-									</div>
+									<div className={styles.catName}>{item.name}</div>
+
 									<div className={styles.catDel} onClick={(event) => deleteRow(item.id, event)}>
 										<Image src='/static/images/close.svg' alt='close' width='12px' height='12px' />
 									</div>

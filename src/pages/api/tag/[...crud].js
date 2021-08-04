@@ -22,6 +22,7 @@ export default handler
 	.post(async (req, res) => {
 		const { name, companyid } = req.body;
 		const errors = [];
+
 		const isdata = await checkDuplicateNames(name, companyid);
 
 		if (isdata > 0) {

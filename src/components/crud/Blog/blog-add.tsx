@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import styles from '../../../styles/Blog.module.scss';
 import axios from 'axios';
-import { getCookie, getCompany } from '../../auth/auth';
+import { getCompany } from '../../auth/auth';
 
 import ConfirmDialog from '../../elements/ui/Dialog/ConfirmDialog';
 import useSWR, { mutate, trigger } from 'swr';
@@ -180,7 +180,7 @@ export default function BlogAdd({ blogs, handleSnackOpen, onReloadBlogList, onMo
 		formData.content = contentBody;
 		formData.catArray = tagsarr;
 		formData.tagArray = categoriessarr;
-		console.log('test blog data', formData);
+
 		const values = {
 			// title, categories, tags, body, companyI
 			title: formData.name,
@@ -189,7 +189,7 @@ export default function BlogAdd({ blogs, handleSnackOpen, onReloadBlogList, onMo
 			companyId: companyId,
 			body: formData.content,
 		};
-		console.log('test response value ----->', values);
+
 		setSubmitting(true);
 		setServerErrors([]);
 		setError(false);
@@ -219,7 +219,6 @@ export default function BlogAdd({ blogs, handleSnackOpen, onReloadBlogList, onMo
 
 	const getSunEditorInstance = (sunEditor) => {
 		editor.current = sunEditor;
-		console.log('dinesh' + editor.current);
 	};
 
 	const handleCMSChange = (content) => {
@@ -229,11 +228,10 @@ export default function BlogAdd({ blogs, handleSnackOpen, onReloadBlogList, onMo
 	const handleImageUploadBefore = (files, info, imageUploadHandler) => {
 		// uploadHandler is a callback function
 		// use this to upload image to cloudinary
-		// console.log(files, info);
 	};
 
 	const imageUploadHandler = (xmlHttpRequest, info, core) => {
-		console.log(xmlHttpRequest, info, core);
+		// console.log(xmlHttpRequest, info, core);
 	};
 
 	//cloudinary

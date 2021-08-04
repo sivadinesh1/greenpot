@@ -45,7 +45,6 @@ export const getStaticProps = async (ctx) => {
 
 // Step1: first static props gets all data
 export const getStaticPaths = async () => {
-	console.log('dinesh');
 	const blogs = await getAllBlogs();
 	const paths = blogs.map((a) => {
 		return { params: { blog_id: a.id.toString() } };
@@ -60,8 +59,6 @@ export const getStaticPaths = async () => {
 // export async function getInitialProps(context) {
 // 	const company_id = context.params.company_id as string;
 // 	const blog_id = context.params.company_id as string;
-// 	console.log(company_id);
-// 	console.log(blog_id);
 
 // 	const [categoriesRes, tagsRes] = await Promise.all([
 // 		axios(`/api/category/crud/company/${company_id}`),
