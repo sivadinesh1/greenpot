@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dynamic from 'next/dynamic';
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles } from '@material-ui/core/styles';
 
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
@@ -33,7 +33,13 @@ import BlogPreview from '../../../../components/crud/Blog/blog-preview';
 import { getAllCategories } from '../../../api/category/[...crud]';
 import { getAllTags } from '../../../api/tag/[...crud]';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import 'date-fns';
+import DateFnsUtils from '@date-io/date-fns';
+import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
 
+import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+// do not delete this import, prevents warnings
+import { alpha } from '@material-ui/core/styles';
 
 export const getServerSideProps = async (context) => {
 	const company_id = context.params.company_id as string;
@@ -47,24 +53,24 @@ export const getServerSideProps = async (context) => {
 
 interface FormData {
 	title: string;
-	description:string;
-	author:string;
-	articleDate:Date,
+	description: string;
+	author: string;
+	articleDate: Date;
 	content: string;
 	categories: any[];
 	tags: any[];
 }
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
 	root: {
-	  "& .MuiTextField-root": {
-		margin: theme.spacing(1)
-	  }
+		'& .MuiTextField-root': {
+			margin: theme.spacing(1),
+		},
 	},
 	textarea: {
-	  resize: "both"
-	}
-  }));
+		resize: 'both',
+	},
+}));
 
 export default function Index({ categories, tags, company_id }) {
 	const [snack, setSnack] = useState(false);
@@ -76,8 +82,8 @@ export default function Index({ categories, tags, company_id }) {
 
 	let schema = yup.object().shape({
 		title: yup.string().required().min(3).max(72),
-		description:yup.string().nullable().notRequired().max(200),
-		author:yup.string().nullable().notRequired().max(50),
+		description: yup.string().nullable().notRequired().max(200),
+		author: yup.string().nullable().notRequired().max(50),
 		categories: yup.string().nullable().notRequired(),
 		tags: yup.string().nullable().notRequired(),
 		companyId: yup.string().nullable().notRequired(),
@@ -90,11 +96,11 @@ export default function Index({ categories, tags, company_id }) {
 		formState: { errors },
 		reset,
 	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
-	
+
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 	const [error, setError] = useState(false);
-	const [duplicate,setDuplicate]=useState(false)
+	const [duplicate, setDuplicate] = useState(false);
 
 	//error style
 	let errorStyle = {
@@ -136,9 +142,9 @@ export default function Index({ categories, tags, company_id }) {
 		}
 		const values = {
 			title: formData.title || '',
-			description:formData.description || '' ,
-			author:formData.author || '',
-			articleDate:formData.articleDate,
+			description: formData.description || '',
+			author: formData.author || '',
+			articleDate: formData.articleDate,
 			categories: selectedCategorys,
 			tags: selectedTags,
 			companyId: company_id,
@@ -156,7 +162,7 @@ export default function Index({ categories, tags, company_id }) {
 			setError(true);
 		}
 		if (response.status === 200) {
-			setDuplicate(true)
+			setDuplicate(true);
 			setTimeout(() => {
 				setDuplicate(false);
 			}, 5000);
@@ -206,6 +212,12 @@ export default function Index({ categories, tags, company_id }) {
 		multiple: false,
 	});
 
+	const [selectedDate, setSelectedDate] = React.useState(new Date());
+
+	const handleDateChange = (date) => {
+		setSelectedDate(date);
+	};
+
 	return (
 		<Layout>
 			<Admin>
@@ -228,17 +240,16 @@ export default function Index({ categories, tags, company_id }) {
 									{duplicate && <p style={errorStyle}>Title already exist</p>}
 								</div>
 								<div className={styles.rowGap}>
-
-								<TextField
-									 id="outlined-textarea"
-									label="Description"
-									multiline
-									minRows={1}  
-									maxRows={2}
-									variant='standard'
-									fullWidth
-									{...register('description')}
-									inputProps={{ className: classes.textarea }}
+									<TextField
+										id='outlined-textarea'
+										label='Description'
+										multiline
+										minRows={1}
+										maxRows={2}
+										variant='standard'
+										fullWidth
+										{...register('description')}
+										inputProps={{ className: classes.textarea }}
 									/>
 								</div>
 								<div className={styles.rowGap}>
@@ -250,12 +261,42 @@ export default function Index({ categories, tags, company_id }) {
 										variant='standard'
 										size='small'
 										fullWidth
-										error={errors?.author? true : false}
+										error={errors?.author ? true : false}
 										{...register('author')}
 									/>
 								</div>
-								<div className={styles.rowGap}>
-									<TextField
+								<div>
+									<MuiPickersUtilsProvider utils={DateFnsUtils}>
+										<KeyboardDatePicker
+											margin='normal'
+											id='date-picker-dialog'
+											label='Date picker dialog'
+											views={['year', 'month', 'date']}
+											value={selectedDate}
+											format='yyyy-MM-dd'
+											onChange={handleDateChange}
+											KeyboardButtonProps={{
+												'aria-label': 'change date',
+											}}
+										/>
+									</MuiPickersUtilsProvider>
+
+									{/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+										<KeyboardDatePicker
+											disableToolbar
+											variant='inline'
+											format='MM/dd/yyyy'
+											margin='normal'
+											id='date-picker-inline'
+											label='Date picker inline'
+											value={selectedDate}
+											onChange={handleDateChange}
+											KeyboardButtonProps={{
+												'aria-label': 'change date',
+											}}
+										/>
+									</MuiPickersUtilsProvider> */}
+									{/* <TextField
 										id="dateTimeFrom"                                        
 										type="date"
 										variant="standard"
@@ -266,7 +307,7 @@ export default function Index({ categories, tags, company_id }) {
 										size='small'
 										fullWidth
 										{...register('articleDate')}
-									/>
+									/> */}
 								</div>
 								<div className={styles.rowGap}>
 									<SunEditor
@@ -369,11 +410,11 @@ export default function Index({ categories, tags, company_id }) {
 						<div style={{ color: 'red' }}>PREVIEW</div>
 
 						<BlogPreview
-						 title={watch('title')} 
-						 description={watch('description')} 
-						 author={watch('author')} 
-						 categories={selectedCategorys} 
-						 body={contentBody}></BlogPreview>
+							title={watch('title')}
+							description={watch('description')}
+							author={watch('author')}
+							categories={selectedCategorys}
+							body={contentBody}></BlogPreview>
 					</div>
 				</div>
 

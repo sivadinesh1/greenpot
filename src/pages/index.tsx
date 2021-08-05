@@ -6,15 +6,35 @@ import styles from '../styles/Home.module.scss';
 import SigninComponent from '../components/auth/SigninComponent';
 import useSWR from 'swr';
 
-export default function Home() {
-	const { data, mutate, error } = useSWR(`/api/auth/me`, {
-		revalidateOnMount: true,
-	});
+import useUser from '../customHooks/useUser';
 
-	if (error) {
-		console.log('dinesh ...ss ' + error.response.status);
-		console.log('dinesh ...ss ' + error.response.data.message);
-	}
+const IndexPage = () => {
+	const { user, loading, loggedIn } = useUser();
+
+	// const { data, mutate, error } = useSWR(`/api/auth/me`, {
+	// 	revalidateOnMount: true,
+	// });
+
+	// if (error) {
+	// 	console.log('dinesh ...ss ' + error.response.status);
+	// 	console.log('dinesh ...ss ' + error.response.data.message);
+	// 	return <SigninComponent />;
+	// }
+
+	// if (!data) return 'Loading';
+
+	const DisplayInfo = () => {
+		if (loading) return <div className='container'> Loading... </div>;
+		if (loggedIn && user.id)
+			return (
+				<div className='container'>
+					{' '}
+					Id: {user.first_name} <br />
+				</div>
+			);
+
+		return <div className='container'> Login to get info </div>;
+	};
 
 	return (
 		<>
@@ -25,6 +45,7 @@ export default function Home() {
 					</div>
 					<div className={styles.login_right}>
 						<div className={styles.form_block}>
+							<DisplayInfo />
 							<SigninComponent />
 						</div>
 					</div>
@@ -32,4 +53,6 @@ export default function Home() {
 			</div>
 		</>
 	);
-}
+};
+
+export default IndexPage;

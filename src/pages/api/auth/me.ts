@@ -5,6 +5,9 @@ import cookie from 'cookie';
 
 import { checkEmailExists } from './common';
 import { ContactsOutlined } from '@material-ui/icons';
+import prisma from '../../../dbconfig/prisma';
+import { bigIntToString } from '../../../dbconfig/utils';
+import User from '../../admin/user';
 
 export default handler
 
@@ -34,4 +37,17 @@ export default handler
 		let id = token.id;
 
 		console.log('dinesh id ' + id);
+		const result = await getUserById(id);
+
+		const returnValue = bigIntToString(result);
+		res.status(200).send(returnValue);
 	});
+
+const getUserById = async (id) => {
+	const result = await prisma.users.findUnique({
+		where: {
+			id: Number(id),
+		},
+	});
+	return bigIntToString(result);
+};
