@@ -12,24 +12,14 @@ export default handler
 		console.log('cookie ' + req.cookies.authToken);
 		const token = req.cookies.authToken;
 
-		// const isLogged = jwt.verify(req.cookies.authToken, process.env.JWT_SECRET);
-		// console.log('cookie json:..' + JSON.stringify(isLogged));
-
 		jwt.verify(req.cookies.authToken, process.env.JWT_SECRET, async function (err, decoded) {
-			if (err && decoded) {
+			if (!err && decoded) {
 				next();
 			} else {
 				res.status(401).json({ message: 'Sorry you are not authenticated' });
 			}
 		});
 	})
-
-	// if (isLogged.id === '') {
-	// 	console.log('not admin');
-
-	// }
-	// 	next();
-	// })
 
 	// without parameters
 	.get('/api/category/crud/users', async (req, res) => {
@@ -38,11 +28,10 @@ export default handler
 
 	// with parameters
 	.get('/api/category/crud/company/:id', async (req, res) => {
-		console.log('inside get all cat...');
 		const result = await getAllCategories(req.params.id);
 
 		const returnValue = bigIntToString(result);
-		console.log('inside get all cat...' + returnValue);
+
 		res.status(200).json(returnValue);
 	})
 

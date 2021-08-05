@@ -21,29 +21,34 @@ export const getServerSideProps = async (context) => {
 
 	// both works dont delete
 	//const categorys = await getAllCategories(company_id);
+	let categorys = [];
 
-	const cookie = context?.req?.headers.cookie;
+	try {
+		const cookie = context?.req?.headers.cookie;
 
-	let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
-		headers: {
-			cookie: cookie!,
-		},
-	});
-
-	if (resp.status === 401) {
-		Router.replace('/');
+		let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
+			headers: {
+				cookie: cookie!,
+			},
+		});
+		categorys = resp.data;
+		return {
+			props: { categorys },
+		};
+	} catch (error) {
+		console.log('dineh error' + error.response.status);
+		if (error.response.status === 401) {
+			return {
+				redirect: {
+					permanent: false,
+					destination: '/',
+				},
+			};
+		}
 	}
-
-	return {
-		props: { categorys: resp.data },
-	};
 };
 
-export interface CategoryProps {
-	categorys: Category[];
-}
-
-export default function Index({ categorys }: CategoryProps) {
+export default function Index({ categorys }) {
 	const router = useRouter();
 
 	const { company_id } = router.query;
