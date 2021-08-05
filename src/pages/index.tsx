@@ -4,8 +4,18 @@ import Image from 'next/image';
 import Link from 'next/link';
 import styles from '../styles/Home.module.scss';
 import SigninComponent from '../components/auth/SigninComponent';
+import useSWR from 'swr';
 
 export default function Home() {
+	const { data, mutate, error } = useSWR(`/api/auth/me`, {
+		revalidateOnMount: true,
+	});
+
+	if (error) {
+		console.log('dinesh ...ss ' + error.response.status);
+		console.log('dinesh ...ss ' + error.response.data.message);
+	}
+
 	return (
 		<>
 			<div>
@@ -15,7 +25,6 @@ export default function Home() {
 					</div>
 					<div className={styles.login_right}>
 						<div className={styles.form_block}>
-							<Link href={`/dashboard`}>TEST</Link>
 							<SigninComponent />
 						</div>
 					</div>
