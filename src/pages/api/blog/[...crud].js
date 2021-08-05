@@ -45,9 +45,11 @@ export default handler
 		res.send(returnValue);
 	})
 	.post(async (req, res) => {
-		console.log("test blog request ----->",req.body)
-		debugger
-		const { title,description,author,articleDate, categories, tags, body, companyId } = req.body;
+		console.log('test blog request ----->', req.body);
+		debugger;
+		const { title, description, author, articleDate, categories, tags, body, companyId } = req.body;
+
+		console.log('test blog  DESC request ----->', description);
 
 		const errors = [];
 
@@ -110,12 +112,12 @@ export default handler
 				categories: newCatArr,
 				tags: newTagArr,
 				companyid: companyid,
-				isdelete: 'N'
-				// description:description,
+				isdelete: 'N',
+				description: description,
 				// author:author,
 				// article_date:articleDate,
 				// status: 'D',
-  				// published: 'N'
+				// published: 'N'
 			},
 		});
 
