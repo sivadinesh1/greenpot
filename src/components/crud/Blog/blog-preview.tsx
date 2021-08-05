@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core';
 import { getCompany } from '../../auth/auth';
 import { useRouter } from 'next/router';
 
-export default function BlogPreview({ title, categories, body }) {
+export default function BlogPreview({ title, categories, body,description, author }) {
 	const router = useRouter();
 	let id = getCompany();
 
@@ -24,6 +24,8 @@ export default function BlogPreview({ title, categories, body }) {
 			<br />
 			{/* <div>{blog.title}</div> */}
 			<div>{title}</div>
+			<div>{description}</div>
+			<div>{author}</div>
 			<br />
 			{listCategory}
 			<div dangerouslySetInnerHTML={{ __html: body }}></div>

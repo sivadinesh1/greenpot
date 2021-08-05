@@ -45,7 +45,21 @@ export default handler
 		res.send(returnValue);
 	})
 	.post(async (req, res) => {
-		const { title, categories, tags, body, companyId } = req.body;
+		console.log("test blog request ----->",req.body)
+		debugger
+		const { title,description,author,articleDate, categories, tags, body, companyId } = req.body;
+
+		const errors = [];
+
+		const isdata = await checkDuplicateTitle(title, companyId);
+
+		if (isdata > 0) {
+			errors.push('Duplicate entry');
+			if (errors.length > 0) {
+				res.status(200).json({ errors });
+				return;
+			}
+		}
 
 		let arrayOfCategories = categories;
 		//&& categories.split(',');
@@ -71,12 +85,14 @@ export default handler
 		let newTagArr = arrayOfTags.map((e) => {
 			return parseInt(e.id);
 		});
-
 		// both works do not delete
+		// let status= 'D';
+		//   let	published= 'N';
+		//   let isdelete='N';
 
 		// db.one(
-		// 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, companyid) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9) RETURNING id',
-		// 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, companyid],
+		// 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, companyid,isdelete, description, author,article_date,status,published) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9,$10,$11,$12,$13,$14,$15) RETURNING id',
+		// 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, companyid,isdelete, description, author, articleDate,status,published],
 		// ).then((data) => {
 
 		// 	// res.json({ title: title, message: 'success' });
@@ -94,7 +110,12 @@ export default handler
 				categories: newCatArr,
 				tags: newTagArr,
 				companyid: companyid,
-				isdelete: 'N',
+				isdelete: 'N'
+				// description:description,
+				// author:author,
+				// article_date:articleDate,
+				// status: 'D',
+  				// published: 'N'
 			},
 		});
 
@@ -122,4 +143,15 @@ export const getBlogById = async (blogId) => {
 		},
 	});
 	return bigIntToString(result);
+};
+
+const checkDuplicateTitle = async (title, companyid) => {
+	const result = await prisma.blog.count({
+		where: {
+			title: title,
+			companyid: Number(companyid),
+		},
+	});
+
+	return result;
 };

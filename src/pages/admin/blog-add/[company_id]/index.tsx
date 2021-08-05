@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dynamic from 'next/dynamic';
+import { makeStyles } from "@material-ui/core/styles";
 
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
@@ -31,6 +32,8 @@ import Admin from '../../../../components/auth/Admin';
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
 import { getAllCategories } from '../../../api/category/[...crud]';
 import { getAllTags } from '../../../api/tag/[...crud]';
+import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+
 
 export const getServerSideProps = async (context) => {
 	const company_id = context.params.company_id as string;
@@ -44,10 +47,24 @@ export const getServerSideProps = async (context) => {
 
 interface FormData {
 	title: string;
+	description:string;
+	author:string;
+	articleDate:Date,
 	content: string;
 	categories: any[];
 	tags: any[];
 }
+
+const useStyles = makeStyles(theme => ({
+	root: {
+	  "& .MuiTextField-root": {
+		margin: theme.spacing(1)
+	  }
+	},
+	textarea: {
+	  resize: "both"
+	}
+  }));
 
 export default function Index({ categories, tags, company_id }) {
 	const [snack, setSnack] = useState(false);
@@ -55,15 +72,17 @@ export default function Index({ categories, tags, company_id }) {
 
 	const [selectedTags, setSelectedTags] = useState([]);
 	const [selectedCategorys, setSelectedCategorys] = useState([]);
+	const classes = useStyles();
 
 	let schema = yup.object().shape({
 		title: yup.string().required().min(3).max(72),
+		description:yup.string().nullable().notRequired().max(200),
+		author:yup.string().nullable().notRequired().max(50),
 		categories: yup.string().nullable().notRequired(),
 		tags: yup.string().nullable().notRequired(),
 		companyId: yup.string().nullable().notRequired(),
 		body: yup.string().nullable().notRequired(),
 	});
-
 	const {
 		register,
 		handleSubmit,
@@ -71,11 +90,17 @@ export default function Index({ categories, tags, company_id }) {
 		formState: { errors },
 		reset,
 	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
-
+	
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 	const [error, setError] = useState(false);
+	const [duplicate,setDuplicate]=useState(false)
 
+	//error style
+	let errorStyle = {
+		color: 'red',
+		content: '⚠ ',
+	};
 	//dialog box
 	const [openDialog, setOpenDialog] = React.useState(false);
 	const handleOpenDialog = () => {
@@ -109,9 +134,11 @@ export default function Index({ categories, tags, company_id }) {
 		if (submitting) {
 			return false;
 		}
-
 		const values = {
 			title: formData.title || '',
+			description:formData.description || '' ,
+			author:formData.author || '',
+			articleDate:formData.articleDate,
 			categories: selectedCategorys,
 			tags: selectedTags,
 			companyId: company_id,
@@ -123,11 +150,17 @@ export default function Index({ categories, tags, company_id }) {
 		setError(false);
 
 		const response = await axios.post(`/api/blog/crud`, values);
+		// console.log("check error --->",response)
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
 			setError(true);
 		}
-
+		if (response.status === 200) {
+			setDuplicate(true)
+			setTimeout(() => {
+				setDuplicate(false);
+			}, 5000);
+		}
 		setSubmitting(false);
 		if (response.status === 201) {
 			setSnack(true);
@@ -143,7 +176,7 @@ export default function Index({ categories, tags, company_id }) {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 
 	const onDrop = useCallback(async (acceptedFiles) => {
-		let path = 'company';
+		let path = `C${company_id}/B${4}/`;
 		const { signature, timestamp } = await getSignature(path);
 		const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
 
@@ -191,6 +224,48 @@ export default function Index({ categories, tags, company_id }) {
 										fullWidth
 										error={errors?.title ? true : false}
 										{...register('title')}
+									/>
+									{duplicate && <p style={errorStyle}>Title already exist</p>}
+								</div>
+								<div className={styles.rowGap}>
+
+								<TextField
+									 id="outlined-textarea"
+									label="Description"
+									multiline
+									minRows={1}  
+									maxRows={2}
+									variant='standard'
+									fullWidth
+									{...register('description')}
+									inputProps={{ className: classes.textarea }}
+									/>
+								</div>
+								<div className={styles.rowGap}>
+									<TextField
+										type='text'
+										label='Author'
+										margin='dense'
+										name='author'
+										variant='standard'
+										size='small'
+										fullWidth
+										error={errors?.author? true : false}
+										{...register('author')}
+									/>
+								</div>
+								<div className={styles.rowGap}>
+									<TextField
+										id="dateTimeFrom"                                        
+										type="date"
+										variant="standard"
+										defaultValue={new Date()}
+										label='ArticleDate'
+										margin='dense'
+										name='articleDate'
+										size='small'
+										fullWidth
+										{...register('articleDate')}
 									/>
 								</div>
 								<div className={styles.rowGap}>
@@ -258,7 +333,7 @@ export default function Index({ categories, tags, company_id }) {
 
 								<div className={styles.textCenter}>
 									<Button variant='contained' color='primary' type='submit'>
-										Add Blog
+										Save as Draft
 									</Button>
 								</div>
 							</form>
@@ -293,7 +368,12 @@ export default function Index({ categories, tags, company_id }) {
 					<div className={styles.right}>
 						<div style={{ color: 'red' }}>PREVIEW</div>
 
-						<BlogPreview title={watch('title')} categories={selectedCategorys} body={contentBody}></BlogPreview>
+						<BlogPreview
+						 title={watch('title')} 
+						 description={watch('description')} 
+						 author={watch('author')} 
+						 categories={selectedCategorys} 
+						 body={contentBody}></BlogPreview>
 					</div>
 				</div>
 

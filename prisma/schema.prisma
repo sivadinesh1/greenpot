@@ -32,6 +32,12 @@ model blog {
   modified_date DateTime? @db.Timestamp(6)
   companyid     BigInt ?
   isdelete      String?   @db.VarChar(5)
+  description   String?   @db.VarChar(200)
+  author        String?   @db.VarChar(50)
+  article_date  DateTime  @default(now()) @db.Timestamp(6)
+  status        String?   @db.VarChar(1)
+  published     String?   @db.VarChar(1)
+  published_datetime  DateTime  @default(now()) @db.Timestamp(6)
 
   @@unique([title, companyid], name: "blog_unique")
 }
