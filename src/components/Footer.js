@@ -1,16 +1,11 @@
-
 import React, { Fragment } from 'react';
 
 const Footer = () => {
-    return (
-        <>
-            <h5>Footer</h5>
-
-
-
-        </>
-
-    )
-}
+	return (
+		<>
+			<div>Copyrights Squapl digital media technologies</div>
+		</>
+	);
+};
 
 export default Footer;
