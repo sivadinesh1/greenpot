@@ -32,6 +32,8 @@ import Admin from '../../../../components/auth/Admin';
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
 import { getAllCategories } from '../../../api/category/[...crud]';
 import { getAllTags } from '../../../api/tag/[...crud]';
+import { getBlogById } from '../../../api/blog/[...crud]';
+
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -42,13 +44,15 @@ import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 import { alpha } from '@material-ui/core/styles';
 
 export const getServerSideProps = async (context) => {
-	const company_id = context.params.company_id as string;
+    const company_id = 2;
+	const blog_id = context.params.blog_id as string;
+	const blog=await getBlogById(blog_id);
 	const categories = await getAllCategories(company_id);
 	const tags = await getAllTags(company_id);
 
 	return {
-		props: { categories, tags, company_id },
-	};
+		props: { blog,categories, tags, company_id },
+    };
 };
 
 interface FormData {
@@ -72,7 +76,8 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Index({ categories, tags, company_id }) {
+export default function Index({ blog, categories, tags, company_id }) {
+	console.log("test blog details---->",blog)
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 
@@ -101,7 +106,7 @@ export default function Index({ categories, tags, company_id }) {
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 	const [error, setError] = useState(false);
 	const [duplicate, setDuplicate] = useState(false);
-	const [selectedDate, setSelectedDate] = React.useState(new Date());
+	const [selectedDate, setSelectedDate] = React.useState(blog.article_date);
 
 	const handleDateChange = (date) => {
 		setSelectedDate(date);
@@ -131,7 +136,7 @@ export default function Index({ categories, tags, company_id }) {
 
 	//sunEditor
 	const [contentBody, setContentBody] = useState();
-	const content = '';
+	const content = blog.body;
 
 	const handleCMSChange = (content) => {
 		setContentBody(content);
@@ -237,6 +242,7 @@ export default function Index({ categories, tags, company_id }) {
 										fullWidth
 										error={errors?.title ? true : false}
 										{...register('title')}
+										defaultValue={blog.title}
 									/>
 									{duplicate && <p style={errorStyle}>Title already exist</p>}
 								</div>
@@ -251,6 +257,7 @@ export default function Index({ categories, tags, company_id }) {
 										fullWidth
 										{...register('description')}
 										inputProps={{ className: classes.textarea }}
+										defaultValue={blog.description}
 									/>
 								</div>
 								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
@@ -265,6 +272,7 @@ export default function Index({ categories, tags, company_id }) {
 										fullWidth
 										error={errors?.author ? true : false}
 										{...register('author')}
+										defaultValue={blog.author}
 									/>
 								</div>
 								<div style={{ marginLeft:'10px'}}>

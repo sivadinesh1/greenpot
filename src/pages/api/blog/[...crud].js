@@ -114,10 +114,10 @@ export default handler
 				companyid: companyid,
 				isdelete: 'N',
 				description: description,
-				// author:author,
-				// article_date:articleDate,
-				// status: 'D',
-				// published: 'N'
+				author:author,
+				article_date:articleDate,
+				status: 'D',
+				published: 'N'
 			},
 		});
 

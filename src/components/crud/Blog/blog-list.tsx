@@ -64,7 +64,11 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 									</div>
 									<div className={styles.blogDel}>
 										<div className={styles.btnGroup}>
-											<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
+										<Link href={`/admin/blog-edit/${item.id}`}>
+											<a>
+												<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
+											</a>
+										</Link>
 										</div>
 										<div
 											className={styles.btnGroup}
