@@ -27,6 +27,7 @@ import messages from '../i18n';
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import Layout from '../components/Layout';
+import { UserContext } from '../customHooks/UserContext';
 
 config.autoAddCss = false;
 
@@ -76,9 +77,11 @@ export default function MyApp(props) {
 							compare: (a, b) => a === b,
 							fetcher: (url: string) => axios(url).then((r) => r.data),
 						}}>
-						<Layout>
-							<Component {...pageProps} />
-						</Layout>
+						<UserContext.Provider value='hello dinesh'>
+							<Layout>
+								<Component {...pageProps} />
+							</Layout>
+						</UserContext.Provider>
 					</SWRConfig>
 				</ThemeProvider>
 			</IntlProvider>

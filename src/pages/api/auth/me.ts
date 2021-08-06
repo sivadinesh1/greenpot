@@ -48,6 +48,27 @@ const getUserById = async (id) => {
 		where: {
 			id: Number(id),
 		},
+		select: {
+			id: true,
+			first_name: true,
+			companyid: true,
+			user_role: {
+				select: {
+					role_id: true,
+				},
+			},
+		},
 	});
 	return bigIntToString(result);
 };
+
+// select: {
+// 	id: true,
+// 	first_name: true,
+// 	companyid: true,
+// 	user_role: {
+// 		select: {
+// 			role_id: true,
+// 		},
+// 	},
+// },

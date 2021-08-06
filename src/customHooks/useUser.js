@@ -12,6 +12,8 @@ export default function useUser() {
 	const loading = !data && !error;
 	const loggedIn = !error && data;
 
+	console.log('printing user data' + JSON.stringify(data));
+
 	return {
 		loading,
 		loggedIn,

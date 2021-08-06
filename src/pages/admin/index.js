@@ -5,11 +5,9 @@ import useUser from '../../customHooks/useUser';
 const AdminIndex = () => {
 	const { user, loading, loggedIn } = useUser();
 	return (
-		<Layout>
-			<Admin>
-				<h2>Admin Dashboard</h2>
-			</Admin>
-		</Layout>
+		<Admin>
+			<h2>Admin Dashboard</h2>
+		</Admin>
 	);
 };
 

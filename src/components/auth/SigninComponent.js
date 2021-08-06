@@ -114,6 +114,7 @@ const SigninComponent = () => {
 						fullWidth
 						margin='dense'
 						name='email'
+						autoComplete='off'
 						// value={email}
 						// onChange={handleChange('email')}
 						{...register('email')}
@@ -127,6 +128,7 @@ const SigninComponent = () => {
 							type={showPassword ? 'text' : 'password'}
 							name='password'
 							fullWidth
+							autoComplete='off'
 							margin='dense'
 							// value={password}
 							// onChange={handleChange('password')}
