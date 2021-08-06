@@ -10,6 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the FontAwesomeIcon component
 import { faUser } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
 
 const Navbar = ({ links, companyid, role }) => {
 	const [anchorEl, setAnchorEl] = useState(null);
@@ -35,7 +36,7 @@ const Navbar = ({ links, companyid, role }) => {
 					<Link href={`/admin`}>DRAFTY</Link>
 				</div>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
-					<div>{role}</div>
+					<div>Role:{role}</div>
 					{links ? (
 						<div style={{ zIndex: '10', position: 'relative', paddingLeft: '16px' }}>
 							<FontAwesomeIcon icon={faUser} onClick={handleClick} style={{ fontSize: '2rem', color: '#234' }}></FontAwesomeIcon>

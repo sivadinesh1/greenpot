@@ -10,15 +10,13 @@ import { useContext } from 'react';
 
 const Layout = ({ children }) => {
 	const classes = useStyles();
-	const { user, loading, loggedIn } = useUser();
-	const msg = useContext(UserContext);
-
-	console.log('dines@# ' + msg);
-
+	// const { user, loading, loggedIn } = useUser();
+	const { user, loading, loggedIn } = useContext(UserContext);
+	console.log('loggedin**  ' + loggedIn);
 	return (
 		<>
-			<Navbar links={loggedIn} companyid={user?.companyid} role={user?.user_role[0]?.role_id === '1' ? 'Admin' : ''} />
-			<main className={classes.content}>{(children, 'test')}</main>
+			<Navbar links={loggedIn} companyid={user?.companyid} role='admin' />
+			<main className={classes.content}>{children}</main>
 			<Footer />
 		</>
 	);
@@ -38,3 +36,4 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 // printing user data{"id":"7","first_name":"dinesh","companyid":"1","user_role":[{"role_id":"1"}]}
+// role={user?.user_role[0]?.role_id === '1' ? 'Admin' : ''}

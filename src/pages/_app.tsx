@@ -28,6 +28,7 @@ import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import Layout from '../components/Layout';
 import { UserContext } from '../customHooks/UserContext';
+import useUser from '../customHooks/useUser';
 
 config.autoAddCss = false;
 
@@ -47,6 +48,7 @@ export default function MyApp(props) {
 	const { locale } = useRouter();
 
 	const router = useRouter();
+	const { user, loading, loggedIn } = useUser();
 
 	React.useEffect(() => {
 		// Remove the server-side injected CSS.
@@ -77,7 +79,7 @@ export default function MyApp(props) {
 							compare: (a, b) => a === b,
 							fetcher: (url: string) => axios(url).then((r) => r.data),
 						}}>
-						<UserContext.Provider value='hello dinesh'>
+						<UserContext.Provider value={{ user, loading, loggedIn }}>
 							<Layout>
 								<Component {...pageProps} />
 							</Layout>
