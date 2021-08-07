@@ -155,7 +155,7 @@ export default function Index({ categories, tags, company_id }) {
 			companyId: company_id,
 			body: contentBody || '',
 		};
-
+console.log("Test add page data------>",values)
 		setSubmitting(true);
 		setServerErrors([]);
 		setError(false);
@@ -183,41 +183,6 @@ export default function Index({ categories, tags, company_id }) {
 		}
 	};
 
-	//cloudinary
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-
-	const onDrop = useCallback(async (acceptedFiles) => {
-		let path = `C${company_id}/B${4}/`;
-		const { signature, timestamp } = await getSignature(path);
-		const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
-
-		acceptedFiles.forEach(async (acceptedFile) => {
-			//login verification
-
-			const formData = new FormData();
-			formData.append('file', acceptedFile);
-			formData.append('signature', signature);
-			formData.append('timestamp', timestamp);
-			formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_KEY);
-			formData.append('folder', path);
-
-			const response = await fetch(url, {
-				method: 'post',
-				body: formData,
-			});
-			const data = await response.json();
-			setUploadedFiles((old) => [...old, data]);
-		});
-	}, []);
-
-	//drop zone
-	const { getRootProps, getInputProps, isDragActive } = useDropzone({
-		onDrop,
-		accept: 'image/*',
-		multiple: false,
-	});
-
-	
 
 	return (
 		<Layout>
@@ -238,6 +203,7 @@ export default function Index({ categories, tags, company_id }) {
 										error={errors?.title ? true : false}
 										{...register('title')}
 									/>
+									<p style={errorStyle}>{errors.title?.message}</p>
 									{duplicate && <p style={errorStyle}>Title already exist</p>}
 								</div>
 								<div className={styles.rowGap}>
@@ -301,20 +267,6 @@ export default function Index({ categories, tags, company_id }) {
 										// imageUploadHandler={imageUploadHandler}
 									/>
 								</div>
-								<div className={styles.rowGap}>
-									<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
-										<input {...getInputProps()} />
-										Drop Zone
-									</div>
-									<span>
-										{uploadedFiles.length > 0 && (
-											<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
-												Show Gallery
-											</Button>
-										)}
-									</span>
-								</div>
-
 								<div>
 									<Autocomplete
 										multiple
@@ -357,31 +309,6 @@ export default function Index({ categories, tags, company_id }) {
 							</form>
 						</div>
 
-						<div>
-							<Dialog
-								// classes={{ paper: classes.dialogPaper }}
-								fullWidth={true}
-								maxWidth='lg'
-								open={openDialog}
-								onClose={handleCloseDialog}
-								aria-labelledby='max-width-dialog-title'>
-								<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
-								<DialogContent dividers>
-									<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
-										{uploadedFiles.map((file) => (
-											<div key={file.public_id} style={{ margin: '10px auto' }}>
-												<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
-											</div>
-										))}
-									</div>
-								</DialogContent>
-								<DialogActions>
-									<Button onClick={handleCloseDialog} color='primary'>
-										Back
-									</Button>
-								</DialogActions>
-							</Dialog>
-						</div>
 					</div>
 					<div className={styles.right}>
 						<div style={{ color: 'red' }}>PREVIEW</div>

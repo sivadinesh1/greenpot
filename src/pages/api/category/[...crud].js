@@ -2,7 +2,8 @@ import handler from '../handler';
 import { bigIntToString } from '../../../dbconfig/utils';
 import prisma from '../../../dbconfig/prisma';
 import jwt from 'jsonwebtoken';
-
+import { getDB } from '../../../dbconfig/db';
+const { db } = getDB();
 const slugify = require('slugify');
 
 export default handler
@@ -142,6 +143,15 @@ export const getAllBlog = async () => {
 	return bigIntToString(result);
 };
 
+export const getCategories = async (ids) =>{
+	let query=`select * from categories t where t.id in (${ids})`
+
+	 return new Promise(function (resolve) {
+		db.any(query,[]).then((data) => {
+				resolve(data);
+		})
+})
+}
 // .use(async (req, res, next) => {
 // 	console.log('CONSOLING../api/category/crud');
 // 	console.log('cookie ' + req.cookies.authToken);
