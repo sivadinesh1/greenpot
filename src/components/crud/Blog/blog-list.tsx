@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../../../styles/Blog.module.scss';
 import axios from 'axios';
-import { getCompany } from '../../../components/auth/auth';
+// import { getCompany } from '../../../components/auth/auth';
 
 import ConfirmDialog from '../../elements/ui/Dialog/ConfirmDialog';
 import { mutate } from 'swr';
@@ -10,16 +10,15 @@ import Link from 'next/link';
 // import { useRouter } from 'next/router';
 import { Button } from '@material-ui/core';
 
-export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode }) {
+export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode, company_id}) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
 	//	const router = useRouter();
-	var companyId = getCompany();
 
 	const handleConfirm = async () => {
 		setOpenDialog(false);
 		mutate(
-			`/api/blog/crud/company/${companyId}`,
+			`/api/blog/crud/company/${company_id}`,
 			blogs.filter((c) => c.id !== currentId),
 			false,
 		);

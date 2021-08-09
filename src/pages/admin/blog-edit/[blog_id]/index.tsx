@@ -28,7 +28,7 @@ import { useDropzone } from 'react-dropzone';
 import styles from '../../../../styles/Blog.module.scss';
 import stylesd from '../../../../styles/dropZone.module.css';
 import Layout from '../../../../components/Layout';
-import Admin from '../../../../components/auth/Admin';
+// import Admin from '../../../../components/auth/Admin';
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
 import { getAllCategories,getCategories } from '../../../api/category/[...crud]';
 import { getAllTags,getTags } from '../../../api/tag/[...crud]';
@@ -40,19 +40,22 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 // do not delete this import, prevents warnings
 import { alpha } from '@material-ui/core/styles';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import {getImages} from '../../../api/cloudinary/[...path]'
 
 export const getServerSideProps = async (context) => {
     const company_id = 2;
 	const blog_id = context.params.blog_id as string;
+	let path=`C${company_id}/B${blog_id}`
 	const blog=await getBlogById(blog_id);
 	const selectedTag=blog.tags.length > 0 ? await getTags(blog.tags) :[]
 	const selectedCat=blog.categories.length > 0 ? await getCategories(blog.categories): []
-
 	const categories = await getAllCategories(company_id);
 	const tags = await getAllTags(company_id);
+	const selectedImages=await getImages(path);
 
 	return {
-		props: { blog,categories, tags, company_id ,selectedTag,selectedCat},
+		props: { blog,categories, tags, company_id ,selectedTag,selectedCat,selectedImages},
     };
 };
 
@@ -77,11 +80,30 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Index({ blog, categories, tags, company_id,selectedTag,selectedCat}) {
+export default function Index({ blog, categories, tags, company_id,selectedTag,selectedCat,selectedImages}) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
+	const uploadLimit=2;
+	// if(selectedTag.length > 0){
+	// 	selectedTag.map((tag,id)=>{
+	// 		selectedTag[id]["status"]=true
+	// 	})
+	// }
+	if(tags.length >0 ){
+			tags.forEach((tag,index) => {
+					selectedTag.map((t,id)=>{
+						if(tag.name === t.name)
+								tags[index]["status"]=true
+					})
+			});
+
+	}
+
+	const [uploadedFiles, setUploadedFiles] = useState(selectedImages.length > 0 ? selectedImages :[]);
+	// const [uploadedFiles, setUploadedFiles] = useState([]);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
+	console.log("check selected tags----->",selectedTags)
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 	const classes = useStyles();
 
@@ -101,7 +123,17 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 		watch,
 		formState:{isValid,errors},
 		reset,
-	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
+		setValue
+	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema),defaultValues: { title: "" } });
+
+	useEffect(() => {
+		setValue("title", blog.title, {
+            shouldValidate: true,
+            shouldDirty: true
+          })
+	  }, [register]);
+
+
 
 	// defaultValues: { title: blog.title }
 	const [submitting, setSubmitting] = useState<boolean>(false);
@@ -109,6 +141,8 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 	const [error, setError] = useState(false);
 	const [duplicate, setDuplicate] = useState(false);
 	const [isError, setIsError] = useState(false);
+	const [copy, setCopy] = useState(false);
+
 
 	const [selectedDate, setSelectedDate] = React.useState(blog.article_date);
 
@@ -151,6 +185,7 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 	};
 
 	const onSubmit = async (formData, event) => {
+		console.log("test -->",formData)                                             
 		if (submitting) {
 			return false;
 		}
@@ -198,8 +233,6 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 	};
 
 	//cloudinary
-	const [uploadedFiles, setUploadedFiles] = useState([]);
-
 	const onDrop = useCallback(async (acceptedFiles) => {
 		let path = `C${company_id}/B${blog.id}/`;
 		const { signature, timestamp } = await getSignature(path);
@@ -229,13 +262,14 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 		onDrop,
 		accept: 'image/*',
 		multiple: false,
+		disabled: uploadedFiles.length === uploadLimit ? true :false
 	});
 
 	
 
 	return (
 		<Layout>
-			<Admin>
+			{/* <Admin> */}
 				<div className={styles.blog_wrap}>
 					<div className={styles.left}>
 						<div>
@@ -330,6 +364,7 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 										<input {...getInputProps()} />
 										Drop Zone
 									</div>
+										{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
 									<span>
 										{uploadedFiles.length > 0 && (
 											<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
@@ -365,7 +400,10 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 										freeSolo
 										filterSelectedOptions
 										fullWidth
-										options={tags}
+										options={tags.filter(t=> {
+											if(!t.status) 
+												return t
+										})}
 										onChange={(e, newValue) => setSelectedTags(newValue)}
 										getOptionLabel={(option) => option.name}
 										value={selectedTags}
@@ -401,6 +439,13 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 										{uploadedFiles.map((file) => (
 											<div key={file.public_id} style={{ margin: '10px auto' }}>
 												<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
+												
+												<div className={styles.textCenter}>
+												<CopyToClipboard text={file.url}
+											onCopy={() => setCopy(true)}>
+											<Button>Copy</Button>
+											</CopyToClipboard>
+													</div>
 											</div>
 										))}
 									</div>
@@ -430,7 +475,7 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 						{message}
 					</MuiAlert>
 				</Snackbar>
-			</Admin>
+			{/* </Admin> */}
 		</Layout>
 	);
 }

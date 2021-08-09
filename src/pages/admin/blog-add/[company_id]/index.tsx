@@ -28,7 +28,7 @@ import { useDropzone } from 'react-dropzone';
 import styles from '../../../../styles/Blog.module.scss';
 import stylesd from '../../../../styles/dropZone.module.css';
 import Layout from '../../../../components/Layout';
-import Admin from '../../../../components/auth/Admin';
+// import Admin from '../../../../components/auth/Admin';
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
 import { getAllCategories } from '../../../api/category/[...crud]';
 import { getAllTags } from '../../../api/tag/[...crud]';
@@ -185,7 +185,7 @@ export default function Index({ categories, tags, company_id }) {
 
 	return (
 		<Layout>
-			<Admin>
+			{/* <Admin> */}
 				<div className={styles.blog_wrap}>
 					<div className={styles.left}>
 						<div>
@@ -324,7 +324,7 @@ export default function Index({ categories, tags, company_id }) {
 						{message}
 					</MuiAlert>
 				</Snackbar>
-			</Admin>
+			{/* </Admin> */}
 		</Layout>
 	);
 }
