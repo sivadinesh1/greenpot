@@ -30,25 +30,30 @@ import stylesd from '../../../../styles/dropZone.module.css';
 import Layout from '../../../../components/Layout';
 import Admin from '../../../../components/auth/Admin';
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
-import { getAllCategories } from '../../../api/category/[...crud]';
-import { getAllTags } from '../../../api/tag/[...crud]';
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import { getAllCategories,getCategories } from '../../../api/category/[...crud]';
+import { getAllTags,getTags } from '../../../api/tag/[...crud]';
+import { getBlogById,getBlog } from '../../../api/blog/[...crud]';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
+import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 
 import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 // do not delete this import, prevents warnings
 import { alpha } from '@material-ui/core/styles';
 
 export const getServerSideProps = async (context) => {
-	const company_id = context.params.company_id as string;
+    const company_id = 2;
+	const blog_id = context.params.blog_id as string;
+	const blog=await getBlogById(blog_id);
+	const selectedTag=blog.tags.length > 0 ? await getTags(blog.tags) :[]
+	const selectedCat=blog.categories.length > 0 ? await getCategories(blog.categories): []
+
 	const categories = await getAllCategories(company_id);
 	const tags = await getAllTags(company_id);
 
 	return {
-		props: { categories, tags, company_id },
-	};
+		props: { blog,categories, tags, company_id ,selectedTag,selectedCat},
+    };
 };
 
 interface FormData {
@@ -72,20 +77,21 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Index({ categories, tags, company_id }) {
+export default function Index({ blog, categories, tags, company_id,selectedTag,selectedCat}) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 
-	const [selectedTags, setSelectedTags] = useState([]);
-	const [selectedCategorys, setSelectedCategorys] = useState([]);
+	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
+	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 	const classes = useStyles();
 
 	let schema = yup.object().shape({
-		title: yup.string().required().min(3).max(72),
-		description: yup.string().nullable().notRequired().max(200),
-		author: yup.string().nullable().notRequired().max(50),
+		title: yup.string().required('Title is required').min(3).max(72),
+		description: yup.string().required('Description is required').max(200),
+		author: yup.string().required("Author is required").max(50),
 		categories: yup.string().nullable().notRequired(),
 		tags: yup.string().nullable().notRequired(),
+		// tags: yup.array().min(1,"select at least 1").required(),
 		companyId: yup.string().nullable().notRequired(),
 		body: yup.string().nullable().notRequired(),
 	});
@@ -93,15 +99,18 @@ export default function Index({ categories, tags, company_id }) {
 		register,
 		handleSubmit,
 		watch,
-		formState: { errors },
+		formState:{isValid,errors},
 		reset,
 	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
 
+	// defaultValues: { title: blog.title }
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 	const [error, setError] = useState(false);
 	const [duplicate, setDuplicate] = useState(false);
-	const [selectedDate, setSelectedDate] = React.useState(new Date());
+	const [isError, setIsError] = useState(false);
+
+	const [selectedDate, setSelectedDate] = React.useState(blog.article_date);
 
 	const handleDateChange = (date) => {
 		setSelectedDate(date);
@@ -131,7 +140,7 @@ export default function Index({ categories, tags, company_id }) {
 
 	//sunEditor
 	const [contentBody, setContentBody] = useState();
-	const content = '';
+	const content = blog.body;
 
 	const handleCMSChange = (content) => {
 		setContentBody(content);
@@ -145,23 +154,28 @@ export default function Index({ categories, tags, company_id }) {
 		if (submitting) {
 			return false;
 		}
+		if(!selectedTags.length || !selectedCategorys.length){
+			setIsError(true)
+			return;
+		}
+
 		const values = {
-			title: formData.title || '',
-			description: formData.description || '',
-			author: formData.author || '',
+			id:blog.id,
+			title: formData.title ,
+			description: formData.description ,
+			author: formData.author ,
 			articleDate: selectedDate,
 			categories: selectedCategorys,
 			tags: selectedTags,
 			companyId: company_id,
 			body: contentBody || '',
 		};
-		console.log('Test add page data------>', values);
+		console.log("test form values---->",values)
 		setSubmitting(true);
 		setServerErrors([]);
 		setError(false);
 
-		const response = await axios.post(`/api/blog/crud`, values);
-		// console.log("check error --->",response)
+		const response = await axios.put(`/api/blog/crud`, values);
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
 			setError(true);
@@ -175,13 +189,49 @@ export default function Index({ categories, tags, company_id }) {
 		setSubmitting(false);
 		if (response.status === 201) {
 			setSnack(true);
-			setMessage('blog Successfully Added');
+			setMessage('blog Updated successfully');
 
 			event.target.reset();
 			reset();
 			Router.push(`/admin/blogs/${company_id}`);
 		}
 	};
+
+	//cloudinary
+	const [uploadedFiles, setUploadedFiles] = useState([]);
+
+	const onDrop = useCallback(async (acceptedFiles) => {
+		let path = `C${company_id}/B${blog.id}/`;
+		const { signature, timestamp } = await getSignature(path);
+		const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+
+		acceptedFiles.forEach(async (acceptedFile) => {
+			//login verification
+
+			const formData = new FormData();
+			formData.append('file', acceptedFile);
+			formData.append('signature', signature);
+			formData.append('timestamp', timestamp);
+			formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_KEY);
+			formData.append('folder', path);
+
+			const response = await fetch(url, {
+				method: 'post',
+				body: formData,
+			});
+			const data = await response.json();
+			setUploadedFiles((old) => [...old, data]);
+		});
+	}, []);
+
+	//drop zone
+	const { getRootProps, getInputProps, isDragActive } = useDropzone({
+		onDrop,
+		accept: 'image/*',
+		multiple: false,
+	});
+
+	
 
 	return (
 		<Layout>
@@ -193,7 +243,7 @@ export default function Index({ categories, tags, company_id }) {
 								<div className={styles.rowGap}>
 									<TextField
 										type='text'
-										label='Title for the article'
+										label='Title for the article *'
 										margin='dense'
 										name='title'
 										variant='standard'
@@ -201,6 +251,7 @@ export default function Index({ categories, tags, company_id }) {
 										fullWidth
 										error={errors?.title ? true : false}
 										{...register('title')}
+										defaultValue={blog.title}
 									/>
 									<p style={errorStyle}>{errors.title?.message}</p>
 									{duplicate && <p style={errorStyle}>Title already exist</p>}
@@ -208,7 +259,8 @@ export default function Index({ categories, tags, company_id }) {
 								<div className={styles.rowGap}>
 									<TextField
 										id='outlined-textarea'
-										label='Description'
+										label='Description *'
+										name='description'
 										multiline
 										minRows={1}
 										maxRows={2}
@@ -216,39 +268,47 @@ export default function Index({ categories, tags, company_id }) {
 										fullWidth
 										{...register('description')}
 										inputProps={{ className: classes.textarea }}
+										defaultValue={blog.description}
+										error={errors?.description ? true : false}
 									/>
+									<p style={errorStyle}>{errors.description?.message}</p>
+
 								</div>
 								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-									<div style={{ marginRight: '10px', marginTop: '10px' }}>
-										<TextField
-											type='text'
-											label='Author'
-											margin='dense'
-											name='author'
-											variant='standard'
-											size='small'
+								<div style={{ marginRight:'10px',marginTop:"10px"}}>
+									<TextField
+										type='text'
+										label='Author *'
+										margin='dense'
+										name='author'
+										variant='standard'
+										size='small'
+										fullWidth
+										error={errors?.author ? true : false}
+										{...register('author')}
+										defaultValue={blog.author}
+									/>
+									<p style={errorStyle}>{errors.author?.message}</p>
+
+								</div>
+								<div style={{ marginLeft:'10px'}}>
+									<MuiPickersUtilsProvider utils={DateFnsUtils}>
+										<KeyboardDatePicker
+											margin='normal'
+											id='date-picker-dialog'
+											label='Article Date'
+											views={['year', 'month', 'date']}
+											value={selectedDate}
+											format='yyyy-MM-dd'
+											onChange={handleDateChange}
+											KeyboardButtonProps={{
+												'aria-label': 'change date',
+											}}
 											fullWidth
-											error={errors?.author ? true : false}
-											{...register('author')}
 										/>
-									</div>
-									<div style={{ marginLeft: '10px' }}>
-										<MuiPickersUtilsProvider utils={DateFnsUtils}>
-											<KeyboardDatePicker
-												margin='normal'
-												id='date-picker-dialog'
-												label='Article Date'
-												views={['year', 'month', 'date']}
-												value={selectedDate}
-												format='yyyy-MM-dd'
-												onChange={handleDateChange}
-												KeyboardButtonProps={{
-													'aria-label': 'change date',
-												}}
-												fullWidth
-											/>
-										</MuiPickersUtilsProvider>
-									</div>
+									</MuiPickersUtilsProvider>
+
+								</div>
 								</div>
 								<div className={styles.rowGap}>
 									<SunEditor
@@ -265,6 +325,20 @@ export default function Index({ categories, tags, company_id }) {
 										// imageUploadHandler={imageUploadHandler}
 									/>
 								</div>
+								<div className={styles.rowGap}>
+									<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
+										<input {...getInputProps()} />
+										Drop Zone
+									</div>
+									<span>
+										{uploadedFiles.length > 0 && (
+											<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+												Show Gallery
+											</Button>
+										)}
+									</span>
+								</div>
+
 								<div>
 									<Autocomplete
 										multiple
@@ -280,6 +354,8 @@ export default function Index({ categories, tags, company_id }) {
 											<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
 										)}
 									/>
+									{!selectedCategorys.length && isError && <p style={errorStyle}>Select at least 1 category</p>}
+
 								</div>
 
 								<div>
@@ -297,14 +373,44 @@ export default function Index({ categories, tags, company_id }) {
 											<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
 										)}
 									/>
+									{!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 tag</p>}
+
+
 								</div>
 
 								<div className={styles.textCenter}>
+								{/* disabled={!formState.isValid} */}
 									<Button variant='contained' color='primary' type='submit'>
-										Save as Draft
+										Publish
 									</Button>
 								</div>
 							</form>
+						</div>
+
+						<div>
+							<Dialog
+								// classes={{ paper: classes.dialogPaper }}
+								fullWidth={true}
+								maxWidth='lg'
+								open={openDialog}
+								onClose={handleCloseDialog}
+								aria-labelledby='max-width-dialog-title'>
+								<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
+								<DialogContent dividers>
+									<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
+										{uploadedFiles.map((file) => (
+											<div key={file.public_id} style={{ margin: '10px auto' }}>
+												<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
+											</div>
+										))}
+									</div>
+								</DialogContent>
+								<DialogActions>
+									<Button onClick={handleCloseDialog} color='primary'>
+										Back
+									</Button>
+								</DialogActions>
+							</Dialog>
 						</div>
 					</div>
 					<div className={styles.right}>

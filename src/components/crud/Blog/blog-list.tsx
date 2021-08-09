@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import styles from '../../../styles/Blog.module.scss';
 import axios from 'axios';
+import { getCompany } from '../../../components/auth/auth';
 
 import ConfirmDialog from '../../elements/ui/Dialog/ConfirmDialog';
 import { mutate } from 'swr';
@@ -9,15 +10,16 @@ import Link from 'next/link';
 // import { useRouter } from 'next/router';
 import { Button } from '@material-ui/core';
 
-export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode, company_id }) {
+export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
 	//	const router = useRouter();
+	var companyId = getCompany();
 
 	const handleConfirm = async () => {
 		setOpenDialog(false);
 		mutate(
-			`/api/blog/crud/company/${company_id}`,
+			`/api/blog/crud/company/${companyId}`,
 			blogs.filter((c) => c.id !== currentId),
 			false,
 		);
@@ -62,7 +64,11 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 									</div>
 									<div className={styles.blogDel}>
 										<div className={styles.btnGroup}>
-											<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
+											<Link href={`/admin/blog-edit/${item.id}`}>
+												<a>
+													<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
+												</a>
+											</Link>
 										</div>
 										<div
 											className={styles.btnGroup}

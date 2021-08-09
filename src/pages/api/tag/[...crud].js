@@ -2,6 +2,8 @@ import handler from '../handler';
 import { bigIntToString } from '../../../dbconfig/utils';
 import prisma from '../../../dbconfig/prisma';
 const slugify = require('slugify');
+import { getDB } from '../../../dbconfig/db';
+const { db } = getDB();
 
 export default handler
 	// with parameters
@@ -124,3 +126,14 @@ export const getTag = async (companyId) => {
 
 	return bigIntToString(result);
 };
+
+
+export const getTags = async (ids) =>{
+	let query=`select * from tags t where t.id in (${ids})`
+
+	 return new Promise(function (resolve) {
+		db.any(query,[]).then((data) => {
+				resolve(data);
+		})
+})
+}
