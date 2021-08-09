@@ -10,12 +10,10 @@ import { useContext } from 'react';
 
 const Layout = ({ children }) => {
 	const classes = useStyles();
-	// const { user, loading, loggedIn } = useUser();
-	const { user, loading, loggedIn } = useContext(UserContext);
-	console.log('loggedin**  ' + loggedIn);
+
 	return (
 		<>
-			<Navbar links={loggedIn} companyid={user?.companyid} role='admin' />
+			<Navbar links={false} companyid={1} role='admin' />
 			<main className={classes.content}>{children}</main>
 			<Footer />
 		</>

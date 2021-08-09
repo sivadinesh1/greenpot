@@ -55,9 +55,6 @@ const SigninComponent = () => {
 
 	const { error, loading, message, showForm } = values;
 
-	useEffect(() => {
-		isAuth() && Router.push('/');
-	}, []);
 	const onSubmit = (data) => {
 		setValues({ ...values, loading: true, error: false });
 		axios.post(`/api/auth/signin`, data).then(function (response) {

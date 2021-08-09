@@ -50,6 +50,8 @@ export default function MyApp(props) {
 	const router = useRouter();
 	const { user, loading, loggedIn } = useUser();
 
+	console.log('in _app.....');
+
 	React.useEffect(() => {
 		// Remove the server-side injected CSS.
 		const jssStyles = document.querySelector('#jss-server-side');

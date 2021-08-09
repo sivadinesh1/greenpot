@@ -19,13 +19,13 @@ export default handler
 		console.log('cookie ' + token);
 
 		if (token === undefined) {
-			res.status(401).json({ message: 'Not yet loggedin' });
+			res.status(200).json('UNAUTHORISED');
 		} else {
 			jwt.verify(req.cookies.authToken, process.env.JWT_SECRET, async function (err, decoded) {
 				if (!err && decoded) {
 					next();
 				} else {
-					res.status(401).json({ message: 'Sorry you are not authenticated' });
+					res.status(200).json('UNAUTHORISED');
 				}
 			});
 		}

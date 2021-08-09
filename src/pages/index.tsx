@@ -9,8 +9,6 @@ import useSWR from 'swr';
 import useUser from '../customHooks/useUser';
 
 const IndexPage = () => {
-	const { user, loading, loggedIn } = useUser();
-
 	// const { data, mutate, error } = useSWR(`/api/auth/me`, {
 	// 	revalidateOnMount: true,
 	// });
@@ -24,14 +22,14 @@ const IndexPage = () => {
 	// if (!data) return 'Loading';
 
 	const DisplayInfo = () => {
-		if (loading) return <div className='container'> Loading... </div>;
-		if (loggedIn && user.id)
-			return (
-				<div className='container'>
-					{' '}
-					Id: {user.first_name} <br />
-				</div>
-			);
+		// if (loading) return <div className='container'> Loading... </div>;
+		// if (loggedIn && user.id)
+		// 	return (
+		// 		<div className='container'>
+		// 			{' '}
+		// 			Id: {user.first_name} <br />
+		// 		</div>
+		// 	);
 
 		return <div className='container'> Login to get info </div>;
 	};
