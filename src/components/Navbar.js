@@ -1,4 +1,4 @@
-import { signout, isAuth, getCompany } from './auth/auth';
+import { signout } from './auth/auth';
 import Link from 'next/link';
 import Router from 'next/router';
 
@@ -11,8 +11,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the FontAwesomeIcon component
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
+import { UserContext } from './../customHooks/UserContext';
+import { useContext } from 'react';
 
-const Navbar = ({ links, companyid, role }) => {
+const Navbar = ({ links, companyid }) => {
+	const { mecheck, setMecheck } = useContext(UserContext);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -26,6 +29,7 @@ const Navbar = ({ links, companyid, role }) => {
 		signout();
 		axios.post(`/api/auth/signout`, {}).then(function (response) {
 			Router.push(`/`);
+			setMecheck({ ...mecheck, data: null, loggedIn: false });
 		});
 	};
 
@@ -36,7 +40,6 @@ const Navbar = ({ links, companyid, role }) => {
 					<Link href={`/admin`}>DRAFTY</Link>
 				</div>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
-					<div>Role:{role}</div>
 					{links ? (
 						<div style={{ zIndex: '10', position: 'relative', paddingLeft: '16px' }}>
 							<FontAwesomeIcon icon={faUser} onClick={handleClick} style={{ fontSize: '2rem', color: '#234' }}></FontAwesomeIcon>

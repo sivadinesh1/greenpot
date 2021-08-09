@@ -8,7 +8,12 @@ import useSWR from 'swr';
 
 import useUser from '../customHooks/useUser';
 
+import { UserContext } from './../customHooks/UserContext';
+import { useContext } from 'react';
+
 const IndexPage = () => {
+	const { mecheck, setMecheck } = useContext(UserContext);
+
 	// const { data, mutate, error } = useSWR(`/api/auth/me`, {
 	// 	revalidateOnMount: true,
 	// });
@@ -36,19 +41,25 @@ const IndexPage = () => {
 
 	return (
 		<>
-			<div>
-				<div className={styles.login_wrap}>
-					<div className={styles.login_left}>
-						<Image src='/static/images/creative.jpg' alt='hallmark academy logo' className={styles.left_img} width='720px' height='20px' />
-					</div>
-					<div className={styles.login_right}>
-						<div className={styles.form_block}>
-							<DisplayInfo />
-							<SigninComponent />
+			{!mecheck.loggedIn ? (
+				<div>
+					<div className={styles.login_wrap}>
+						<div className={styles.login_left}>
+							<Image src='/static/images/creative.jpg' alt='hallmark academy logo' className={styles.left_img} width='720px' height='20px' />
+						</div>
+						<div className={styles.login_right}>
+							<div className={styles.form_block}>
+								<DisplayInfo />
+								<SigninComponent />
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			) : (
+				<>
+					<div>Welcome back !!!</div>
+				</>
+			)}
 		</>
 	);
 };

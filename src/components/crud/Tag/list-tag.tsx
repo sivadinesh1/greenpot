@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import styles from '../../../styles/Tag.module.scss';
 import axios from 'axios';
-import { getCompany } from '../../auth/auth';
 
 import ConfirmDialog from '../../elements/ui/Dialog/ConfirmDialog';
 import { mutate } from 'swr';
 import Image from 'next/image';
 
-export default function TagList({ tags, onMode, onEditRow, onReloadTagList, handleSnackOpen }) {
+export default function TagList({ tags, onMode, onEditRow, onReloadTagList, handleSnackOpen, company_id }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
-	var companyId = getCompany();
 
 	const handleConfirm = async () => {
 		setOpenDialog(false);
 
 		mutate(
-			`/api/tag/crud/company/${companyId}`,
+			`/api/tag/crud/company/${company_id}`,
 			tags.filter((c) => c.id !== currentId),
 			false,
 		);

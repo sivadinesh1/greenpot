@@ -1,4 +1,5 @@
 import useSWR from 'swr';
+import { useState } from 'react';
 
 import { getUser } from '../requests/userApi';
 
@@ -16,15 +17,30 @@ export default function useUser() {
 		fetcher: (url) => axios(url).then((r) => r.data),
 	});
 
-	const loading = !data && !error;
 	const loggedIn = !error && data;
+	// console.log('printing user data!!' + !error);
+	// if (!error && data) {
+
+	// }
+
+	// setMecheck({ ...mecheck, loggedIn: false });
+
+	let tempdata = data === 'UNAUTHORISED' ? null : data === undefined ? null : data;
+	let temploggedIn = data === 'UNAUTHORISED' ? false : data === undefined ? false : true;
+
+	const [mecheck, setMecheck] = useState({
+		data: tempdata,
+		loggedIn: temploggedIn,
+	});
 
 	console.log('printing user data' + JSON.stringify(data));
 
-	return {
-		loading,
-		loggedIn,
-		user: data,
-		mutate,
-	};
+	return { mecheck, setMecheck };
+
+	// return {
+	// 	loading,
+	// 	loggedIn,
+	// 	user: data,
+	// 	mutate,
+	// };
 }

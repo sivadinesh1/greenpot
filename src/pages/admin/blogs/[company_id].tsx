@@ -1,7 +1,7 @@
 import Layout from '../../../components/Layout';
-import Admin from '../../../components/auth/Admin';
+
 import React, { useState } from 'react';
-import { getCompany } from '../../../components/auth/auth';
+
 import SnackBar from '../../../components/elements/ui/Dialog/SnackBar';
 
 import { Blog } from '../../../modal/Blog';
@@ -11,7 +11,6 @@ import styles from '../../../styles/Category.module.scss';
 
 import BlogList from '../../../components/crud/Blog/blog-list';
 import { getAllBlogs, getBlogsByCompany } from '../../api/blog/[...crud]';
-import BlogAdd from '../../../components/crud/Blog/blog-add';
 
 import axios from 'axios';
 import useSWR, { mutate, trigger } from 'swr';
@@ -56,26 +55,30 @@ export default function Index({ blogs, company_id }: BlogProps) {
 	};
 
 	return (
-		<Layout>
-			<Admin>
-				<div className={styles.cat_wrap}>
-					<div className={styles.left}>
-						<div className={styles.blogAdd}>
-							<Link href={`/admin/blog-add/${company_id}`}>
-								<a>+ Add Blog</a>
-							</Link>
-						</div>
-					</div>
-
-					<div className={styles.right}>
-						{mode === 'list' && (
-							<BlogList blogs={blogsList} onReloadBlogList={reloadBlogList} handleSnackOpen={handleSnackOpen} onMode={chooseMode} />
-						)}
-						{mode === 'add' && <BlogAdd onMode={chooseMode} blogs={blogsList} handleSnackOpen={handleSnackOpen} onReloadBlogList={reloadBlogList} />}
+		<>
+			<div className={styles.cat_wrap}>
+				<div className={styles.left}>
+					<div className={styles.blogAdd}>
+						<Link href={`/admin/blog-add/${company_id}`}>
+							<a>+ Add Blog</a>
+						</Link>
 					</div>
 				</div>
-			</Admin>
+
+				<div className={styles.right}>
+					{mode === 'list' && (
+						<BlogList
+							blogs={blogsList}
+							onReloadBlogList={reloadBlogList}
+							handleSnackOpen={handleSnackOpen}
+							onMode={chooseMode}
+							company_id={company_id}
+						/>
+					)}
+				</div>
+			</div>
+
 			<SnackBar open={snack} handleClose={() => setSnack(false)} message={message}></SnackBar>
-		</Layout>
+		</>
 	);
 }

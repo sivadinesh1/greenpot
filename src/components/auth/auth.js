@@ -24,24 +24,24 @@ export const authenticate = (data, next) => {
 	next();
 };
 
-export const isAuth = () => {
-	if (process.browser) {
-		if (localStorage.getItem('user')) {
-			return JSON.parse(localStorage.getItem('user'));
-		} else {
-			return false;
-		}
-	}
-};
+// export const isAuth = () => {
+// 	if (process.browser) {
+// 		if (localStorage.getItem('user')) {
+// 			return JSON.parse(localStorage.getItem('user'));
+// 		} else {
+// 			return false;
+// 		}
+// 	}
+// };
 
-export const getCompany = () => {
-	if (process.browser) {
-		if (localStorage.getItem('user')) {
-			let data = JSON.parse(localStorage.getItem('user'));
+// export const getCompany = () => {
+// 	if (process.browser) {
+// 		if (localStorage.getItem('user')) {
+// 			let data = JSON.parse(localStorage.getItem('user'));
 
-			return data.companyid;
-		} else {
-			return false;
-		}
-	}
-};
+// 			return data.companyid;
+// 		} else {
+// 			return false;
+// 		}
+// 	}
+// };

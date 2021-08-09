@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from '@material-ui/core';
-import { getCompany } from '../../auth/auth';
+
 import { useRouter } from 'next/router';
 
-export default function BlogPreview({ title, categories, body,description, author }) {
+export default function BlogPreview({ title, categories, body, description, author }) {
 	const router = useRouter();
-	let id = getCompany();
 
 	const listCategory = categories?.map((categorylist, idx) => <li key={idx}>{categorylist.name}</li>);
 

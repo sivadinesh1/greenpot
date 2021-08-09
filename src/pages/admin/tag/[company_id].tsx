@@ -1,5 +1,5 @@
 import Layout from '../../../components/Layout';
-import Admin from '../../../components/auth/Admin';
+
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 
@@ -63,27 +63,33 @@ export default function Index({ tags }: TagProps) {
 	const ref = React.createRef();
 
 	return (
-		<Layout>
-			<Admin>
-				<div className={styles.tag_wrap}>
-					<div className={styles.left}>
-						{mode === 'add' ? (
-							<AddTag tags={data} onReloadTagList={reloadTagList} handleSnackOpen={handleSnackOpen}></AddTag>
-						) : (
-							<EditTag onMode={chooseMode} editItem={editRowItem} onReloadTagList={reloadTagList} handleSnackOpen={handleSnackOpen}></EditTag>
-						)}
-					</div>
-
-					<div className={styles.right}>
-						<TagList tags={data} onMode={chooseMode} onEditRow={editRow} onReloadTagList={reloadTagList} handleSnackOpen={handleSnackOpen} />
-					</div>
+		<>
+			<div className={styles.tag_wrap}>
+				<div className={styles.left}>
+					{mode === 'add' ? (
+						<AddTag tags={data} onReloadTagList={reloadTagList} handleSnackOpen={handleSnackOpen} company_id={company_id}></AddTag>
+					) : (
+						<EditTag onMode={chooseMode} editItem={editRowItem} onReloadTagList={reloadTagList} handleSnackOpen={handleSnackOpen}></EditTag>
+					)}
 				</div>
-			</Admin>
+
+				<div className={styles.right}>
+					<TagList
+						tags={data}
+						onMode={chooseMode}
+						onEditRow={editRow}
+						onReloadTagList={reloadTagList}
+						handleSnackOpen={handleSnackOpen}
+						company_id={company_id}
+					/>
+				</div>
+			</div>
+
 			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
 				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
 					{message}
 				</MuiAlert>
 			</Snackbar>
-		</Layout>
+		</>
 	);
 }

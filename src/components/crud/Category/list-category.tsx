@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import styles from '../../../styles/Category.module.scss';
 import axios from 'axios';
-import { getCompany } from '../../../components/auth/auth';
 
 import ConfirmDialog from '../../elements/ui/Dialog/ConfirmDialog';
 import { mutate } from 'swr';
@@ -10,7 +9,6 @@ import Image from 'next/image';
 export default function CategoryList({ categories, onMode, onEditRow, onReloadCategoryList, handleSnackOpen }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
-	var companyId = getCompany();
 
 	const handleConfirm = async () => {
 		setOpenDialog(false);

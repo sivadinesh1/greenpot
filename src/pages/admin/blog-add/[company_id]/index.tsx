@@ -28,7 +28,7 @@ import { useDropzone } from 'react-dropzone';
 import styles from '../../../../styles/Blog.module.scss';
 import stylesd from '../../../../styles/dropZone.module.css';
 import Layout from '../../../../components/Layout';
-import Admin from '../../../../components/auth/Admin';
+
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
 import { getAllCategories } from '../../../api/category/[...crud]';
 import { getAllTags } from '../../../api/tag/[...crud]';
@@ -219,69 +219,68 @@ export default function Index({ categories, tags, company_id }) {
 	};
 
 	return (
-		<Layout>
-			<Admin>
-				<div className={styles.blog_wrap}>
-					<div className={styles.left}>
-						<div>
-							<form onSubmit={handleSubmit(onSubmit)}>
-								<div className={styles.rowGap}>
-									<TextField
-										type='text'
-										label='Title for the article'
-										margin='dense'
-										name='title'
-										variant='standard'
-										size='small'
-										fullWidth
-										error={errors?.title ? true : false}
-										{...register('title')}
+		<>
+			<div className={styles.blog_wrap}>
+				<div className={styles.left}>
+					<div>
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<div className={styles.rowGap}>
+								<TextField
+									type='text'
+									label='Title for the article'
+									margin='dense'
+									name='title'
+									variant='standard'
+									size='small'
+									fullWidth
+									error={errors?.title ? true : false}
+									{...register('title')}
+								/>
+								{duplicate && <p style={errorStyle}>Title already exist</p>}
+							</div>
+							<div className={styles.rowGap}>
+								<TextField
+									id='outlined-textarea'
+									label='Description'
+									multiline
+									minRows={1}
+									maxRows={2}
+									variant='standard'
+									fullWidth
+									{...register('description')}
+									inputProps={{ className: classes.textarea }}
+								/>
+							</div>
+							<div className={styles.rowGap}>
+								<TextField
+									type='text'
+									label='Author'
+									margin='dense'
+									name='author'
+									variant='standard'
+									size='small'
+									fullWidth
+									error={errors?.author ? true : false}
+									{...register('author')}
+								/>
+							</div>
+							<div>
+								<MuiPickersUtilsProvider utils={DateFnsUtils}>
+									<KeyboardDatePicker
+										margin='normal'
+										id='date-picker-dialog'
+										label='Date picker dialog'
+										views={['year', 'month', 'date']}
+										value={selectedDate}
+										format='yyyy-MM-dd'
+										onChange={handleDateChange}
+										KeyboardButtonProps={{
+											'aria-label': 'change date',
+										}}
 									/>
-									{duplicate && <p style={errorStyle}>Title already exist</p>}
-								</div>
-								<div className={styles.rowGap}>
-									<TextField
-										id='outlined-textarea'
-										label='Description'
-										multiline
-										minRows={1}
-										maxRows={2}
-										variant='standard'
-										fullWidth
-										{...register('description')}
-										inputProps={{ className: classes.textarea }}
-									/>
-								</div>
-								<div className={styles.rowGap}>
-									<TextField
-										type='text'
-										label='Author'
-										margin='dense'
-										name='author'
-										variant='standard'
-										size='small'
-										fullWidth
-										error={errors?.author ? true : false}
-										{...register('author')}
-									/>
-								</div>
-								<div>
-									<MuiPickersUtilsProvider utils={DateFnsUtils}>
-										<KeyboardDatePicker
-											margin='normal'
-											id='date-picker-dialog'
-											label='Date picker dialog'
-											views={['year', 'month', 'date']}
-											value={selectedDate}
-											format='yyyy-MM-dd'
-											onChange={handleDateChange}
-											KeyboardButtonProps={{
-												'aria-label': 'change date',
-											}}
-										/>
-									</MuiPickersUtilsProvider>
+								</MuiPickersUtilsProvider>
 
-									{/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
+								{/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
 										<KeyboardDatePicker
 											disableToolbar
 											variant='inline'
@@ -296,7 +295,7 @@ export default function Index({ categories, tags, company_id }) {
 											}}
 										/>
 									</MuiPickersUtilsProvider> */}
-									{/* <TextField
+								{/* <TextField
 										id="dateTimeFrom"                                        
 										type="date"
 										variant="standard"
@@ -308,123 +307,120 @@ export default function Index({ categories, tags, company_id }) {
 										fullWidth
 										{...register('articleDate')}
 									/> */}
+							</div>
+							<div className={styles.rowGap}>
+								<SunEditor
+									disable={false}
+									disableToolbar={false}
+									height='100%'
+									lang='en'
+									name='content'
+									setContents={content}
+									setOptions={options}
+									width='100%'
+									onChange={handleCMSChange}
+									// onImageUploadBefore={handleImageUploadBefore}
+									// imageUploadHandler={imageUploadHandler}
+								/>
+							</div>
+							<div className={styles.rowGap}>
+								<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
+									<input {...getInputProps()} />
+									Drop Zone
 								</div>
-								<div className={styles.rowGap}>
-									<SunEditor
-										disable={false}
-										disableToolbar={false}
-										height='100%'
-										lang='en'
-										name='content'
-										setContents={content}
-										setOptions={options}
-										width='100%'
-										onChange={handleCMSChange}
-										// onImageUploadBefore={handleImageUploadBefore}
-										// imageUploadHandler={imageUploadHandler}
-									/>
-								</div>
-								<div className={styles.rowGap}>
-									<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
-										<input {...getInputProps()} />
-										Drop Zone
-									</div>
-									<span>
-										{uploadedFiles.length > 0 && (
-											<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
-												Show Gallery
-											</Button>
-										)}
-									</span>
-								</div>
+								<span>
+									{uploadedFiles.length > 0 && (
+										<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+											Show Gallery
+										</Button>
+									)}
+								</span>
+							</div>
 
-								<div>
-									<Autocomplete
-										multiple
-										id='tags-standard'
-										freeSolo
-										filterSelectedOptions
-										fullWidth
-										options={categories}
-										onChange={(e, newValue) => setSelectedCategorys(newValue)}
-										getOptionLabel={(option) => option.name}
-										value={selectedCategorys}
-										renderInput={(params) => (
-											<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
-										)}
-									/>
-								</div>
+							<div>
+								<Autocomplete
+									multiple
+									id='tags-standard'
+									freeSolo
+									filterSelectedOptions
+									fullWidth
+									options={categories}
+									onChange={(e, newValue) => setSelectedCategorys(newValue)}
+									getOptionLabel={(option) => option.name}
+									value={selectedCategorys}
+									renderInput={(params) => (
+										<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+									)}
+								/>
+							</div>
 
-								<div>
-									<Autocomplete
-										multiple
-										id='tags-standard'
-										freeSolo
-										filterSelectedOptions
-										fullWidth
-										options={tags}
-										onChange={(e, newValue) => setSelectedTags(newValue)}
-										getOptionLabel={(option) => option.name}
-										value={selectedTags}
-										renderInput={(params) => (
-											<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
-										)}
-									/>
-								</div>
+							<div>
+								<Autocomplete
+									multiple
+									id='tags-standard'
+									freeSolo
+									filterSelectedOptions
+									fullWidth
+									options={tags}
+									onChange={(e, newValue) => setSelectedTags(newValue)}
+									getOptionLabel={(option) => option.name}
+									value={selectedTags}
+									renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
+								/>
+							</div>
 
-								<div className={styles.textCenter}>
-									<Button variant='contained' color='primary' type='submit'>
-										Save as Draft
-									</Button>
-								</div>
-							</form>
-						</div>
-
-						<div>
-							<Dialog
-								// classes={{ paper: classes.dialogPaper }}
-								fullWidth={true}
-								maxWidth='lg'
-								open={openDialog}
-								onClose={handleCloseDialog}
-								aria-labelledby='max-width-dialog-title'>
-								<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
-								<DialogContent dividers>
-									<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
-										{uploadedFiles.map((file) => (
-											<div key={file.public_id} style={{ margin: '10px auto' }}>
-												<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
-											</div>
-										))}
-									</div>
-								</DialogContent>
-								<DialogActions>
-									<Button onClick={handleCloseDialog} color='primary'>
-										Back
-									</Button>
-								</DialogActions>
-							</Dialog>
-						</div>
+							<div className={styles.textCenter}>
+								<Button variant='contained' color='primary' type='submit'>
+									Save as Draft
+								</Button>
+							</div>
+						</form>
 					</div>
-					<div className={styles.right}>
-						<div style={{ color: 'red' }}>PREVIEW</div>
 
-						<BlogPreview
-							title={watch('title')}
-							description={watch('description')}
-							author={watch('author')}
-							categories={selectedCategorys}
-							body={contentBody}></BlogPreview>
+					<div>
+						<Dialog
+							// classes={{ paper: classes.dialogPaper }}
+							fullWidth={true}
+							maxWidth='lg'
+							open={openDialog}
+							onClose={handleCloseDialog}
+							aria-labelledby='max-width-dialog-title'>
+							<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
+							<DialogContent dividers>
+								<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
+									{uploadedFiles.map((file) => (
+										<div key={file.public_id} style={{ margin: '10px auto' }}>
+											<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
+										</div>
+									))}
+								</div>
+							</DialogContent>
+							<DialogActions>
+								<Button onClick={handleCloseDialog} color='primary'>
+									Back
+								</Button>
+							</DialogActions>
+						</Dialog>
 					</div>
 				</div>
+				<div className={styles.right}>
+					<div style={{ color: 'red' }}>PREVIEW</div>
 
-				<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
-					<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
-						{message}
-					</MuiAlert>
-				</Snackbar>
-			</Admin>
-		</Layout>
+					<BlogPreview
+						title={watch('title')}
+						description={watch('description')}
+						author={watch('author')}
+						categories={selectedCategorys}
+						body={contentBody}></BlogPreview>
+				</div>
+			</div>
+
+			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
+				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
+					{message}
+				</MuiAlert>
+			</Snackbar>
+		</>
 	);
 }
 

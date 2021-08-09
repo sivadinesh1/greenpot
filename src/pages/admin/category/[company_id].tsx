@@ -1,5 +1,5 @@
 import Layout from '../../../components/Layout';
-import Admin from '../../../components/auth/Admin';
+
 import React, { useState } from 'react';
 import Router, { useRouter } from 'next/router';
 
@@ -83,37 +83,40 @@ export default function Index({ categorys }) {
 	};
 
 	return (
-		<Layout>
-			<Admin>
-				<div className={styles.cat_wrap}>
-					<div className={styles.left}>
-						{mode === 'add' ? (
-							<AddCategory categories={data} onReloadCategoryList={reloadCategoryList} handleSnackOpen={handleSnackOpen}></AddCategory>
-						) : (
-							<EditCategory
-								onMode={chooseMode}
-								editItem={editRowItem}
-								onReloadCategoryList={reloadCategoryList}
-								handleSnackOpen={handleSnackOpen}></EditCategory>
-						)}
-					</div>
-
-					<div className={styles.right}>
-						<CategoryList
+		<>
+			<div className={styles.cat_wrap}>
+				<div className={styles.left}>
+					{mode === 'add' ? (
+						<AddCategory
 							categories={data}
-							onMode={chooseMode}
-							onEditRow={editRow}
 							onReloadCategoryList={reloadCategoryList}
 							handleSnackOpen={handleSnackOpen}
-						/>
-					</div>
+							company_id={company_id}></AddCategory>
+					) : (
+						<EditCategory
+							onMode={chooseMode}
+							editItem={editRowItem}
+							onReloadCategoryList={reloadCategoryList}
+							handleSnackOpen={handleSnackOpen}></EditCategory>
+					)}
 				</div>
-			</Admin>
+
+				<div className={styles.right}>
+					<CategoryList
+						categories={data}
+						onMode={chooseMode}
+						onEditRow={editRow}
+						onReloadCategoryList={reloadCategoryList}
+						handleSnackOpen={handleSnackOpen}
+					/>
+				</div>
+			</div>
+
 			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
 				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
 					{message}
 				</MuiAlert>
 			</Snackbar>
-		</Layout>
+		</>
 	);
 }

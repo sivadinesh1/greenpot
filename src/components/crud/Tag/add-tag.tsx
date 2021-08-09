@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import Button from '@material-ui/core/Button';
 
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import { getCompany } from '../../auth/auth';
+
 import TextField from '@material-ui/core/TextField';
 
 import styles from '../../../styles/Tag.module.scss';
@@ -43,9 +43,7 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function AddTag({ tags, onReloadTagList, handleSnackOpen }) {
-	var companyId = getCompany();
-
+export default function AddTag({ tags, onReloadTagList, handleSnackOpen, company_id }) {
 	let schema = yup.object().shape({
 		name: yup.string().required().min(3).max(60),
 	});
@@ -66,7 +64,7 @@ export default function AddTag({ tags, onReloadTagList, handleSnackOpen }) {
 		}
 		const values = {
 			name: formData.name,
-			companyid: companyId,
+			companyid: company_id,
 		};
 		setSubmitting(true);
 		setServerErrors([]);

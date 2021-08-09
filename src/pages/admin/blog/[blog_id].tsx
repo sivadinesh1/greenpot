@@ -1,7 +1,7 @@
 import Layout from '../../../components/Layout';
-import Admin from '../../../components/auth/Admin';
+
 import React, { useState } from 'react';
-import { getCompany } from '../../../components/auth/auth';
+
 import SnackBar from '../../../components/elements/ui/Dialog/SnackBar';
 
 import { Blog } from '../../../modal/Blog';
@@ -14,23 +14,17 @@ import axios from 'axios';
 import useSWR, { mutate, trigger } from 'swr';
 import BlogView from '../../../components/crud/Blog/blog-view';
 
-export interface BlogProps {
-	blog: Blog;
-}
-
-export default function Index({ blog }: BlogProps) {
+export default function Index({ blog, company_id }) {
 	return (
-		<Layout>
-			<Admin>
-				<div className={styles.cat_wrap}>
-					<div className={styles.left}></div>
+		<>
+			<div className={styles.cat_wrap}>
+				<div className={styles.left}></div>
 
-					<div className={styles.right}>
-						<BlogView blog={blog} />
-					</div>
+				<div className={styles.right}>
+					<BlogView blog={blog} company_id={company_id} />
 				</div>
-			</Admin>
-		</Layout>
+			</div>
+		</>
 	);
 }
 
@@ -38,8 +32,15 @@ export default function Index({ blog }: BlogProps) {
 export const getStaticProps = async (ctx) => {
 	const blog_id = ctx.params.blog_id as string;
 	const blog = await getBlogById(blog_id);
+	let company_id = ctx.req ? { cookie: ctx.req.headers.cookie } : undefined;
+
+	if (ctx.req) {
+		console.log('SSR cookie ' + ctx.req.headers.cookie);
+		console.log('SSR cookie@ ' + JSON.stringify(ctx.req.headers.cookie));
+	}
+
 	return {
-		props: { blog },
+		props: { blog, company_id },
 	};
 };
 

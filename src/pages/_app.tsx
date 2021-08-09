@@ -6,7 +6,7 @@
 
 // export default MyApp;
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -48,7 +48,8 @@ export default function MyApp(props) {
 	const { locale } = useRouter();
 
 	const router = useRouter();
-	const { user, loading, loggedIn } = useUser();
+	const { mecheck, setMecheck } = useUser();
+	const providerValue = useMemo(() => ({ mecheck, setMecheck }), [mecheck, setMecheck]);
 
 	console.log('in _app.....');
 
@@ -81,7 +82,7 @@ export default function MyApp(props) {
 							compare: (a, b) => a === b,
 							fetcher: (url: string) => axios(url).then((r) => r.data),
 						}}>
-						<UserContext.Provider value={{ user, loading, loggedIn }}>
+						<UserContext.Provider value={providerValue}>
 							<Layout>
 								<Component {...pageProps} />
 							</Layout>
