@@ -19,15 +19,10 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 
-import { UserContext } from './../../customHooks/UserContext';
-import { useContext } from 'react';
-
 const SigninComponent = () => {
 	const { formatMessage: f } = useIntl();
 	const [isError, setIsError] = useState(false);
 	const [ErMessage, setErMessage] = useState('');
-
-	const { mecheck, setMecheck } = useContext(UserContext);
 
 	const [showPassword, setShowPassword] = useState(false);
 	let schema = yup.object().shape({
@@ -69,7 +64,8 @@ const SigninComponent = () => {
 				setValues({ ...values, loading: false });
 				showTest(true, response.data.message);
 			} else {
-				setMecheck({ ...mecheck, data: response.data, loggedIn: true });
+				Router.push(`/dashboard`);
+
 				// authenticate(response.data, () => {
 				// 	if (isAuth() && isAuth().role === '1') {
 				// 		Router.push(`/admin`);

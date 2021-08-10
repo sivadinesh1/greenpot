@@ -21,6 +21,14 @@ export default handler
 		res.status(200).json(returnValue);
 	})
 
+	// with parameters
+	.get('/api/blog/crud/:id', async (req, res) => {
+		const result = await getBlogById(req.params.id);
+
+		const returnValue = bigIntToString(result);
+		res.status(200).json(returnValue);
+	})
+
 	// default routes
 	.get(async (req, res) => {
 		const result = await prisma.categories.findMany({});
@@ -114,16 +122,17 @@ export default handler
 				companyid: companyid,
 				isdelete: 'N',
 				description: description,
-				author:author,
-				article_date:articleDate,
+				author: author,
+				article_date: articleDate,
 				status: 'D',
-				published: 'N'
+				published: 'N',
 			},
 		});
 
 		res.status(201).send({ title: title, message: 'success' });
-	}).put(async (req, res) => {
-		const {id, title, description, author, articleDate, categories, tags, body, companyId } = req.body;
+	})
+	.put(async (req, res) => {
+		const { id, title, description, author, articleDate, categories, tags, body, companyId } = req.body;
 		const errors = [];
 
 		const isdata = await checkDuplicateTitle(title, companyId);
@@ -161,7 +170,7 @@ export default handler
 			return parseInt(e.id);
 		});
 
-		let currentDate=new Date();
+		let currentDate = new Date();
 		// both works do not delete
 		// let status= 'D';
 		//   let	published= 'N';
@@ -192,11 +201,11 @@ export default handler
 				companyid: companyid,
 				isdelete: 'N',
 				description: description,
-				author:author,
-				article_date:articleDate,
+				author: author,
+				article_date: articleDate,
 				status: 'P',
 				published: 'Y',
-				published_datetime:currentDate
+				published_datetime: currentDate,
 			},
 		});
 
@@ -226,8 +235,8 @@ export const getBlogById = async (blogId) => {
 	return bigIntToString(result);
 };
 
-export const getBlog = async (blogId) =>{
-		let query=`SELECT b.id, b.title, b.slug, b.body, 
+export const getBlog = async (blogId) => {
+	let query = `SELECT b.id, b.title, b.slug, b.body, 
 		b.description,b.author,CAST(b.article_date AS char) as article_date,b.status,
 		array_agg(distinct(c )) as categories, 	
 		array_agg(distinct(t.name )) as tags
@@ -237,14 +246,14 @@ export const getBlog = async (blogId) =>{
 			 LEFT  JOIN tags as t ON t.id = SOME(b.tags)
 		WHERE
 			b.id = ${blogId}	
-		 GROUP BY title, b.id ORDER BY id`
+		 GROUP BY title, b.id ORDER BY id`;
 
-		 return new Promise(function (resolve) {
-			db.oneOrNone(query,[]).then((data) => {
-					resolve(data);
-			})
-})
-}
+	return new Promise(function (resolve) {
+		db.oneOrNone(query, []).then((data) => {
+			resolve(data);
+		});
+	});
+};
 
 const checkDuplicateTitle = async (title, companyid) => {
 	const result = await prisma.blog.count({

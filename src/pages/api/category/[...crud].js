@@ -9,7 +9,7 @@ const slugify = require('slugify');
 export default handler
 
 	.use(async (req, res, next) => {
-		console.log('CONSOLING../api/category/crud');
+		console.log('..in category api handler.');
 		console.log('cookie ' + req.cookies.authToken);
 		const token = req.cookies.authToken;
 
@@ -143,15 +143,15 @@ export const getAllBlog = async () => {
 	return bigIntToString(result);
 };
 
-export const getCategories = async (ids) =>{
-	let query=`select * from categories t where t.id in (${ids})`
+export const getCategories = async (ids) => {
+	let query = `select * from categories t where t.id in (${ids})`;
 
-	 return new Promise(function (resolve) {
-		db.any(query,[]).then((data) => {
-				resolve(data);
-		})
-})
-}
+	return new Promise(function (resolve) {
+		db.any(query, []).then((data) => {
+			resolve(data);
+		});
+	});
+};
 // .use(async (req, res, next) => {
 // 	console.log('CONSOLING../api/category/crud');
 // 	console.log('cookie ' + req.cookies.authToken);

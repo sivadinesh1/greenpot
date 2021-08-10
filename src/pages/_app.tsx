@@ -27,8 +27,6 @@ import messages from '../i18n';
 import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import Layout from '../components/Layout';
-import { UserContext } from '../customHooks/UserContext';
-import useUser from '../customHooks/useUser';
 
 config.autoAddCss = false;
 
@@ -46,10 +44,6 @@ Router.events.on('routeChangeError', () => NProgress.done());
 export default function MyApp(props) {
 	const { Component, pageProps } = props;
 	const { locale } = useRouter();
-
-	const router = useRouter();
-	const { mecheck, setMecheck } = useUser();
-	const providerValue = useMemo(() => ({ mecheck, setMecheck }), [mecheck, setMecheck]);
 
 	console.log('in _app.....');
 
@@ -82,11 +76,9 @@ export default function MyApp(props) {
 							compare: (a, b) => a === b,
 							fetcher: (url: string) => axios(url).then((r) => r.data),
 						}}>
-						<UserContext.Provider value={providerValue}>
-							<Layout>
-								<Component {...pageProps} />
-							</Layout>
-						</UserContext.Provider>
+						<Layout>
+							<Component {...pageProps} />
+						</Layout>
 					</SWRConfig>
 				</ThemeProvider>
 			</IntlProvider>

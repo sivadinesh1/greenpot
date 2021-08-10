@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core';
 
 import { useRouter } from 'next/router';
 
-export default function BlogView({ blog, company_id }) {
+export default function BlogView({ blog }) {
 	const router = useRouter();
 
 	return (
@@ -18,7 +18,7 @@ export default function BlogView({ blog, company_id }) {
 					Blog PreView
 				</div>
 				<div style={{ fontSize: '1.3rem', padding: '1rem' }}>
-					<Button onClick={() => router.push(`/admin/blogs/${company_id}`)} type='button' variant='contained' color='primary'>
+					<Button onClick={() => router.back()} type='button' variant='contained' color='primary'>
 						Back
 					</Button>
 				</div>

@@ -11,11 +11,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the FontAwesomeIcon component
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
-import { UserContext } from './../customHooks/UserContext';
-import { useContext } from 'react';
 
 const Navbar = ({ links, companyid }) => {
-	const { mecheck, setMecheck } = useContext(UserContext);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -29,7 +26,6 @@ const Navbar = ({ links, companyid }) => {
 		signout();
 		axios.post(`/api/auth/signout`, {}).then(function (response) {
 			Router.push(`/`);
-			setMecheck({ ...mecheck, data: null, loggedIn: false });
 		});
 	};
 
