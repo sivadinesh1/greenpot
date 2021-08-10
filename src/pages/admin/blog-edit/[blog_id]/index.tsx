@@ -124,14 +124,14 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 		formState:{isValid,errors},
 		reset,
 		setValue
-	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema),defaultValues: { title: "" } });
+	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
 
-	useEffect(() => {
-		setValue("title", blog.title, {
-            shouldValidate: true,
-            shouldDirty: true
-          })
-	  }, [register]);
+	// useEffect(() => {
+	// 	setValue("title", blog.title, {
+    //         shouldValidate: true,
+    //         shouldDirty: true
+    //       })
+	//   }, [register]);
 
 
 
@@ -193,7 +193,7 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 			setIsError(true)
 			return;
 		}
-
+		let status=event.nativeEvent.submitter.id === "save" ? "N" :"Y"
 		const values = {
 			id:blog.id,
 			title: formData.title ,
@@ -204,8 +204,9 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 			tags: selectedTags,
 			companyId: company_id,
 			body: contentBody || '',
+			status:status
+
 		};
-		console.log("test form values---->",values)
 		setSubmitting(true);
 		setServerErrors([]);
 		setError(false);
@@ -231,6 +232,13 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 			Router.push(`/admin/blogs/${company_id}`);
 		}
 	};
+
+	//cloudinary delete image
+	const removeImage =async (data)=>{
+		console.log("test image request data---->",data)
+		const response = await axios.post(`/api/blog/crud/image/delete`, data);
+		setUploadedFiles([...response.data])
+}
 
 	//cloudinary
 	const onDrop = useCallback(async (acceptedFiles) => {
@@ -418,7 +426,10 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 
 								<div className={styles.textCenter}>
 								{/* disabled={!formState.isValid} */}
-									<Button variant='contained' color='primary' type='submit'>
+								<Button variant='contained' color='primary' type='submit' id="save" style={{ marginRight:'10px'}}>
+										Save
+									</Button>
+									<Button variant='contained' color='primary' type='submit' id="publish" style={{ marginLeft:'10px'}}>
 										Publish
 									</Button>
 								</div>
@@ -438,6 +449,7 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 									<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
 										{uploadedFiles.map((file) => (
 											<div key={file.public_id} style={{ margin: '10px auto' }}>
+												<div onClick= {()=>removeImage({publicId:file.public_id,folder:file.folder})}><Image src='/static/images/close.svg' alt='close' width='10px' height='10px' /></div>
 												<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
 												
 												<div className={styles.textCenter}>
