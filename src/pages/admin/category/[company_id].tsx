@@ -23,7 +23,6 @@ export const getServerSideProps = async (context) => {
 	//const categorys = await getAllCategories(company_id);
 	let categorys = [];
 
-	try {
 		const cookie = context?.req?.headers.cookie;
 
 		let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
@@ -35,17 +34,7 @@ export const getServerSideProps = async (context) => {
 		return {
 			props: { categorys },
 		};
-	} catch (error) {
-		console.log('dineh error' + error.response.status);
-		if (error.response.status === 401) {
-			return {
-				redirect: {
-					permanent: false,
-					destination: '/',
-				},
-			};
-		}
-	}
+	
 };
 
 export default function Index({ categorys }) {

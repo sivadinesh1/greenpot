@@ -31,7 +31,16 @@ cloudinary.config({
   export const getImages = async(path)=>{
     const data=cloudinary.search.expression(
         `folder:${path}/*` // add your folder
-        ).sort_by('public_id','desc').max_results(5).execute().then(result=>{console.log(result)
+        ).sort_by('public_id','desc').max_results(5).execute().then(result=>{
+             console.log(result)
         return result.resources});
         return data;
+  }
+
+  export const deleteImage = async (public_id) =>{
+    const data=cloudinary.uploader.destroy(public_id, function(result) { 
+        console.log(result) 
+    return result;
+});
+    return data;
   }

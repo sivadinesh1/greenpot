@@ -11,20 +11,13 @@ export default function BlogPreview({ title, categories, body, description, auth
 	return (
 		<div>
 			<div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
-				<div
-					style={{
-						fontSize: '2rem',
-						fontWeight: 'bold',
-					}}>
-					{' '}
-					Blog PreView
-				</div>
+				<h1>{title}</h1>
 			</div>
 			<br />
-			{/* <div>{blog.title}</div> */}
-			<div>{title}</div>
-			<div>{description}</div>
 			<div>{author}</div>
+
+			<div>{description}</div>
+
 			<br />
 			{listCategory}
 			<div dangerouslySetInnerHTML={{ __html: body }}></div>

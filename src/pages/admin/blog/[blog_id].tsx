@@ -16,12 +16,10 @@ import BlogView from '../../../components/crud/Blog/blog-view';
 
 export const getServerSideProps = async (context) => {
 	const blog_id = context.params.blog_id as string;
-
-	// both works dont delete
-	//const categorys = await getAllCategories(company_id);
+	// let company_id = 2 ;//ctx.req ? { cookie: ctx.req.headers.cookie } : undefined;
+	
 	let blog = [];
 
-	try {
 		const cookie = context?.req?.headers.cookie;
 
 		let resp = await axios.get(`${process.env.API_URL}/blog/crud/${blog_id}`, {
@@ -33,17 +31,8 @@ export const getServerSideProps = async (context) => {
 		return {
 			props: { blog },
 		};
-	} catch (error) {
-		console.log('dineh error' + error.response.status);
-		if (error.response.status === 401) {
-			return {
-				redirect: {
-					permanent: false,
-					destination: '/',
-				},
-			};
-		}
-	}
+	
+	
 };
 
 export default function Index({ blog }) {

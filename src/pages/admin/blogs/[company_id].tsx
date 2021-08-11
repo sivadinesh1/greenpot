@@ -16,6 +16,8 @@ import axios from 'axios';
 import useSWR, { mutate, trigger } from 'swr';
 import { Button } from '@material-ui/core';
 import Link from 'next/link';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 export const getServerSideProps = async (context) => {
 	const company_id = context.params.company_id as string;
@@ -78,7 +80,11 @@ export default function Index({ blogs, company_id }: BlogProps) {
 				</div>
 			</div>
 
-			<SnackBar open={snack} handleClose={() => setSnack(false)} message={message}></SnackBar>
+			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
+				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
+					{message}
+				</MuiAlert>
+			</Snackbar>
 		</>
 	);
 }
