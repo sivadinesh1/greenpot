@@ -55,24 +55,22 @@ const SigninComponent = () => {
 
 	const { error, loading, message, showForm } = values;
 
-	const onSubmit = (data) => {
+	const onSubmit =async (data) => {
+		debugger
 		setValues({ ...values, loading: true, error: false });
-		axios.post(`/api/auth/signin`, data).then(function (response) {
-			if (response.data.error) {
-				setValues({ ...values, error: data.error, loading: false });
-			} else if (response.data.errorCode === 1) {
+		const body = {
+			username: data.email,
+			password: data.password,
+		  };
+	
+			axios.post(`/api/auth/login`, body).then( (response)=> {
+				console.log("response test---->",response)
+				debugger
+			if (!response.data.done) {
 				setValues({ ...values, loading: false });
-				showTest(true, response.data.message);
+				showTest(true, response.data.error);
 			} else {
 				Router.push(`/dashboard`);
-
-				// authenticate(response.data, () => {
-				// 	if (isAuth() && isAuth().role === '1') {
-				// 		Router.push(`/admin`);
-				// 	} else {
-				// 		Router.push(`/user`);
-				// 	}
-				// });
 			}
 		});
 	};

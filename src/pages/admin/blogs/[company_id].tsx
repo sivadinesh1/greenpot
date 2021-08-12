@@ -18,8 +18,11 @@ import { Button } from '@material-ui/core';
 import Link from 'next/link';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import {getLoginSession} from '../../../lib/auth'
 
 export const getServerSideProps = async (context) => {
+	const currentLogin=await getLoginSession(context.req);
+	console.log("current login session--->",currentLogin)
 	const company_id = context.params.company_id as string;
 	const blogs = await getBlogsByCompany(company_id);
 	return {

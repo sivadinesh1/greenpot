@@ -15,21 +15,35 @@ import EditCategory from '../../../components/crud/Category/edit-category';
 import { getAllCategories } from '../../api/category/[...crud]';
 import axios from 'axios';
 import useSWR from 'swr';
+import {getLoginSession} from '../../../lib/auth'
+
 
 export const getServerSideProps = async (context) => {
+	// const currentLogin=await getLoginSession(context.req);
 	const company_id = context.params.company_id as string;
 
 	// both works dont delete
 	//const categorys = await getAllCategories(company_id);
 	let categorys = [];
-
-		const cookie = context?.req?.headers.cookie;
-
-		let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
+		//redirect login page
+		if (context.req.headers.cookie === undefined) {
+			return {
+			  redirect: { destination: '/', permanent: false },
+			}
+		  }
+		const cookie = context?.req?.headers?.cookie ;
+		let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`
+		, {
 			headers: {
-				cookie: cookie!,
-			},
-		});
+				cookie: cookie,
+			},}
+		);
+
+		if (resp.status === 200 && !resp.data.session) {
+			return {
+			  redirect: { destination: '/', permanent: false },
+			}
+		  }
 		categorys = resp.data;
 		return {
 			props: { categorys },

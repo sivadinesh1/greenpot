@@ -24,7 +24,7 @@ const Navbar = ({ links, companyid }) => {
 
 	const handleSignout = () => {
 		signout();
-		axios.post(`/api/auth/signout`, {}).then(function (response) {
+		axios.post(`/api/auth/logout`, {}).then(function (response) {
 			Router.push(`/`);
 		});
 	};

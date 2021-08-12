@@ -10,7 +10,7 @@ const Layout = ({ children }) => {
 
 	return (
 		<>
-			<Navbar links={true} companyid={1} />
+			<Navbar links={true} companyid={2} />
 			<main className={classes.content}>{children}</main>
 			<Footer />
 		</>
