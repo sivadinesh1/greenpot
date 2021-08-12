@@ -30,12 +30,6 @@ import Layout from '../components/Layout';
 
 config.autoAddCss = false;
 
-// const messages = {
-// 	en: { name: 'Name' },
-// 	fr: { name: 'Nom' },
-// 	es: { name: 'Nombre' },
-// };
-
 Router.events.on('routeChangeStart', () => NProgress.start());
 
 Router.events.on('routeChangeComplete', () => NProgress.done());
@@ -64,7 +58,6 @@ export default function MyApp(props) {
 					<meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
 				</Head>
 				<ThemeProvider theme={theme}>
-					<CssBaseline />
 					<SWRConfig
 						value={{
 							refreshInterval: 0,

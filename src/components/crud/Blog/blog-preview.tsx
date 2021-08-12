@@ -3,7 +3,7 @@ import { Button } from '@material-ui/core';
 
 import { useRouter } from 'next/router';
 
-export default function BlogPreview({ title, categories, body, description, author }) {
+export default function BlogPreview({ title, categories, body, description, author, articleDate }) {
 	const router = useRouter();
 
 	const listCategory = categories?.map((categorylist, idx) => <li key={idx}>{categorylist.name}</li>);
@@ -11,10 +11,16 @@ export default function BlogPreview({ title, categories, body, description, auth
 	return (
 		<div>
 			<div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
-				<h1>{title}</h1>
+				{title === '' || title === undefined ? (
+					<div style={{ paddingBottom: '8px', fontSize: '24px', color: '#ccc' }}>Type a Sample Title</div>
+				) : (
+					<div style={{ paddingBottom: '8px', fontSize: '24px' }}>{title}</div>
+				)}
 			</div>
-			<br />
-			<div>{author}</div>
+			<div>
+				<div>{author}</div>
+				<div>{articleDate}</div>
+			</div>
 
 			<div>{description}</div>
 

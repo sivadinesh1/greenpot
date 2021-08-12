@@ -30,9 +30,9 @@ import stylesd from '../../../../styles/dropZone.module.css';
 import Layout from '../../../../components/Layout';
 // import Admin from '../../../../components/auth/Admin';
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
-import { getAllCategories,getCategories } from '../../../api/category/[...crud]';
-import { getAllTags,getTags } from '../../../api/tag/[...crud]';
-import { getBlogById,getBlog } from '../../../api/blog/[...crud]';
+import { getAllCategories, getCategories } from '../../../api/category/[...crud]';
+import { getAllTags, getTags } from '../../../api/tag/[...crud]';
+import { getBlogById, getBlog } from '../../../api/blog/[...crud]';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -40,23 +40,23 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 import { format, formatDistance, formatRelative, subDays } from 'date-fns';
 // do not delete this import, prevents warnings
 import { alpha } from '@material-ui/core/styles';
-import {CopyToClipboard} from 'react-copy-to-clipboard';
-import {getImages} from '../../../api/cloudinary/[...path]'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { getImages } from '../../../api/cloudinary/[...path]';
 
 export const getServerSideProps = async (context) => {
-    const company_id = 2;
+	const company_id = 2;
 	const blog_id = context.params.blog_id as string;
-	let path=`C${company_id}/B${blog_id}`
-	const blog=await getBlogById(blog_id);
-	const selectedTag=blog.tags.length > 0 ? await getTags(blog.tags) :[]
-	const selectedCat=blog.categories.length > 0 ? await getCategories(blog.categories): []
+	let path = `C${company_id}/B${blog_id}`;
+	const blog = await getBlogById(blog_id);
+	const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
+	const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
 	const categories = await getAllCategories(company_id);
 	const tags = await getAllTags(company_id);
-	const selectedImages=await getImages(path);
+	const selectedImages = await getImages(path);
 
 	return {
-		props: { blog,categories, tags, company_id ,selectedTag,selectedCat,selectedImages},
-    };
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages },
+	};
 };
 
 interface FormData {
@@ -80,37 +80,38 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Index({ blog, categories, tags, company_id,selectedTag,selectedCat,selectedImages}) {
+export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages }) {
+	console.log('reached blog edit...');
+
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
-	const uploadLimit=2;
+	const uploadLimit = 2;
 	// if(selectedTag.length > 0){
 	// 	selectedTag.map((tag,id)=>{
 	// 		selectedTag[id]["status"]=true
 	// 	})
 	// }
-	if(tags.length >0 ){
-			tags.forEach((tag,index) => {
-					selectedTag.map((t,id)=>{
-						if(tag.name === t.name)
-								tags[index]["status"]=true
-					})
+	if (tags.length > 0) {
+		tags.forEach((tag, index) => {
+			selectedTag.map((t, id) => {
+				if (tag.name === t.name) tags[index]['status'] = true;
 			});
-
+		});
 	}
 
-	const [uploadedFiles, setUploadedFiles] = useState(selectedImages.length > 0 ? selectedImages :[]);
+	const [uploadedFiles, setUploadedFiles] = useState(selectedImages.length > 0 ? selectedImages : []);
 	// const [uploadedFiles, setUploadedFiles] = useState([]);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
-	console.log("check selected tags----->",selectedTags)
+	console.log('check selected tags----->', selectedTags);
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
+
 	const classes = useStyles();
 
 	let schema = yup.object().shape({
 		title: yup.string().required('Title is required').min(3).max(72),
 		description: yup.string().required('Description is required').max(200),
-		author: yup.string().required("Author is required").max(50),
+		author: yup.string().required('Author is required').max(50),
 		categories: yup.string().nullable().notRequired(),
 		tags: yup.string().nullable().notRequired(),
 		// tags: yup.array().min(1,"select at least 1").required(),
@@ -121,19 +122,17 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 		register,
 		handleSubmit,
 		watch,
-		formState:{isValid,errors},
+		formState: { isValid, errors },
 		reset,
-		setValue
+		setValue,
 	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
 
 	// useEffect(() => {
 	// 	setValue("title", blog.title, {
-    //         shouldValidate: true,
-    //         shouldDirty: true
-    //       })
+	//         shouldValidate: true,
+	//         shouldDirty: true
+	//       })
 	//   }, [register]);
-
-
 
 	// defaultValues: { title: blog.title }
 	const [submitting, setSubmitting] = useState<boolean>(false);
@@ -142,7 +141,6 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 	const [duplicate, setDuplicate] = useState(false);
 	const [isError, setIsError] = useState(false);
 	const [copy, setCopy] = useState(false);
-
 
 	const [selectedDate, setSelectedDate] = React.useState(blog.article_date);
 
@@ -173,10 +171,12 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 	};
 
 	//sunEditor
-	const [contentBody, setContentBody] = useState();
+	const [contentBody, setContentBody] = useState(blog.body);
+	const [contentInitBody, setContentInitBody] = useState(blog.body);
 	const content = blog.body;
 
 	const handleCMSChange = (content) => {
+		console.log('inside handle cms change');
 		setContentBody(content);
 	};
 
@@ -185,27 +185,26 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 	};
 
 	const onSubmit = async (formData, event) => {
-		console.log("test -->",formData)                                             
+		console.log('test -->', formData);
 		if (submitting) {
 			return false;
 		}
-		if(!selectedTags.length || !selectedCategorys.length){
-			setIsError(true)
+		if (!selectedTags.length || !selectedCategorys.length) {
+			setIsError(true);
 			return;
 		}
-		let status=event.nativeEvent.submitter.id === "save" ? "N" :"Y"
+		let status = event.nativeEvent.submitter.id === 'save' ? 'N' : 'Y';
 		const values = {
-			id:blog.id,
-			title: formData.title ,
-			description: formData.description ,
-			author: formData.author ,
+			id: blog.id,
+			title: formData.title,
+			description: formData.description,
+			author: formData.author,
 			articleDate: selectedDate,
 			categories: selectedCategorys,
 			tags: selectedTags,
 			companyId: company_id,
 			body: contentBody || '',
-			status:status
-
+			status: status,
 		};
 		setSubmitting(true);
 		setServerErrors([]);
@@ -234,11 +233,11 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 	};
 
 	//cloudinary delete image
-	const removeImage =async (data)=>{
-		console.log("test image request data---->",data)
+	const removeImage = async (data) => {
+		console.log('test image request data---->', data);
 		const response = await axios.post(`/api/blog/crud/image/delete`, data);
-		setUploadedFiles([...response.data])
-}
+		setUploadedFiles([...response.data]);
+	};
 
 	//cloudinary
 	const onDrop = useCallback(async (acceptedFiles) => {
@@ -270,54 +269,33 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 		onDrop,
 		accept: 'image/*',
 		multiple: false,
-		disabled: uploadedFiles.length === uploadLimit ? true :false
+		disabled: uploadedFiles.length === uploadLimit ? true : false,
 	});
 
-	
-
 	return (
-		<Layout>
-			{/* <Admin> */}
-				<div className={styles.blog_wrap}>
-					<div className={styles.left}>
-						<div>
-							<form onSubmit={handleSubmit(onSubmit)}>
-								<div className={styles.rowGap}>
-									<TextField
-										type='text'
-										label='Title for the article *'
-										margin='dense'
-										name='title'
-										variant='standard'
-										size='small'
-										fullWidth
-										error={errors?.title ? true : false}
-										{...register('title')}
-										defaultValue={blog.title}
-									/>
-									<p style={errorStyle}>{errors.title?.message}</p>
-									{duplicate && <p style={errorStyle}>Title already exist</p>}
-								</div>
-								<div className={styles.rowGap}>
-									<TextField
-										id='outlined-textarea'
-										label='Description *'
-										name='description'
-										multiline
-										minRows={1}
-										maxRows={2}
-										variant='standard'
-										fullWidth
-										{...register('description')}
-										inputProps={{ className: classes.textarea }}
-										defaultValue={blog.description}
-										error={errors?.description ? true : false}
-									/>
-									<p style={errorStyle}>{errors.description?.message}</p>
-
-								</div>
-								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-								<div style={{ marginRight:'10px',marginTop:"10px"}}>
+		<>
+			<div className={styles.blog_wrap}>
+				<div className={styles.left}>
+					<div>
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<div>
+								<TextField
+									type='text'
+									label='Title for the article *'
+									margin='dense'
+									name='title'
+									variant='standard'
+									size='small'
+									fullWidth
+									error={errors?.title ? true : false}
+									{...register('title')}
+									defaultValue={blog.title}
+								/>
+								<div style={errorStyle}>{errors.title?.message}</div>
+								{duplicate && <p style={errorStyle}>Title already exist</p>}
+							</div>
+							<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+								<div style={{ marginRight: '10px', marginTop: '10px' }}>
 									<TextField
 										type='text'
 										label='Author *'
@@ -331,9 +309,8 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 										defaultValue={blog.author}
 									/>
 									<p style={errorStyle}>{errors.author?.message}</p>
-
 								</div>
-								<div style={{ marginLeft:'10px'}}>
+								<div style={{ marginLeft: '10px' }}>
 									<MuiPickersUtilsProvider utils={DateFnsUtils}>
 										<KeyboardDatePicker
 											margin='normal'
@@ -349,146 +326,176 @@ export default function Index({ blog, categories, tags, company_id,selectedTag,s
 											fullWidth
 										/>
 									</MuiPickersUtilsProvider>
-
 								</div>
+							</div>
+							<div>
+								<TextField
+									id='outlined-textarea'
+									label='Description *'
+									name='description'
+									multiline
+									minRows={1}
+									maxRows={2}
+									variant='standard'
+									fullWidth
+									{...register('description')}
+									inputProps={{ className: classes.textarea }}
+									defaultValue={blog.description}
+									error={errors?.description ? true : false}
+								/>
+								<p style={errorStyle}>{errors.description?.message}</p>
+							</div>
+
+							<div>
+								<SunEditor
+									disable={false}
+									disableToolbar={false}
+									lang='en'
+									name='content'
+									setContents={contentInitBody}
+									setOptions={options}
+									width='100%'
+									height='400px'
+									onChange={handleCMSChange}
+									//	onChange={() => handleCMSChange(content)}
+
+									// onImageUploadBefore={handleImageUploadBefore}
+									// imageUploadHandler={imageUploadHandler}
+								/>
+							</div>
+							<div>
+								<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
+									<input {...getInputProps()} />
+									Drop Zone
 								</div>
-								<div className={styles.rowGap}>
-									<SunEditor
-										disable={false}
-										disableToolbar={false}
-										height='100%'
-										lang='en'
-										name='content'
-										setContents={content}
-										setOptions={options}
-										width='100%'
-										onChange={handleCMSChange}
-										// onImageUploadBefore={handleImageUploadBefore}
-										// imageUploadHandler={imageUploadHandler}
-									/>
-								</div>
-								<div className={styles.rowGap}>
-									<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
-										<input {...getInputProps()} />
-										Drop Zone
-									</div>
-										{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
-									<span>
-										{uploadedFiles.length > 0 && (
-											<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
-												Show Gallery
-											</Button>
-										)}
-									</span>
-								</div>
+								{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
+								<span>
+									{uploadedFiles.length > 0 && (
+										<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+											Show Gallery
+										</Button>
+									)}
+								</span>
+							</div>
 
-								<div>
-									<Autocomplete
-										multiple
-										id='tags-standard'
-										freeSolo
-										filterSelectedOptions
-										fullWidth
-										options={categories}
-										onChange={(e, newValue) => setSelectedCategorys(newValue)}
-										getOptionLabel={(option) => option.name}
-										value={selectedCategorys}
-										renderInput={(params) => (
-											<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
-										)}
-									/>
-									{!selectedCategorys.length && isError && <p style={errorStyle}>Select at least 1 category</p>}
+							<div>
+								<Autocomplete
+									multiple
+									id='tags-standard'
+									freeSolo
+									filterSelectedOptions
+									fullWidth
+									options={categories}
+									onChange={(e, newValue) => setSelectedCategorys(newValue)}
+									getOptionLabel={(option) => option.name}
+									value={selectedCategorys}
+									renderInput={(params) => (
+										<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+									)}
+								/>
+								{!selectedCategorys.length && isError && <p style={errorStyle}>Select at least 1 category</p>}
+							</div>
 
-								</div>
+							<div>
+								<Autocomplete
+									multiple
+									id='tags-standard'
+									freeSolo
+									filterSelectedOptions
+									fullWidth
+									options={tags}
+									onChange={(e, newValue) => setSelectedTags(newValue)}
+									getOptionLabel={(option) => option.name}
+									value={selectedTags}
+									renderInput={(params) => (
+										<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+									)}
+								/>
+								{!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 Tag</p>}
+							</div>
 
-								<div>
-									<Autocomplete
-										multiple
-										id='tags-standard'
-										freeSolo
-										filterSelectedOptions
-										fullWidth
-										options={tags.filter(t=> {
-											if(!t.status) 
-												return t
-										})}
-										onChange={(e, newValue) => setSelectedTags(newValue)}
-										getOptionLabel={(option) => option.name}
-										value={selectedTags}
-										renderInput={(params) => (
-											<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
-										)}
-									/>
-									{!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 tag</p>}
+							{/* <div>
+								<Autocomplete
+									multiple
+									id='tags-standard'
+									freeSolo
+									filterSelectedOptions
+									fullWidth
+									options={tags}
+									onChange={(e, newValue) => setSelectedTags(newValue)}
+									getOptionLabel={(option) => option.name}
+									value={selectedTags}
+									renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
+								/>
+								{!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 tag</p>}
+							</div> */}
 
-
-								</div>
-
-								<div className={styles.textCenter}>
+							<div className={styles.textCenter}>
 								{/* disabled={!formState.isValid} */}
-								<Button variant='contained' color='primary' type='submit' id="save" style={{ marginRight:'10px'}}>
-										Save
-									</Button>
-									<Button variant='contained' color='primary' type='submit' id="publish" style={{ marginLeft:'10px'}}>
-										Publish
-									</Button>
-								</div>
-							</form>
-						</div>
-
-						<div>
-							<Dialog
-								// classes={{ paper: classes.dialogPaper }}
-								fullWidth={true}
-								maxWidth='lg'
-								open={openDialog}
-								onClose={handleCloseDialog}
-								aria-labelledby='max-width-dialog-title'>
-								<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
-								<DialogContent dividers>
-									<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
-										{uploadedFiles.map((file) => (
-											<div key={file.public_id} style={{ margin: '10px auto' }}>
-												<div onClick= {()=>removeImage({publicId:file.public_id,folder:file.folder})}><Image src='/static/images/close.svg' alt='close' width='10px' height='10px' /></div>
-												<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
-												
-												<div className={styles.textCenter}>
-												<CopyToClipboard text={file.url}
-											onCopy={() => setCopy(true)}>
-											<Button>Copy</Button>
-											</CopyToClipboard>
-													</div>
-											</div>
-										))}
-									</div>
-								</DialogContent>
-								<DialogActions>
-									<Button onClick={handleCloseDialog} color='primary'>
-										Back
-									</Button>
-								</DialogActions>
-							</Dialog>
-						</div>
+								<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
+									Save
+								</Button>
+								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
+									Publish
+								</Button>
+							</div>
+						</form>
 					</div>
-					<div className={styles.right}>
-						<div style={{ color: 'red' }}>PREVIEW</div>
 
-						<BlogPreview
-							title={watch('title')}
-							description={watch('description')}
-							author={watch('author')}
-							categories={selectedCategorys}
-							body={contentBody}></BlogPreview>
+					<div>
+						<Dialog
+							// classes={{ paper: classes.dialogPaper }}
+							fullWidth={true}
+							maxWidth='lg'
+							open={openDialog}
+							onClose={handleCloseDialog}
+							aria-labelledby='max-width-dialog-title'>
+							<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
+							<DialogContent dividers>
+								<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
+									{uploadedFiles.map((file) => (
+										<div key={file.public_id} style={{ margin: '10px auto' }}>
+											<div onClick={() => removeImage({ publicId: file.public_id, folder: file.folder })}>
+												<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
+											</div>
+											<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
+
+											<div className={styles.textCenter}>
+												<CopyToClipboard text={file.url} onCopy={() => setCopy(true)}>
+													<Button>Copy</Button>
+												</CopyToClipboard>
+											</div>
+										</div>
+									))}
+								</div>
+							</DialogContent>
+							<DialogActions>
+								<Button onClick={handleCloseDialog} color='primary'>
+									Back
+								</Button>
+							</DialogActions>
+						</Dialog>
 					</div>
 				</div>
+				<div className={styles.right}>
+					<div style={{ color: 'red' }}>PREVIEW</div>
 
-				<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
-					<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
-						{message}
-					</MuiAlert>
-				</Snackbar>
-			{/* </Admin> */}
-		</Layout>
+					<BlogPreview
+						title={watch('title', blog.title)}
+						description={watch('description')}
+						author={watch('author')}
+						categories={selectedCategorys}
+						body={contentBody}
+						articleDate={watch('articleDate')}></BlogPreview>
+				</div>
+			</div>
+
+			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
+				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
+					{message}
+				</MuiAlert>
+			</Snackbar>
+		</>
 	);
 }
 
@@ -498,3 +505,5 @@ async function getSignature(folderPath) {
 	const { signature, timestamp } = data;
 	return { signature, timestamp };
 }
+
+// https://cloudinary.com/documentation/admin_api
