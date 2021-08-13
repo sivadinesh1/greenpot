@@ -121,12 +121,21 @@ export const getUser = async ({email}) => {
 };
 
 export const getUserByEmail = async (email) => {
-	console.log("get user method call ---->",email)
 	let query='select * from users where email=$1'
 
 	return new Promise(function (resolve) {
 		db.oneOrNone(query, [email]).then((data) => {
-			console.log("data get success fully--->",data)
+			resolve(data)
+		});
+	});
+};
+
+
+export const getUserById = async (id) => {
+	let query='select * from users where id=$1'
+
+	return new Promise(function (resolve) {
+		db.oneOrNone(query, [id]).then((data) => {
 			resolve(data)
 		});
 	});

@@ -10,20 +10,16 @@ import {getLoginSession} from '../../../lib/auth'
 // const handler = nextConnect();
 
 export default handler
-.use(async (req, res, next) => {
-	console.log('api middle ware---->');
-	const data=await getLoginSession(req);
-	if(data != null){
-		next();
-	}else{
-		res.status(200).json({ message: 'Sorry you are not authenticated',session:false });
-		console.log('api test');
-	}
-		
-
-
+// .use(async (req, res, next) => {
+// 	const data=await getLoginSession(req);
+// 	if(data != null){
+// 		next();
+// 	}else{
+// 		res.status(200).json({ message: 'Sorry you are not authenticated',session:false,status:"INVALID" });
+// 		console.log('api test');
+// 	}
 	
-})
+// })
 // without parameters
 	.get('/api/category/crud/users', async (req, res) => {
 		res.status(200).json({ name: 'John Doe 2' });
@@ -35,7 +31,7 @@ export default handler
 
 		const returnValue = bigIntToString(result);
 
-		res.status(201).json(returnValue);
+		res.status(200).json(returnValue);
 	})
 
 	// default routes

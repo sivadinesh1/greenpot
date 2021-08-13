@@ -37,6 +37,5 @@ export function parseCookies(req) {
 
 export function getTokenCookie(req) {
   const cookies = parseCookies(req);
-  console.log("test cookies--->",cookies)
   return cookies[TOKEN_NAME];
 }

@@ -8,20 +8,11 @@ import {getLoginSession} from '../../../lib/auth'
 
 
 export default handler
-// .use(async (req, res, next) => {
-// 	console.log('api middle ware---->');
-// 	const data=await getLoginSession(req);
-// 	if(data != null){
-// 		next();
-// 	}else{
-// 		res.status(200).json({ message: 'Sorry you are not authenticated',session:false });
-// 		console.log('api test');
-// 	}})
 	// with parameters
 	.get('/api/tag/crud/company/:id', async (req, res) => {
 		const result = await getTag(req.params.id);
 		const returnValue = bigIntToString(result);
-		res.status(201).json(returnValue);
+		res.status(200).json(returnValue);
 	})
 
 	// default routes

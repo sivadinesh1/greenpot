@@ -21,6 +21,7 @@
 		"@material-ui/lab": "^4.0.0-alpha.57",
 		"@material-ui/pickers": "^3.3.10",
 		"@prisma/client": "^2.28.0",
+		"@sendgrid/mail": "^7.4.6",
 		"axios": "^0.21.1",
 		"bcrypt": "^5.0.1",
 		"cloudinary": "^1.26.2",

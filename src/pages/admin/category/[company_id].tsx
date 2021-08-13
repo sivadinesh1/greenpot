@@ -19,7 +19,6 @@ import {getLoginSession} from '../../../lib/auth'
 
 
 export const getServerSideProps = async (context) => {
-	// const currentLogin=await getLoginSession(context.req);
 	const company_id = context.params.company_id as string;
 
 	// both works dont delete
@@ -38,8 +37,7 @@ export const getServerSideProps = async (context) => {
 				cookie: cookie,
 			},}
 		);
-
-		if (resp.status === 200 && !resp.data.session) {
+		if (resp.status === 200 && resp.data.status ==="INVALID") {
 			return {
 			  redirect: { destination: '/', permanent: false },
 			}
@@ -59,7 +57,6 @@ export default function Index({ categorys }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('add');
-
 	const [editRowItem, setEditRowItem] = useState<Category>();
 
 	const { data, mutate } = useSWR(`/api/category/crud/company/${company_id}`, {

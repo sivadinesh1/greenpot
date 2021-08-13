@@ -22,10 +22,6 @@ export default nextConnect()
   .post(async (req, res) => {
     try {
       const {login,user,error} = await authenticate("local", req, res);
-    //   const user={}
-      console.log("test authenticate response---->",user)
-      console.log("test authenticate error---->",error?.message)
-      console.log("test authenticate status---->",login)
       // session is the payload to save in the token, it may contain basic info about the user
       if(login){
           const session = { ...user };
