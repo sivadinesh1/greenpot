@@ -17,10 +17,14 @@ export default function BlogPreview({ title, categories, body, description, auth
 					<div style={{ paddingBottom: '8px', fontSize: '24px' }}>{title}</div>
 				)}
 			</div>
-			<div>
-				<div>{author}</div>
-				<div>{articleDate}</div>
-			</div>
+			{author === '' || author === undefined ? (
+				<div>
+					<span style={{ paddingBottom: '8px', fontSize: '14px', color: 'grey' }}>{author},</span>
+					<span>{articleDate}</span>
+				</div>
+			) : (
+				''
+			)}
 
 			<div>{description}</div>
 

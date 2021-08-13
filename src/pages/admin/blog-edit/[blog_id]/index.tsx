@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
 import axios from 'axios';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dynamic from 'next/dynamic';
@@ -18,7 +18,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 import { Image } from 'cloudinary-react';
-
+import FormControl from '@material-ui/core/FormControl';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 const SunEditor = dynamic(() => import('suneditor-react'), { ssr: false });
 
@@ -37,7 +37,7 @@ import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 
-import { format, formatDistance, formatRelative, subDays } from 'date-fns';
+import { format, parseISO, formatDistance, formatRelative, subDays } from 'date-fns';
 // do not delete this import, prevents warnings
 import { alpha } from '@material-ui/core/styles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -48,6 +48,7 @@ export const getServerSideProps = async (context) => {
 	const blog_id = context.params.blog_id as string;
 	let path = `C${company_id}/B${blog_id}`;
 	const blog = await getBlogById(blog_id);
+
 	const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
 	const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
 	const categories = await getAllCategories(company_id);
@@ -81,15 +82,18 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages }) {
-	console.log('reached blog edit...');
-
+	const preloadedValues = {
+		title: blog.title,
+		description: blog.description,
+		author: blog.author,
+	};
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const uploadLimit = 2;
 	// if(selectedTag.length > 0){
-	// 	selectedTag.map((tag,id)=>{
-	// 		selectedTag[id]["status"]=true
-	// 	})
+	//  selectedTag.map((tag,id)=>{
+	//      selectedTag[id]["status"]=true
+	//  })
 	// }
 	if (tags.length > 0) {
 		tags.forEach((tag, index) => {
@@ -103,7 +107,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	// const [uploadedFiles, setUploadedFiles] = useState([]);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
-	console.log('check selected tags----->', selectedTags);
+
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 
 	const classes = useStyles();
@@ -123,16 +127,32 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		handleSubmit,
 		watch,
 		formState: { isValid, errors },
-		reset,
 		setValue,
-	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
+
+		control,
+		reset,
+	} = useForm<FormData>({ defaultValues: preloadedValues, resolver: yupResolver(schema) });
+	// } = useForm({
+	// 	defaultValues: { title: 'dinu', firstname: 'dinesh' },
+	// });
+
+	//setValue('title', blog.title);
 
 	// useEffect(() => {
-	// 	setValue("title", blog.title, {
-	//         shouldValidate: true,
-	//         shouldDirty: true
-	//       })
-	//   }, [register]);
+	// 	const fields = ['title', 'description', 'author'];
+	// 	setValue('title', blog.title);
+	// 	setValue('description', blog.title);
+	// 	setValue('title', blog.title);
+
+	//     // fields.forEach(field => setValue(field, user[field]));
+	// }, []);
+
+	// useEffect(() => {
+	// 	setValue('title', blog.title, {
+	// 		shouldValidate: true,
+	// 		shouldDirty: true,
+	// 	});
+	// }, [register]);
 
 	// defaultValues: { title: blog.title }
 	const [submitting, setSubmitting] = useState<boolean>(false);
@@ -142,10 +162,12 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	const [isError, setIsError] = useState(false);
 	const [copy, setCopy] = useState(false);
 
-	const [selectedDate, setSelectedDate] = React.useState(blog.article_date);
+	const [selectedDate, setSelectedDate] = React.useState(format(parseISO(blog.article_date), 'yyyy-mm-dd'));
+	const [formattedDate, setFormattedDate] = React.useState(format(parseISO(blog.article_date), 'MMM dd, yyyy'));
 
 	const handleDateChange = (date) => {
 		setSelectedDate(date);
+		setFormattedDate(format(date, 'MMM dd, yyyy'));
 	};
 
 	//error style
@@ -173,10 +195,10 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	//sunEditor
 	const [contentBody, setContentBody] = useState(blog.body);
 	const [contentInitBody, setContentInitBody] = useState(blog.body);
-	const content = blog.body;
 
 	const handleCMSChange = (content) => {
-		console.log('inside handle cms change');
+		console.log('are u called?');
+		//  setValue('title', getValues('title'));
 		setContentBody(content);
 	};
 
@@ -186,6 +208,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 
 	const onSubmit = async (formData, event) => {
 		console.log('test -->', formData);
+		debugger;
 		if (submitting) {
 			return false;
 		}
@@ -199,7 +222,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 			title: formData.title,
 			description: formData.description,
 			author: formData.author,
-			articleDate: selectedDate,
+			articleDate: (parseISO(selectedDate), 'yyyy-mm-dd'),
 			categories: selectedCategorys,
 			tags: selectedTags,
 			companyId: company_id,
@@ -279,59 +302,58 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 					<div>
 						<form onSubmit={handleSubmit(onSubmit)}>
 							<div>
-								<TextField
-									type='text'
-									label='Title for the article *'
-									margin='dense'
+								<Controller
 									name='title'
-									variant='standard'
-									size='small'
-									fullWidth
-									error={errors?.title ? true : false}
-									{...register('title')}
-									defaultValue={blog.title}
+									control={control}
+									rules={{ required: true }}
+									render={({ field }) => (
+										<TextField
+											type='text'
+											label='Title'
+											margin='dense'
+											variant='standard'
+											size='small'
+											fullWidth
+											error={errors?.title ? true : false}
+											{...field}
+										/>
+									)}
 								/>
+
 								<div style={errorStyle}>{errors.title?.message}</div>
 								{duplicate && <p style={errorStyle}>Title already exist</p>}
 							</div>
-							<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-								<div style={{ marginRight: '10px', marginTop: '10px' }}>
-									<TextField
-										type='text'
-										label='Author *'
-										margin='dense'
-										name='author'
-										variant='standard'
-										size='small'
-										fullWidth
-										error={errors?.author ? true : false}
-										{...register('author')}
-										defaultValue={blog.author}
-									/>
-									<p style={errorStyle}>{errors.author?.message}</p>
-								</div>
-								<div style={{ marginLeft: '10px' }}>
-									<MuiPickersUtilsProvider utils={DateFnsUtils}>
-										<KeyboardDatePicker
-											margin='normal'
-											id='date-picker-dialog'
-											label='Article Date'
-											views={['year', 'month', 'date']}
-											value={selectedDate}
-											format='yyyy-MM-dd'
-											onChange={handleDateChange}
-											KeyboardButtonProps={{
-												'aria-label': 'change date',
-											}}
-											fullWidth
-										/>
-									</MuiPickersUtilsProvider>
-								</div>
-							</div>
+
 							<div>
+								<Controller
+									name='description'
+									control={control}
+									rules={{ required: true }}
+									render={({ field }) => (
+										<TextField
+											type='text'
+											label='Subtitle'
+											margin='dense'
+											variant='standard'
+											size='small'
+											multiline
+											minRows={1}
+											maxRows={2}
+											fullWidth
+											inputProps={{ className: classes.textarea }}
+											error={errors?.description ? true : false}
+											{...field}
+										/>
+									)}
+								/>
+
+								<p style={errorStyle}>{errors.description?.message}</p>
+							</div>
+
+							{/* <div>
 								<TextField
 									id='outlined-textarea'
-									label='Description *'
+									label='Subtitle'
 									name='description'
 									multiline
 									minRows={1}
@@ -344,9 +366,10 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									error={errors?.description ? true : false}
 								/>
 								<p style={errorStyle}>{errors.description?.message}</p>
-							</div>
+							</div> */}
 
-							<div>
+							<div style={{ paddingTop: '10px' }}>
+								<label style={{ color: '#eee', fontSize: '12px' }}>Article</label>
 								<SunEditor
 									disable={false}
 									disableToolbar={false}
@@ -357,27 +380,12 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									width='100%'
 									height='400px'
 									onChange={handleCMSChange}
-									//	onChange={() => handleCMSChange(content)}
+									//  onChange={(content) => handleCMSChange(content)}
 
 									// onImageUploadBefore={handleImageUploadBefore}
 									// imageUploadHandler={imageUploadHandler}
 								/>
 							</div>
-							<div>
-								<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
-									<input {...getInputProps()} />
-									Drop Zone
-								</div>
-								{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
-								<span>
-									{uploadedFiles.length > 0 && (
-										<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
-											Show Gallery
-										</Button>
-									)}
-								</span>
-							</div>
-
 							<div>
 								<Autocomplete
 									multiple
@@ -413,22 +421,77 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 								/>
 								{!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 Tag</p>}
 							</div>
+							<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+								<div style={{ marginRight: '10px', marginTop: '10px' }}>
+									<Controller
+										name='author'
+										control={control}
+										rules={{ required: true }}
+										render={({ field }) => (
+											<TextField
+												type='text'
+												label='Author'
+												margin='dense'
+												variant='standard'
+												size='small'
+												fullWidth
+												error={errors?.title ? true : false}
+												{...field}
+											/>
+										)}
+									/>
+
+									<p style={errorStyle}>{errors.author?.message}</p>
+								</div>
+
+								<div style={{ marginLeft: '10px' }}>
+									<MuiPickersUtilsProvider utils={DateFnsUtils}>
+										<KeyboardDatePicker
+											margin='normal'
+											id='date-picker-dialog'
+											label='Article Date'
+											views={['year', 'month', 'date']}
+											value={selectedDate}
+											format='yyyy-MM-dd'
+											onChange={handleDateChange}
+											KeyboardButtonProps={{
+												'aria-label': 'change date',
+											}}
+											fullWidth
+										/>
+									</MuiPickersUtilsProvider>
+								</div>
+							</div>
+							<div>
+								<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
+									<input {...getInputProps()} />
+									Drop Zone
+								</div>
+								{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
+								<span>
+									{uploadedFiles.length > 0 && (
+										<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+											Show Gallery
+										</Button>
+									)}
+								</span>
+							</div>
 
 							{/* <div>
-								<Autocomplete
-									multiple
-									id='tags-standard'
-									freeSolo
-									filterSelectedOptions
-									fullWidth
-									options={tags}
-									onChange={(e, newValue) => setSelectedTags(newValue)}
-									getOptionLabel={(option) => option.name}
-									value={selectedTags}
-									renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
-								/>
-								{!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 tag</p>}
-							</div> */}
+                                <Autocomplete
+                                    multiple
+                                    id='tags-standard'
+                                    freeSolo
+                                    filterSelectedOptions
+                                    fullWidth
+                                    options={tags}
+                                    onChange={(e, newValue) => setSelectedTags(newValue)}
+                                    getOptionLabel={(option) => option.name}
+                                    value={selectedTags}
+                                    renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
+                                />
+                                {!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 tag</p>}
+                            </div> */}
 
 							<div className={styles.textCenter}>
 								{/* disabled={!formState.isValid} */}
@@ -482,11 +545,11 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 
 					<BlogPreview
 						title={watch('title', blog.title)}
-						description={watch('description')}
-						author={watch('author')}
+						description={watch('description', blog.description)}
+						author={watch('author', blog.author)}
 						categories={selectedCategorys}
 						body={contentBody}
-						articleDate={watch('articleDate')}></BlogPreview>
+						articleDate={formattedDate}></BlogPreview>
 				</div>
 			</div>
 
@@ -507,3 +570,5 @@ async function getSignature(folderPath) {
 }
 
 // https://cloudinary.com/documentation/admin_api
+// bs","categories":[117],"tags":[7],"created_by":null,"created_date":"2021-08-12T02:24:19.829Z","modified_by":null,"modified_date":null,"companyid":"1","isdelete":"N","description":"Digital Interviewing – the path to a smooth interview process","author":"Mehul Butt","article_date":"2021-08-12T15:35:00.000Z","status":"D","published":"N","published_datetime":"2021-08-12T15:35:48.590Z"}
+// https://stackoverflow.com/questions/65805358/react-hook-form-validation-with-material-ui
