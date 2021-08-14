@@ -6,8 +6,7 @@ import prisma from '../../../dbconfig/prisma';
 const slugify = require('slugify');
 import { getDB } from '../../../dbconfig/db';
 const { db } = getDB();
-import {getImages,deleteImage} from '../../api/cloudinary/[...path]'
-
+import { getImages, deleteImage } from '../../api/cloudinary/[...path]';
 
 export default handler
 	// without parameters
@@ -53,17 +52,17 @@ export default handler
 		var returnValue = bigIntToString(result);
 
 		res.send(returnValue);
-	}).post('/api/blog/crud/image/delete', async (req, res) => {
-		const data=await deleteImage(req.body.publicId)
-		if(data.result === 'ok')
-		{
-			const result=await getImages(req.body.folder)
+	})
+	.post('/api/blog/crud/image/delete', async (req, res) => {
+		const data = await deleteImage(req.body.publicId);
+		if (data.result === 'ok') {
+			const result = await getImages(req.body.folder);
 			res.status(200).json(result.length > 0 ? result : []);
 		}
 	})
 	.post(async (req, res) => {
 		console.log('test blog request ----->', req.body);
-		debugger;
+
 		const { title, description, author, articleDate, categories, tags, body, companyId } = req.body;
 
 		console.log('test blog  DESC request ----->', description);
@@ -141,7 +140,7 @@ export default handler
 		res.status(201).send({ title: title, message: 'success' });
 	})
 	.put(async (req, res) => {
-		const { id, title, description, author, articleDate, categories, tags, body, companyId,status } = req.body;
+		const { id, title, description, author, articleDate, categories, tags, body, companyId, status } = req.body;
 		const errors = [];
 
 		const isdata = await checkDuplicateTitle(title, companyId);
@@ -212,7 +211,7 @@ export default handler
 				description: description,
 				author: author,
 				article_date: articleDate,
-				status: status === 'N' ?'D' :'P',
+				status: status === 'N' ? 'D' : 'P',
 				published: status,
 				published_datetime: currentDate,
 			},

@@ -1,7 +1,7 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
 import axios from 'axios';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, FieldErrors } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dynamic from 'next/dynamic';
@@ -42,6 +42,7 @@ import { format, parseISO, formatDistance, formatRelative, subDays } from 'date-
 import { alpha } from '@material-ui/core/styles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getImages } from '../../../api/cloudinary/[...path]';
+import { ErrorMessage } from '@hookform/error-message';
 
 export const getServerSideProps = async (context) => {
 	const company_id = 2;
@@ -80,6 +81,27 @@ const useStyles = makeStyles((theme) => ({
 		resize: 'both',
 	},
 }));
+
+type ErrorSummaryProps<T> = {
+	errors: FieldErrors<T>;
+};
+function ErrorSummary<T>({ errors }: ErrorSummaryProps<T>) {
+	if (Object.keys(errors).length === 0) {
+		return null;
+	}
+	return (
+		<div className='error-summary'>
+			{Object.keys(errors).map((fieldName) => (
+				<ErrorMessage errors={errors} name={fieldName as any} as='div' key={fieldName} />
+			))}
+		</div>
+	);
+}
+
+type ErrorMessageContainerProps = {
+	children?: React.ReactNode;
+};
+const ErrorMessageContainer = ({ children }: ErrorMessageContainerProps) => <span className='error'>{children}</span>;
 
 export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages }) {
 	const preloadedValues = {
@@ -128,41 +150,18 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		watch,
 		formState: { isValid, errors },
 		setValue,
-
+		setError,
 		control,
 		reset,
 	} = useForm<FormData>({ defaultValues: preloadedValues, resolver: yupResolver(schema) });
-	// } = useForm({
-	// 	defaultValues: { title: 'dinu', firstname: 'dinesh' },
-	// });
 
-	//setValue('title', blog.title);
-
-	// useEffect(() => {
-	// 	const fields = ['title', 'description', 'author'];
-	// 	setValue('title', blog.title);
-	// 	setValue('description', blog.title);
-	// 	setValue('title', blog.title);
-
-	//     // fields.forEach(field => setValue(field, user[field]));
-	// }, []);
-
-	// useEffect(() => {
-	// 	setValue('title', blog.title, {
-	// 		shouldValidate: true,
-	// 		shouldDirty: true,
-	// 	});
-	// }, [register]);
-
-	// defaultValues: { title: blog.title }
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
-	const [error, setError] = useState(false);
-	const [duplicate, setDuplicate] = useState(false);
+
 	const [isError, setIsError] = useState(false);
 	const [copy, setCopy] = useState(false);
 
-	const [selectedDate, setSelectedDate] = React.useState(format(parseISO(blog.article_date), 'yyyy-mm-dd'));
+	const [selectedDate, setSelectedDate] = React.useState(format(parseISO(blog.article_date), 'yyyy-MM-dd'));
 	const [formattedDate, setFormattedDate] = React.useState(format(parseISO(blog.article_date), 'MMM dd, yyyy'));
 
 	const handleDateChange = (date) => {
@@ -208,7 +207,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 
 	const onSubmit = async (formData, event) => {
 		console.log('test -->', formData);
-		debugger;
+
 		if (submitting) {
 			return false;
 		}
@@ -217,12 +216,16 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 			return;
 		}
 		let status = event.nativeEvent.submitter.id === 'save' ? 'N' : 'Y';
+
+		let temp = parseISO(selectedDate);
+		debugger;
+
 		const values = {
 			id: blog.id,
 			title: formData.title,
 			description: formData.description,
 			author: formData.author,
-			articleDate: (parseISO(selectedDate), 'yyyy-mm-dd'),
+			articleDate: parseISO(selectedDate),
 			categories: selectedCategorys,
 			tags: selectedTags,
 			companyId: company_id,
@@ -231,18 +234,16 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		};
 		setSubmitting(true);
 		setServerErrors([]);
-		setError(false);
 
 		const response = await axios.put(`/api/blog/crud`, values);
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
-			setError(true);
 		}
 		if (response.status === 200) {
-			setDuplicate(true);
-			setTimeout(() => {
-				setDuplicate(false);
-			}, 5000);
+			setError('title', {
+				type: 'server',
+				message: 'Title already exists',
+			});
 		}
 		setSubmitting(false);
 		if (response.status === 201) {
@@ -314,16 +315,13 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 											variant='standard'
 											size='small'
 											fullWidth
-											error={errors?.title ? true : false}
+											error={!!errors.title}
+											helperText={errors?.title?.message}
 											{...field}
 										/>
 									)}
 								/>
-
-								<div style={errorStyle}>{errors.title?.message}</div>
-								{duplicate && <p style={errorStyle}>Title already exist</p>}
 							</div>
-
 							<div>
 								<Controller
 									name='description'
@@ -341,32 +339,13 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 											maxRows={2}
 											fullWidth
 											inputProps={{ className: classes.textarea }}
-											error={errors?.description ? true : false}
+											error={!!errors.description}
+											helperText={errors?.description?.message}
 											{...field}
 										/>
 									)}
 								/>
-
-								<p style={errorStyle}>{errors.description?.message}</p>
 							</div>
-
-							{/* <div>
-								<TextField
-									id='outlined-textarea'
-									label='Subtitle'
-									name='description'
-									multiline
-									minRows={1}
-									maxRows={2}
-									variant='standard'
-									fullWidth
-									{...register('description')}
-									inputProps={{ className: classes.textarea }}
-									defaultValue={blog.description}
-									error={errors?.description ? true : false}
-								/>
-								<p style={errorStyle}>{errors.description?.message}</p>
-							</div> */}
 
 							<div style={{ paddingTop: '10px' }}>
 								<label style={{ color: '#eee', fontSize: '12px' }}>Article</label>
@@ -403,7 +382,6 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 								/>
 								{!selectedCategorys.length && isError && <p style={errorStyle}>Select at least 1 category</p>}
 							</div>
-
 							<div>
 								<Autocomplete
 									multiple
@@ -435,13 +413,12 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 												variant='standard'
 												size='small'
 												fullWidth
-												error={errors?.title ? true : false}
+												error={!!errors.author}
+												helperText={errors?.author?.message}
 												{...field}
 											/>
 										)}
 									/>
-
-									<p style={errorStyle}>{errors.author?.message}</p>
 								</div>
 
 								<div style={{ marginLeft: '10px' }}>
@@ -476,7 +453,6 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									)}
 								</span>
 							</div>
-
 							{/* <div>
                                 <Autocomplete
                                     multiple
@@ -492,6 +468,14 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
                                 />
                                 {!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 tag</p>}
                             </div> */}
+							{errors ? (
+								<div>
+									<div className='error-header'>Please fix below errors</div>
+									<ErrorSummary errors={errors} />
+								</div>
+							) : (
+								''
+							)}
 
 							<div className={styles.textCenter}>
 								{/* disabled={!formState.isValid} */}

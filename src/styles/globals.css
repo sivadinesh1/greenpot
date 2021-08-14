@@ -19,3 +19,22 @@ a {
 .global-main {
 	height: calc(100% - 53px);
 }
+
+.error {
+	color: red;
+	font-size: 0.7rem;
+	margin: 5px;
+}
+.error-summary {
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid red;
+	color: red;
+	font-size: 0.7rem;
+}
+
+.error-header {
+	font-size: 14px;
+	color: rgb(164, 164, 164);
+	padding: 1rem 0 0 5px;
+}
