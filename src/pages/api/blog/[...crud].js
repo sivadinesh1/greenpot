@@ -7,6 +7,7 @@ const slugify = require('slugify');
 import { getDB } from '../../../dbconfig/db';
 const { db } = getDB();
 import { getImages, deleteImage } from '../../api/cloudinary/[...path]';
+const { nanoid } = require('nanoid');
 
 export default handler
 	// without parameters
@@ -25,6 +26,14 @@ export default handler
 	// with parameters
 	.get('/api/blog/crud/:id', async (req, res) => {
 		const result = await getBlogById(req.params.id);
+
+		const returnValue = bigIntToString(result);
+		res.status(200).json(returnValue);
+	})
+
+	// with parameters
+	.get('/api/blog/crud/new/:companyid', async (req, res) => {
+		const result = await createBlogEntry(req.params.companyid);
 
 		const returnValue = bigIntToString(result);
 		res.status(200).json(returnValue);
@@ -272,4 +281,28 @@ const checkDuplicateTitle = async (title, companyid) => {
 	});
 
 	return result;
+};
+
+export const createBlogEntry = async (company_id) => {
+	const result = await prisma.blog.create({
+		data: {
+			title: `Untitled - ${nanoid(11)}`,
+			slug: '',
+			body: '',
+			excerpt: '',
+			mtitle: '',
+			mdesc: '',
+			author: '',
+			description: '',
+			companyid: Number(company_id),
+			isdelete: 'N',
+			article_date: new Date(),
+			status: 'D',
+			published: 'N',
+		},
+	});
+
+	console.log('dummy blog created ' + JSON.stringify(bigIntToString(result)));
+
+	return bigIntToString(result);
 };

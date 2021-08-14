@@ -41,7 +41,7 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 
 	const editRow = (id: string, event: any) => {
 		event.stopPropagation();
-		Router.push(`/admin/blog-edit/${id}`);
+		Router.push(`/admin/blog-edit/${company_id}/${id}`);
 	};
 
 	const viewRow = (id: string, event: any) => {

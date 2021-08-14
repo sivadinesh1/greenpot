@@ -22,16 +22,17 @@ import { Image } from 'cloudinary-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 const SunEditor = dynamic(() => import('suneditor-react'), { ssr: false });
 
-import { options } from '../../../../components/utils/sunEditor';
+import { options } from '../../../../../components/utils/sunEditor';
 import { useDropzone } from 'react-dropzone';
 
-import styles from '../../../../styles/Blog.module.scss';
-import stylesd from '../../../../styles/dropZone.module.css';
+import styles from '../../../../../styles/Blog.module.scss';
+import stylesd from '../../../../../styles/dropZone.module.css';
 
-import BlogPreview from '../../../../components/crud/Blog/blog-preview';
-import { getAllCategories, getCategories } from '../../../api/category/[...crud]';
-import { getAllTags, getTags } from '../../../api/tag/[...crud]';
-import { getBlogById, getBlog } from '../../../api/blog/[...crud]';
+import BlogPreview from '../../../../../components/crud/Blog/blog-preview';
+
+import { getAllCategories, getCategories } from '../../../../api/category/[...crud]';
+import { getAllTags, getTags } from '../../../../api/tag/[...crud]';
+import { getBlogById, getBlog, createBlogEntry } from '../../../../api/blog/[...crud]';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -40,14 +41,15 @@ import { format, parseISO, formatDistance, formatRelative, subDays } from 'date-
 // do not delete this import, prevents warnings
 import { alpha } from '@material-ui/core/styles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { getImages } from '../../../api/cloudinary/[...path]';
+import { getImages } from '../../../../api/cloudinary/[...path]';
 import { ErrorMessage } from '@hookform/error-message';
 
-import { isEmpty } from '../../../../components/utils/util';
+import { isEmpty } from '../../../../../components/utils/util';
 
 export const getServerSideProps = async (context) => {
-	const company_id = 2;
+	const company_id = context.params.company_id as string;
 	const blog_id = context.params.blog_id as string;
+
 	let path = `C${company_id}/B${blog_id}`;
 	const blog = await getBlogById(blog_id);
 
@@ -106,7 +108,7 @@ const ErrorMessageContainer = ({ children }: ErrorMessageContainerProps) => <spa
 
 export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages }) {
 	const preloadedValues = {
-		title: blog.title,
+		title: blog.title.startsWith('Untitled') ? '' : blog.title,
 		description: blog.description,
 		author: blog.author,
 	};
@@ -498,7 +500,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 					<div style={{ color: 'red' }}>PREVIEW</div>
 
 					<BlogPreview
-						title={watch('title', blog.title)}
+						title={watch('title', blog.title.startsWith('Untitled') ? '' : blog.title)}
 						description={watch('description', blog.description)}
 						author={watch('author', blog.author)}
 						categories={selectedCategorys}
