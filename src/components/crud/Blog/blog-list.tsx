@@ -9,8 +9,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 // import { useRouter } from 'next/router';
 import { Button } from '@material-ui/core';
+import Router from 'next/router';
 
-export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode, company_id}) {
+export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode, company_id }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
 	//	const router = useRouter();
@@ -38,6 +39,18 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 		setOpenDialog(true);
 	};
 
+	const editRow = (id: string, event: any) => {
+		event.stopPropagation();
+		Router.push(`/admin/blog-edit/${company_id}/${id}`);
+	};
+
+	const viewRow = (id: string, event: any) => {
+		event.stopPropagation();
+		Router.push(`/admin/blogt/${id}`);
+	};
+
+	// `/admin/blog-edit/${item.id}
+
 	const handleAdd = () => {
 		onMode('add');
 	};
@@ -48,13 +61,13 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 				<div>
 					Blogs (<span>{blogs.length}</span>)
 				</div>
+				<div onClick={(event) => editRow('25', event)}>EDIT</div>
 			</div>
 			{blogs &&
 				blogs?.map((item, index) => {
 					return (
 						<div key={index}>
 							<div className={styles.blogRow}>
-								{/* onClick={() => handleEdit(item)} */}
 								<div className={styles.blogList}>
 									<div>
 										<div className={styles.blogName}>
@@ -62,22 +75,11 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 										</div>
 									</div>
 									<div className={styles.blogDel}>
-										<div className={styles.btnGroup}>
-											<Link href={`/admin/blog-edit/${item.id}`}>
-												<a>
-													<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
-												</a>
-											</Link>
+										<div className={styles.btnGroup} onClick={(event) => editRow(item.id, event)}>
+											<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
 										</div>
-										<div
-											className={styles.btnGroup}
-											// onClick={() => router.push(`/admin/blog/${item.id}`)}
-										>
-											<Link href={`/admin/blog/${item.id}`}>
-												<a>
-													<Image src='/static/images/preview.svg' alt='preview' width='15px' height='15px' />
-												</a>
-											</Link>
+										<div className={styles.btnGroup} onClick={(event) => viewRow(item.id, event)}>
+											<Image src='/static/images/preview.svg' alt='preview' width='15px' height='15px' />
 										</div>
 										<div className={styles.btnGroup} onClick={(event) => deleteRow(item.id, event)}>
 											<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />

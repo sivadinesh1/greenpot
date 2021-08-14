@@ -33,7 +33,7 @@ const Navbar = ({ links, companyid }) => {
 		<>
 			<div className={styles.toolbar__wrapper}>
 				<div>
-					<Link href={`/admin`}>DRAFTY</Link>
+					<Link href={`/dashboard`}>DRAFTY</Link>
 				</div>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					{links ? (

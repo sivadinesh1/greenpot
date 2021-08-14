@@ -1,16 +1,40 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap');
+
 html,
 body {
-  padding: 0;
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+	padding: 0;
+	margin: 0;
 }
 
 a {
-  color: inherit;
-  text-decoration: none;
+	color: inherit;
+	text-decoration: none;
 }
 
 * {
-  box-sizing: border-box;
+	box-sizing: border-box;
+	font-family: 'Open Sans', sans-serif;
+}
+
+.global-main {
+	height: calc(100% - 53px);
+}
+
+.error {
+	color: red;
+	font-size: 0.7rem;
+	margin: 5px;
+}
+.error-summary {
+	margin: 5px;
+	padding: 5px;
+
+	color: red;
+	font-size: 0.7rem;
+}
+
+.error-header {
+	font-size: 14px;
+	color: rgb(99, 99, 99);
+	padding: 1rem 0 0 10px;
 }

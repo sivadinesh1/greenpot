@@ -6,8 +6,8 @@ import prisma from '../../../dbconfig/prisma';
 const slugify = require('slugify');
 import { getDB } from '../../../dbconfig/db';
 const { db } = getDB();
-import {getImages,deleteImage} from '../../api/cloudinary/[...path]'
-
+import { getImages, deleteImage } from '../../api/cloudinary/[...path]';
+const { nanoid } = require('nanoid');
 
 export default handler
 	// without parameters
@@ -26,6 +26,14 @@ export default handler
 	// with parameters
 	.get('/api/blog/crud/:id', async (req, res) => {
 		const result = await getBlogById(req.params.id);
+
+		const returnValue = bigIntToString(result);
+		res.status(200).json(returnValue);
+	})
+
+	// with parameters
+	.get('/api/blog/crud/new/:companyid', async (req, res) => {
+		const result = await createBlogEntry(req.params.companyid);
 
 		const returnValue = bigIntToString(result);
 		res.status(200).json(returnValue);
@@ -53,17 +61,17 @@ export default handler
 		var returnValue = bigIntToString(result);
 
 		res.send(returnValue);
-	}).post('/api/blog/crud/image/delete', async (req, res) => {
-		const data=await deleteImage(req.body.publicId)
-		if(data.result === 'ok')
-		{
-			const result=await getImages(req.body.folder)
+	})
+	.post('/api/blog/crud/image/delete', async (req, res) => {
+		const data = await deleteImage(req.body.publicId);
+		if (data.result === 'ok') {
+			const result = await getImages(req.body.folder);
 			res.status(200).json(result.length > 0 ? result : []);
 		}
 	})
 	.post(async (req, res) => {
 		console.log('test blog request ----->', req.body);
-		debugger;
+
 		const { title, description, author, articleDate, categories, tags, body, companyId } = req.body;
 
 		console.log('test blog  DESC request ----->', description);
@@ -141,12 +149,12 @@ export default handler
 		res.status(201).send({ title: title, message: 'success' });
 	})
 	.put(async (req, res) => {
-		const { id, title, description, author, articleDate, categories, tags, body, companyId,status } = req.body;
+		const { id, title, description, author, articleDate, categories, tags, body, companyId, status } = req.body;
 		const errors = [];
 
 		const isdata = await checkDuplicateTitle(title, companyId);
 
-		if (isdata > 0) {
+		if (isdata > 1) {
 			errors.push('Duplicate entry');
 			if (errors.length > 0) {
 				res.status(200).json({ errors });
@@ -212,7 +220,7 @@ export default handler
 				description: description,
 				author: author,
 				article_date: articleDate,
-				status: status === 'N' ?'D' :'P',
+				status: status === 'N' ? 'D' : 'P',
 				published: status,
 				published_datetime: currentDate,
 			},
@@ -273,4 +281,28 @@ const checkDuplicateTitle = async (title, companyid) => {
 	});
 
 	return result;
+};
+
+export const createBlogEntry = async (company_id) => {
+	const result = await prisma.blog.create({
+		data: {
+			title: `Untitled - ${nanoid(11)}`,
+			slug: '',
+			body: '',
+			excerpt: '',
+			mtitle: '',
+			mdesc: '',
+			author: '',
+			description: '',
+			companyid: Number(company_id),
+			isdelete: 'N',
+			article_date: new Date(),
+			status: 'D',
+			published: 'N',
+		},
+	});
+
+	console.log('dummy blog created ' + JSON.stringify(bigIntToString(result)));
+
+	return bigIntToString(result);
 };
