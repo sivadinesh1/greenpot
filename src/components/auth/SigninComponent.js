@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { authenticate, isAuth } from '../../components/auth/auth';
+import { useState } from 'react';
 import Router from 'next/router';
 import styles from '../../styles/Home.module.scss';
 import Link from 'next/link';
@@ -45,8 +44,6 @@ const SigninComponent = () => {
 	const [values, setValues] = useState({
 		email: '',
 		password: '',
-		// email: 'din@gmail.com',
-		// password: 'password',
 		error: '',
 		loading: false,
 		message: '',
@@ -55,24 +52,21 @@ const SigninComponent = () => {
 
 	const { error, loading, message, showForm } = values;
 
-	const onSubmit = (data) => {
+	const onSubmit =async (data) => {
+		debugger
 		setValues({ ...values, loading: true, error: false });
-		axios.post(`/api/auth/signin`, data).then(function (response) {
-			if (response.data.error) {
-				setValues({ ...values, error: data.error, loading: false });
-			} else if (response.data.errorCode === 1) {
+		const body = {
+			username: data.email,
+			password: data.password,
+		  };
+	
+			axios.post(`/api/auth/login`, body).then( (response)=> {
+				debugger
+			if (!response.data.done) {
 				setValues({ ...values, loading: false });
-				showTest(true, response.data.message);
+				showTest(true, response.data.error);
 			} else {
 				Router.push(`/dashboard`);
-
-				// authenticate(response.data, () => {
-				// 	if (isAuth() && isAuth().role === '1') {
-				// 		Router.push(`/admin`);
-				// 	} else {
-				// 		Router.push(`/user`);
-				// 	}
-				// });
 			}
 		});
 	};
@@ -114,8 +108,6 @@ const SigninComponent = () => {
 						margin='dense'
 						name='email'
 						autoComplete='off'
-						// value={email}
-						// onChange={handleChange('email')}
 						{...register('email')}
 					/>
 					<p style={errorStyle}>{errors.email?.message}</p>
@@ -129,8 +121,6 @@ const SigninComponent = () => {
 							fullWidth
 							autoComplete='off'
 							margin='dense'
-							// value={password}
-							// onChange={handleChange('password')}
 							{...register('password')}
 							endAdornment={
 								<InputAdornment position='end'>
@@ -146,7 +136,7 @@ const SigninComponent = () => {
 					<div className={styles.fgt_pass}>
 						<div className={styles.login_rememberme}>&nbsp;</div>
 						<div className={styles.login_forgotpass}>
-							<Link href='/signup'>
+							<Link href='/forgot-password'>
 								<a>Forgot Password</a>
 							</Link>
 						</div>

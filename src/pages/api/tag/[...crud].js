@@ -4,6 +4,8 @@ import prisma from '../../../dbconfig/prisma';
 const slugify = require('slugify');
 import { getDB } from '../../../dbconfig/db';
 const { db } = getDB();
+import {getLoginSession} from '../../../lib/auth'
+
 
 export default handler
 	// with parameters
@@ -15,6 +17,7 @@ export default handler
 
 	// default routes
 	.get(async (req, res) => {
+		// console.log("test req-->",req)
 		const result = await prisma.tags.findMany({});
 
 		const returnValue = bigIntToString(result);

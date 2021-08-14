@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { signup, isAuth } from '../auth';
+import { useState} from 'react';
 import Router from 'next/router';
 import { Button } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -13,49 +12,88 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import styles from '../../styles/Home.module.scss';
 import Link from 'next/link';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 
 const SignupComponent = () => {
-	const [showPassword, setShowPassword] = useState(false);
-	const [values, setValues] = useState({
-		name: '',
-		email: '',
-		password: '',
-		error: '',
-		loading: false,
-		message: '',
-		showForm: true,
+	const [isError, setIsError] = useState(false);
+	const [ErMessage, setErMessage] = useState('');
+	let schema = yup.object().shape({
+		name:yup.string().required(),
+		email: yup.string().email().required(),
+		password: yup.string().required().min(8).max(16),
 	});
 
-	const { name, email, password } = values;
+	//error style
+	let errorStyle = {
+		color: 'red',
+		content: '⚠ ',
+	};
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({
+		resolver: yupResolver(schema),
+	});
 
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		//console.table({ name, email, password, error, loading, message, showForm });
 
-		setValues({ ...values, loading: true, error: false });
-		const user = { name, email, password };
+	const [showPassword, setShowPassword] = useState(false);
 
-		signup(user).then((res) => {
-			if (res.data.error) {
-				setValues({ ...values, error: res.data.error, loading: false });
-			} else {
-				setValues({
-					...values,
-					name: '',
-					email: '',
-					password: '',
-					error: '',
-					loading: false,
-					message: res.data.message,
-					showForm: false,
-				});
-			}
-		});
+	const onSubmit =async (data) => {
+		const body={
+			name: data.name,
+			password: data.password,
+			email: data.email,
+			origin:"lapa"
+		  }
+
+		axios.post(`/api/auth/signup`, body).then( (response)=> {
+			debugger
+		if (!response.data.status) {
+			showTest(true, response.data.error);
+		} else {
+			Router.push(`/`);
+		}
+	});
+	}
+
+	const showTest = (flag, data) => {
+		setErMessage(data);
+		setIsError(flag);
+		setTimeout(() => {
+			setIsError(false);
+		}, 3000);
 	};
 
-	const handleChange = (name) => (e) => {
-		setValues({ ...values, error: false, [name]: e.target.value });
-	};
+	// const handleSubmit = (e) => {
+	// 	e.preventDefault();
+
+	// 	console.log("test signup values--->",values)
+	// 	//console.table({ name, email, password, error, loading, message, showForm });
+
+	// 	setValues({ ...values, loading: true, error: false });
+	// 	const user = { name, email, password };
+
+	// 	signup(user).then((res) => {
+	// 		if (res.data.error) {
+	// 			setValues({ ...values, error: res.data.error, loading: false });
+	// 		} else {
+	// 			setValues({
+	// 				...values,
+	// 				name: '',
+	// 				email: '',
+	// 				password: '',
+	// 				error: '',
+	// 				loading: false,
+	// 				message: res.data.message,
+	// 				showForm: false,
+	// 			});
+	// 		}
+	// 	});
+	// };
 
 	const handleClickShowPassword = () => {
 		setShowPassword(!showPassword);
@@ -65,57 +103,59 @@ const SignupComponent = () => {
 		event.preventDefault();
 	};
 
-	useEffect(() => {
-		isAuth() && Router.push('/');
-	}, []);
 
 	const signupForm = () => {
 		return (
 			<>
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit(onSubmit)}>
 					<div className={styles.login_flex_container}>
 						<div className={styles.login_caps}>
-							{/* logo to be here */}
-							{/* <img
-								src={hallacademylogo}
-								alt='hallmark academy logo'
-								className='imgstyle'
-							/> */}
 							<div className='academy__name'>Drafty Content Solutions</div>
 						</div>
 
-						<TextField type='text' label='Enter Name' fullWidth margin='dense' name='name' value={name} onChange={handleChange('name')} />
+						<TextField
+						type='text'
+						label='Enter User Name *'
+						fullWidth
+						margin='dense'
+						name='name'
+						autoComplete='off'
+						{...register('name')}
+					/>
+					<p style={errorStyle}>{errors.name?.message}</p>
 
-						<TextField type='text' label='Enter Email' fullWidth margin='dense' name='email' value={email} onChange={handleChange('email')} />
 
-						<FormControl fullWidth>
-							<InputLabel htmlFor='standard-adornment-password'>Password</InputLabel>
-							<Input
-								id='standard-adornment-password'
-								type={showPassword ? 'text' : 'password'}
-								name='password'
-								fullWidth
-								margin='dense'
-								value={password}
-								onChange={handleChange('password')}
-								endAdornment={
-									<InputAdornment position='end'>
-										<IconButton aria-label='toggle password visibility' onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword}>
-											{showPassword ? <Visibility /> : <VisibilityOff />}
-										</IconButton>
-									</InputAdornment>
-								}
-							/>
-						</FormControl>
-
-						<div className={styles.fgt_pass}>
-							<div className={styles.login_rememberme}>&nbsp;</div>
-							<div className={styles.login_forgotpass}>
-								<Link href='/signup'>
-									<a>Forgot Password</a>
-								</Link>
-							</div>
-						</div>
+						<TextField
+						type='email'
+						label='Enter Email *'
+						fullWidth
+						margin='dense'
+						name='email'
+						autoComplete='off'
+						{...register('email')}
+					/>
+					<p style={errorStyle}>{errors.email?.message}</p>
+					{isError && <p style={errorStyle}>{ErMessage}</p>}
+					<FormControl fullWidth>
+						<InputLabel htmlFor='standard-adornment-password'>Password *</InputLabel>
+						<Input
+							id='standard-adornment-password'
+							type={showPassword ? 'text' : 'password'}
+							name='password'
+							fullWidth
+							autoComplete='off'
+							margin='dense'
+							{...register('password')}
+							endAdornment={
+								<InputAdornment position='end'>
+									<IconButton aria-label='toggle password visibility' onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword}>
+										{showPassword ? <Visibility /> : <VisibilityOff />}
+									</IconButton>
+								</InputAdornment>
+							}
+						/>
+						<p style={errorStyle}>{errors.password?.message}</p>
+					</FormControl>
 
 						<div className={styles.styl_center}>
 							<Button type='submit' variant='contained' color='primary'>

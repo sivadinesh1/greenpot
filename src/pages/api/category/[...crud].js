@@ -5,24 +5,22 @@ import jwt from 'jsonwebtoken';
 import { getDB } from '../../../dbconfig/db';
 const { db } = getDB();
 const slugify = require('slugify');
+import {getLoginSession} from '../../../lib/auth'
+// import nextConnect from "next-connect";
+// const handler = nextConnect();
 
 export default handler
-
-	.use(async (req, res, next) => {
-		console.log('..in category api handler.');
-		console.log('cookie ' + req.cookies.authToken);
-		const token = req.cookies.authToken;
-
-		jwt.verify(req.cookies.authToken, process.env.JWT_SECRET, async function (err, decoded) {
-			if (!err && decoded) {
-				next();
-			} else {
-				res.status(401).json({ message: 'Sorry you are not authenticated' });
-			}
-		});
-	})
-
-	// without parameters
+// .use(async (req, res, next) => {
+// 	const data=await getLoginSession(req);
+// 	if(data != null){
+// 		next();
+// 	}else{
+// 		res.status(200).json({ message: 'Sorry you are not authenticated',session:false,status:"INVALID" });
+// 		console.log('api test');
+// 	}
+	
+// })
+// without parameters
 	.get('/api/category/crud/users', async (req, res) => {
 		res.status(200).json({ name: 'John Doe 2' });
 	})
