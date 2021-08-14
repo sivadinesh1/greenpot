@@ -19,6 +19,9 @@ import Link from 'next/link';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
+import { getBlogById, getBlog, createBlogEntry } from '../../api/blog/[...crud]';
+import Router from 'next/router';
+
 export const getServerSideProps = async (context) => {
 	const company_id = context.params.company_id as string;
 	const blogs = await getBlogsByCompany(company_id);
@@ -56,14 +59,25 @@ export default function Index({ blogs, company_id }: BlogProps) {
 		setMode(mode);
 	};
 
+	const handleAddBlog = async (event) => {
+		event.stopPropagation();
+
+		const blog = await axios.get(`/api/blog/crud/new/${company_id}`);
+
+		debugger;
+
+		Router.push(`/admin/blog-edit/${company_id}/${blog.data.id}`);
+	};
+
 	return (
 		<>
 			<div className={styles.cat_wrap}>
 				<div className={styles.left}>
-					<div className={styles.blogAdd}>
-						<Link href={`/admin/blog-add/${company_id}`}>
+					<div className={styles.blogAdd} onClick={handleAddBlog}>
+						+ Add Blog
+						{/* <Link href={`/admin/blog-edit/${company_id}/0`}>
 							<a>+ Add Blog</a>
-						</Link>
+						</Link> */}
 					</div>
 				</div>
 

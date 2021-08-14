@@ -34,6 +34,7 @@ import { getAllCategories } from '../../../api/category/[...crud]';
 import { getAllTags } from '../../../api/tag/[...crud]';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import 'date-fns';
+
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardTimePicker, KeyboardDatePicker } from '@material-ui/pickers';
 
@@ -102,9 +103,11 @@ export default function Index({ categories, tags, company_id }) {
 	const [error, setError] = useState(false);
 	const [duplicate, setDuplicate] = useState(false);
 	const [selectedDate, setSelectedDate] = React.useState(new Date());
+	const [formattedDate, setFormattedDate] = React.useState(format(new Date(), 'MMM dd, yyyy'));
 
 	const handleDateChange = (date) => {
 		setSelectedDate(date);
+		setFormattedDate(format(date, 'MMM dd, yyyy'));
 	};
 
 	//error style
@@ -184,148 +187,149 @@ export default function Index({ categories, tags, company_id }) {
 	};
 
 	return (
-		<Layout>
-			{/* <Admin> */}
-				<div className={styles.blog_wrap}>
-					<div className={styles.left}>
-						<div>
-							<form onSubmit={handleSubmit(onSubmit)}>
-								<div className={styles.rowGap}>
+		<>
+			<div className={styles.blog_wrap}>
+				<div className={styles.left}>
+					<div>
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<div>
+								<TextField
+									type='text'
+									label='Title for the article'
+									margin='dense'
+									name='title'
+									variant='standard'
+									size='small'
+									fullWidth
+									error={errors?.title ? true : false}
+									{...register('title')}
+								/>
+								<div style={errorStyle}>{errors.title?.message}</div>
+								{duplicate && <p style={errorStyle}>Title already exist</p>}
+							</div>
+
+							<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+								<div style={{ marginRight: '10px', marginTop: '10px' }}>
 									<TextField
 										type='text'
-										label='Title for the article'
+										label='Author'
 										margin='dense'
-										name='title'
+										name='author'
 										variant='standard'
 										size='small'
 										fullWidth
-										error={errors?.title ? true : false}
-										{...register('title')}
-									/>
-									<p style={errorStyle}>{errors.title?.message}</p>
-									{duplicate && <p style={errorStyle}>Title already exist</p>}
-								</div>
-								<div className={styles.rowGap}>
-									<TextField
-										id='outlined-textarea'
-										label='Description'
-										multiline
-										minRows={1}
-										maxRows={2}
-										variant='standard'
-										fullWidth
-										{...register('description')}
-										inputProps={{ className: classes.textarea }}
+										error={errors?.author ? true : false}
+										{...register('author')}
 									/>
 								</div>
-								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-									<div style={{ marginRight: '10px', marginTop: '10px' }}>
-										<TextField
-											type='text'
-											label='Author'
-											margin='dense'
-											name='author'
-											variant='standard'
-											size='small'
+								<div style={{ marginLeft: '10px' }}>
+									<MuiPickersUtilsProvider utils={DateFnsUtils}>
+										<KeyboardDatePicker
+											margin='normal'
+											id='date-picker-dialog'
+											label='Article Date'
+											views={['year', 'month', 'date']}
+											value={selectedDate}
+											format='dd-MMM-yyyy'
+											autoOk={true}
+											onChange={handleDateChange}
+											KeyboardButtonProps={{
+												'aria-label': 'change date',
+											}}
 											fullWidth
-											error={errors?.author ? true : false}
-											{...register('author')}
 										/>
-									</div>
-									<div style={{ marginLeft: '10px' }}>
-										<MuiPickersUtilsProvider utils={DateFnsUtils}>
-											<KeyboardDatePicker
-												margin='normal'
-												id='date-picker-dialog'
-												label='Article Date'
-												views={['year', 'month', 'date']}
-												value={selectedDate}
-												format='yyyy-MM-dd'
-												onChange={handleDateChange}
-												KeyboardButtonProps={{
-													'aria-label': 'change date',
-												}}
-												fullWidth
-											/>
-										</MuiPickersUtilsProvider>
-									</div>
+									</MuiPickersUtilsProvider>
 								</div>
-								<div className={styles.rowGap}>
-									<SunEditor
-										disable={false}
-										disableToolbar={false}
-										height='100%'
-										lang='en'
-										name='content'
-										setContents={content}
-										setOptions={options}
-										width='100%'
-										onChange={handleCMSChange}
-										// onImageUploadBefore={handleImageUploadBefore}
-										// imageUploadHandler={imageUploadHandler}
-									/>
-								</div>
-								<div>
-									<Autocomplete
-										multiple
-										id='tags-standard'
-										freeSolo
-										filterSelectedOptions
-										fullWidth
-										options={categories}
-										onChange={(e, newValue) => setSelectedCategorys(newValue)}
-										getOptionLabel={(option) => option.name}
-										value={selectedCategorys}
-										renderInput={(params) => (
-											<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
-										)}
-									/>
-								</div>
+							</div>
 
-								<div>
-									<Autocomplete
-										multiple
-										id='tags-standard'
-										freeSolo
-										filterSelectedOptions
-										fullWidth
-										options={tags}
-										onChange={(e, newValue) => setSelectedTags(newValue)}
-										getOptionLabel={(option) => option.name}
-										value={selectedTags}
-										renderInput={(params) => (
-											<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
-										)}
-									/>
-								</div>
+							<div>
+								<TextField
+									id='outlined-textarea'
+									label='Description'
+									multiline
+									minRows={1}
+									maxRows={2}
+									variant='standard'
+									fullWidth
+									{...register('description')}
+									inputProps={{ className: classes.textarea }}
+								/>
+							</div>
 
-								<div className={styles.textCenter}>
-									<Button variant='contained' color='primary' type='submit'>
-										Save as Draft
-									</Button>
-								</div>
-							</form>
-						</div>
-					</div>
-					<div className={styles.right}>
-						<div style={{ color: 'red' }}>PREVIEW</div>
+							<div>
+								<SunEditor
+									disable={false}
+									disableToolbar={false}
+									height='400px'
+									lang='en'
+									name='content'
+									setContents={content}
+									setOptions={options}
+									width='100%'
+									onChange={handleCMSChange}
+									// onImageUploadBefore={handleImageUploadBefore}
+									// imageUploadHandler={imageUploadHandler}
+								/>
+							</div>
+							<div>
+								<Autocomplete
+									multiple
+									id='tags-standard'
+									freeSolo
+									filterSelectedOptions
+									fullWidth
+									options={categories}
+									onChange={(e, newValue) => setSelectedCategorys(newValue)}
+									getOptionLabel={(option) => option.name}
+									value={selectedCategorys}
+									renderInput={(params) => (
+										<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+									)}
+								/>
+							</div>
 
-						<BlogPreview
-							title={watch('title')}
-							description={watch('description')}
-							author={watch('author')}
-							categories={selectedCategorys}
-							body={contentBody}></BlogPreview>
+							<div>
+								<Autocomplete
+									multiple
+									id='tags-standard'
+									freeSolo
+									filterSelectedOptions
+									fullWidth
+									options={tags}
+									onChange={(e, newValue) => setSelectedTags(newValue)}
+									getOptionLabel={(option) => option.name}
+									value={selectedTags}
+									renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
+								/>
+							</div>
+
+							<div className={styles.textCenter}>
+								<Button variant='contained' color='primary' type='submit'>
+									Save as Draft
+								</Button>
+							</div>
+						</form>
 					</div>
 				</div>
+				<div className={styles.right}>
+					<div style={{ color: 'red' }}>PREVIEW</div>
 
-				<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
-					<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
-						{message}
-					</MuiAlert>
-				</Snackbar>
-			{/* </Admin> */}
-		</Layout>
+					<BlogPreview
+						title={watch('title')}
+						description={watch('description')}
+						author={watch('author')}
+						categories={selectedCategorys}
+						body={contentBody}
+						articleDate={formattedDate}></BlogPreview>
+				</div>
+			</div>
+
+			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
+				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
+					{message}
+				</MuiAlert>
+			</Snackbar>
+		</>
 	);
 }
 
