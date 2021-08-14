@@ -10,7 +10,7 @@ export default nextConnect()
 
       const user=await getUserByEmail(email);
       if(user == null)
-       res.status(200).send({ email: email, message:"User Not Found" })
+       res.status(200).send({ email: email, message:"User Not Found" ,isError:true})
       else{
           console.log("test email in forgot password",email)
         //  await mail.send({
@@ -31,7 +31,8 @@ export default nextConnect()
         const token=jwt.sign(payload,secret,{expiresIn:'10m'})
         const link=`${process.env.CLIENT_URL}/reset-password/${user.id}/${token}`
           res.status(200).send({ email: email,
-        link:link})
+        link:link,
+        isError:false})
       }
 
   });

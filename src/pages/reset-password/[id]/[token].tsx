@@ -3,13 +3,14 @@ import { useForm } from 'react-hook-form';
 import { Button } from '@material-ui/core';
 import {getUserById} from '../../api/auth/common'
 import axios from 'axios';
+import Router from 'next/router';
+
 
 const jwt=require('jsonwebtoken')
 
 
 
 export const getServerSideProps = async (context) => {
-    console.log("test value---->",context.params)
     const {id,token}=context.params
     const user=await getUserById(id);
     var response=null
@@ -27,25 +28,25 @@ export const getServerSideProps = async (context) => {
     }
 
 	return {
-		props: { test:response },
+		props: { user:response },
 	};
 };
 
-const Token = ({test}) => {
-    console.log("test response data",test)
+const Token = ({user}) => {
     const {
 		register,
 		handleSubmit,
 	} = useForm();
     const onSubmit = async (data) => {
-        console.log("test tha data in reset page",data)
         const values={
-            id:test.id,
+            id:user.id,
             password:data.password,
-            salt:test.salt
+            salt:user.salt
         }
         const response = await axios.post(`/api/auth/reset-password`, values);
-        console.log("test response===>",response)
+        if(response.status === 200 && response.data.message === "success"){
+            Router.push(`/`);
+        }
     }
 	return (
 		<>

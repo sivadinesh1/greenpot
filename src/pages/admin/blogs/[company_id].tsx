@@ -22,7 +22,6 @@ import {getLoginSession} from '../../../lib/auth'
 
 export const getServerSideProps = async (context) => {
 	const currentLogin=await getLoginSession(context.req);
-	console.log("current login session--->",currentLogin)
 	const company_id = context.params.company_id as string;
 	const blogs = await getBlogsByCompany(company_id);
 	return {

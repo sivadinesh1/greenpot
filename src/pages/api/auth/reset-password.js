@@ -10,8 +10,7 @@ import crypto from "crypto";
 
 export default nextConnect()
 .post(async (req, res) => {
-    const {password,salt,id} =req.body
-    console.log("test result=====>",req.body)
+    const {password,id} =req.body
     const salt1 = crypto.randomBytes(16).toString("hex");
     const hash = crypto
       .pbkdf2Sync(password, salt1, 1000, 64, "sha512")
@@ -20,8 +19,7 @@ export default nextConnect()
 db.one(	'update users set salt=$1,hashed_password=$2 where id=$3 RETURNING id',
 			[salt1,hash,id],
 		).then((data) => {
-            console.log("test---data----success",data)
-			res.status(201).send({ message: 'success' });
+			res.status(200).send({ message: 'success' });
 		});
 });
 //   .post(async (req, res) => {

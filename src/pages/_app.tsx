@@ -44,9 +44,6 @@ Router.events.on('routeChangeError', () => NProgress.done());
 export default function MyApp(props) {
 	const { Component, pageProps } = props;
 	const { locale } = useRouter();
-
-	console.log('in _app.....');
-
 	React.useEffect(() => {
 		// Remove the server-side injected CSS.
 		const jssStyles = document.querySelector('#jss-server-side');
