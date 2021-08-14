@@ -145,7 +145,7 @@ export default handler
 
 		const isdata = await checkDuplicateTitle(title, companyId);
 
-		if (isdata > 0) {
+		if (isdata > 1) {
 			errors.push('Duplicate entry');
 			if (errors.length > 0) {
 				res.status(200).json({ errors });

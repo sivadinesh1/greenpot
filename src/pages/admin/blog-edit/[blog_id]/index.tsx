@@ -18,7 +18,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
 import { Image } from 'cloudinary-react';
-import FormControl from '@material-ui/core/FormControl';
+
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 const SunEditor = dynamic(() => import('suneditor-react'), { ssr: false });
 
@@ -27,8 +27,7 @@ import { useDropzone } from 'react-dropzone';
 
 import styles from '../../../../styles/Blog.module.scss';
 import stylesd from '../../../../styles/dropZone.module.css';
-import Layout from '../../../../components/Layout';
-// import Admin from '../../../../components/auth/Admin';
+
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
 import { getAllCategories, getCategories } from '../../../api/category/[...crud]';
 import { getAllTags, getTags } from '../../../api/tag/[...crud]';
@@ -43,6 +42,8 @@ import { alpha } from '@material-ui/core/styles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getImages } from '../../../api/cloudinary/[...path]';
 import { ErrorMessage } from '@hookform/error-message';
+
+import { isEmpty } from '../../../../components/utils/util';
 
 export const getServerSideProps = async (context) => {
 	const company_id = 2;
@@ -112,27 +113,12 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const uploadLimit = 2;
-	// if(selectedTag.length > 0){
-	//  selectedTag.map((tag,id)=>{
-	//      selectedTag[id]["status"]=true
-	//  })
-	// }
-	if (tags.length > 0) {
-		tags.forEach((tag, index) => {
-			selectedTag.map((t, id) => {
-				if (tag.name === t.name) tags[index]['status'] = true;
-			});
-		});
-	}
 
 	const [uploadedFiles, setUploadedFiles] = useState(selectedImages.length > 0 ? selectedImages : []);
-	// const [uploadedFiles, setUploadedFiles] = useState([]);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
 
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
-
-	const classes = useStyles();
 
 	let schema = yup.object().shape({
 		title: yup.string().required('Title is required').min(3).max(72),
@@ -196,8 +182,6 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	const [contentInitBody, setContentInitBody] = useState(blog.body);
 
 	const handleCMSChange = (content) => {
-		console.log('are u called?');
-		//  setValue('title', getValues('title'));
 		setContentBody(content);
 	};
 
@@ -217,8 +201,11 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		}
 		let status = event.nativeEvent.submitter.id === 'save' ? 'N' : 'Y';
 
-		let temp = parseISO(selectedDate);
-		debugger;
+		let tempCatIds = selectedCategorys.map((o) => o.id);
+		let uniqCategorys = selectedCategorys.filter(({ id }, index) => !tempCatIds.includes(id, index + 1));
+
+		let tempTagIds = selectedTags.map((o) => o.id);
+		let uniqTags = selectedTags.filter(({ id }, index) => !tempTagIds.includes(id, index + 1));
 
 		const values = {
 			id: blog.id,
@@ -226,8 +213,8 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 			description: formData.description,
 			author: formData.author,
 			articleDate: parseISO(selectedDate),
-			categories: selectedCategorys,
-			tags: selectedTags,
+			categories: uniqCategorys,
+			tags: uniqTags,
 			companyId: company_id,
 			body: contentBody || '',
 			status: status,
@@ -338,7 +325,6 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 											minRows={1}
 											maxRows={2}
 											fullWidth
-											inputProps={{ className: classes.textarea }}
 											error={!!errors.description}
 											helperText={errors?.description?.message}
 											{...field}
@@ -346,7 +332,6 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									)}
 								/>
 							</div>
-
 							<div style={{ paddingTop: '10px' }}>
 								<label style={{ color: '#eee', fontSize: '12px' }}>Article</label>
 								<SunEditor
@@ -380,7 +365,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 										<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
 									)}
 								/>
-								{!selectedCategorys.length && isError && <p style={errorStyle}>Select at least 1 category</p>}
+								{!selectedCategorys.length && isError && <div style={errorStyle}>Select at least 1 category</div>}
 							</div>
 							<div>
 								<Autocomplete
@@ -393,9 +378,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									onChange={(e, newValue) => setSelectedTags(newValue)}
 									getOptionLabel={(option) => option.name}
 									value={selectedTags}
-									renderInput={(params) => (
-										<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
-									)}
+									renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
 								/>
 								{!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 Tag</p>}
 							</div>
@@ -453,30 +436,17 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									)}
 								</span>
 							</div>
-							{/* <div>
-                                <Autocomplete
-                                    multiple
-                                    id='tags-standard'
-                                    freeSolo
-                                    filterSelectedOptions
-                                    fullWidth
-                                    options={tags}
-                                    onChange={(e, newValue) => setSelectedTags(newValue)}
-                                    getOptionLabel={(option) => option.name}
-                                    value={selectedTags}
-                                    renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
-                                />
-                                {!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 tag</p>}
-                            </div> */}
-							{errors ? (
+
+							{!isEmpty(errors) ? (
 								<div>
-									<div className='error-header'>Please fix below errors</div>
+									<div className='error-header'>
+										<span style={{ borderBottom: '1px solid red', fontWeight: 'bold', paddingBottom: '2px' }}>Please fix below errors</span>
+									</div>
 									<ErrorSummary errors={errors} />
 								</div>
 							) : (
 								''
 							)}
-
 							<div className={styles.textCenter}>
 								{/* disabled={!formState.isValid} */}
 								<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>

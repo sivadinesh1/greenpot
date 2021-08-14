@@ -28,13 +28,13 @@ a {
 .error-summary {
 	margin: 5px;
 	padding: 5px;
-	border: 1px solid red;
+
 	color: red;
 	font-size: 0.7rem;
 }
 
 .error-header {
 	font-size: 14px;
-	color: rgb(164, 164, 164);
-	padding: 1rem 0 0 5px;
+	color: rgb(99, 99, 99);
+	padding: 1rem 0 0 10px;
 }
