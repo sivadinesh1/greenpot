@@ -71,7 +71,7 @@ const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen 
 		setSubmitting(true);
 		setServerErrors([]);
 		setError(false);
-		mutate(`/api/category/crud/company/${editItem.id}`);
+		// mutate(`/api/category/crud/company/${editItem.id}`);
 		axios.put(`/api/category/crud`, category).then(function (response) {
 			if (response.data.errors) {
 				setServerErrors(response.data.errors);

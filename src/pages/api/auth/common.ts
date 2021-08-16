@@ -2,8 +2,7 @@ import { getDB } from '../../../dbconfig/db';
 const { db } = getDB();
 const { nanoid } = require('nanoid');
 const { encryptPassword } = require('../../../dbconfig/utils');
-import crypto from "crypto";
-
+import crypto from 'crypto';
 
 export const checkEmailExists = (email) => {
 	let query = ` select u.*, r.name as role_name, r.description as role_desc,
@@ -56,74 +55,54 @@ export const checkIdExists = (id) => {
 	});
 };
 
-export const insertUser = async (name, email, password,origin) => {
-	const salt = crypto.randomBytes(16).toString("hex");
-    const hash = crypto
-      .pbkdf2Sync(password, salt, 1000, 64, "sha512")
-      .toString("hex");
+export const insertUser = async (name, email, password, origin) => {
+	const salt = crypto.randomBytes(16).toString('hex');
+	const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 	let username = nanoid(11);
-	let companyid=2;
+	let companyid = 2;
 
 	let profile = `${process.env.CLIENT_URL}/profile/${username}`;
 	let status = `A`;
-	
-        db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid) VALUES($1, $2, $3, $4, $5,$6,$7) RETURNING id', [
-            name,
-            email,
-            hash,
-            salt,
-            status,
-			profile,
-			companyid
-			
-        ])
-            .then((data) => {
-                db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1])
-                // .then((data1) => {
-                    //     console.log('user role inserted..');
-                    // });
-            })
-    
+
+	db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid) VALUES($1, $2, $3, $4, $5,$6,$7) RETURNING id', [
+		name,
+		email,
+		hash,
+		salt,
+		status,
+		profile,
+		companyid,
+	]).then((data) => {
+		db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1]);
+	});
 };
 
-// export const getUser =async (email) =>{
-// 	let query='select * from users where email=$1'
-
-// 	db.oneOrNone(query, [email]).then((data) => {
-// 		console.log("data get success fully--->",data)
-// 	});
-// }
-
-
-export const getUser = async ({email}) => {
-	console.log("get user method call ---->",email)
-	let query='select * from users where email=$1'
+export const getUser = async ({ email }) => {
+	let query = 'select * from users where email=$1';
 
 	return new Promise(function (resolve) {
 		db.oneOrNone(query, [email]).then((data) => {
-			console.log("data get success fully--->",data)
-			resolve(data)
+			resolve(data);
 		});
 	});
 };
 
 export const getUserByEmail = async (email) => {
-	let query='select * from users where email=$1'
+	let query = 'select * from users where email=$1';
 
 	return new Promise(function (resolve) {
 		db.oneOrNone(query, [email]).then((data) => {
-			resolve(data)
+			resolve(data);
 		});
 	});
 };
 
-
 export const getUserById = async (id) => {
-	let query='select * from users where id=$1'
+	let query = 'select * from users where id=$1';
 
 	return new Promise(function (resolve) {
 		db.oneOrNone(query, [id]).then((data) => {
-			resolve(data)
+			resolve(data);
 		});
 	});
 };

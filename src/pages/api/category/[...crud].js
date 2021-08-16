@@ -5,22 +5,10 @@ import jwt from 'jsonwebtoken';
 import { getDB } from '../../../dbconfig/db';
 const { db } = getDB();
 const slugify = require('slugify');
-import {getLoginSession} from '../../../lib/auth'
-// import nextConnect from "next-connect";
-// const handler = nextConnect();
 
 export default handler
-// .use(async (req, res, next) => {
-// 	const data=await getLoginSession(req);
-// 	if(data != null){
-// 		next();
-// 	}else{
-// 		res.status(200).json({ message: 'Sorry you are not authenticated',session:false,status:"INVALID" });
-// 		console.log('api test');
-// 	}
-	
-// })
-// without parameters
+
+	// without parameters
 	.get('/api/category/crud/users', async (req, res) => {
 		res.status(200).json({ name: 'John Doe 2' });
 	})
@@ -150,20 +138,3 @@ export const getCategories = async (ids) => {
 		});
 	});
 };
-// .use(async (req, res, next) => {
-// 	console.log('CONSOLING../api/category/crud');
-// 	console.log('cookie ' + req.cookies.authToken);
-// 	const token = req.cookies.authToken;
-
-// 	if (token === undefined) {
-// 		next(Error('Not Logged in yet!'));
-// 	} else {
-// 		const isLogged = jwt.verify(req.cookies.authToken, process.env.JWT_SECRET);
-// 		console.log('cookie json:..' + JSON.stringify(isLogged));
-// 		// if (isLogged.id === '') {
-// 		// 	console.log('not admin');
-
-// 		// }
-// 		next();
-// 	}
-// })

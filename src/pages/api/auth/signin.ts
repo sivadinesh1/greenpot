@@ -12,12 +12,10 @@ export default handler.post(async (req, res) => {
 
 	if (user !== 0) {
 		if (await bcrypt.compare(password, user.hashed_password)) {
-			const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+			const token = jwt.sign({ id: user.id, companyid: user.companyid }, process.env.JWT_SECRET, {
 				expiresIn: '1d',
 			});
 			const { id, username, name, email, role, companyid } = user;
-
-			console.log('auth :: ' + token);
 
 			res.setHeader(
 				'Set-Cookie',

@@ -4,8 +4,6 @@ import prisma from '../../../dbconfig/prisma';
 const slugify = require('slugify');
 import { getDB } from '../../../dbconfig/db';
 const { db } = getDB();
-import {getLoginSession} from '../../../lib/auth'
-
 
 export default handler
 	// with parameters
@@ -17,7 +15,6 @@ export default handler
 
 	// default routes
 	.get(async (req, res) => {
-		// console.log("test req-->",req)
 		const result = await prisma.tags.findMany({});
 
 		const returnValue = bigIntToString(result);
@@ -66,7 +63,7 @@ export default handler
 		const errors = [];
 
 		const isdata = await checkDuplicateNames(name, companyid);
-		if (isdata > 0) {
+		if (isdata > 1) {
 			errors.push('Duplicate entry');
 			if (errors.length > 0) {
 				res.status(200).json({ errors });
@@ -130,13 +127,12 @@ export const getTag = async (companyId) => {
 	return bigIntToString(result);
 };
 
+export const getTags = async (ids) => {
+	let query = `select * from tags t where t.id in (${ids})`;
 
-export const getTags = async (ids) =>{
-	let query=`select * from tags t where t.id in (${ids})`
-
-	 return new Promise(function (resolve) {
-		db.any(query,[]).then((data) => {
-				resolve(data);
-		})
-})
-}
+	return new Promise(function (resolve) {
+		db.any(query, []).then((data) => {
+			resolve(data);
+		});
+	});
+};

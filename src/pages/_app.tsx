@@ -1,11 +1,3 @@
-// import '../styles/globals.css';
-
-// function MyApp({ Component, pageProps }) {
-// 	return <Component {...pageProps} />;
-// }
-
-// export default MyApp;
-
 import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
@@ -64,7 +56,10 @@ export default function MyApp(props) {
 							revalidateOnFocus: false,
 							revalidateOnReconnect: false,
 							compare: (a, b) => a === b,
-							fetcher: (url: string) => axios(url).then((r) => r.data),
+							fetcher: (url: string) =>
+								axios(url).then((r) => {
+									return r.data;
+								}),
 						}}>
 						<Layout>
 							<Component {...pageProps} />
@@ -80,3 +75,6 @@ MyApp.propTypes = {
 	Component: PropTypes.elementType.isRequired,
 	pageProps: PropTypes.object.isRequired,
 };
+
+// do not delete
+// The fetch in your fetcher is not being returned.

@@ -1,3 +1,5 @@
+import cookie from 'cookie';
+
 export const smartTrim = (str, length, delim, appendix) => {
 	if (str.length <= length) return str;
 
@@ -11,3 +13,7 @@ export const smartTrim = (str, length, delim, appendix) => {
 };
 
 export const isEmpty = (obj) => [Object, Array].includes((obj || {}).constructor) && !Object.entries(obj || {}).length;
+
+export const parseCookies = (req) => {
+	return cookie.parse(req ? req.headers.cookie || '' : document.cookie);
+};

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+
+import { useForm, Controller, FieldErrors } from 'react-hook-form';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
@@ -41,18 +42,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
+	const preloadedValues = {
+		name: editItem.name,
+	};
 	let schema = yup.object().shape({
 		name: yup.string().required().min(3).max(60),
 	});
 
-	const form = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
+	const form = useForm<FormData>({ defaultValues: preloadedValues, mode: 'onTouched', resolver: yupResolver(schema) });
 
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 	const [error, setError] = useState(false);
 
 	const {
-		register,
+		control,
+		reset,
 		handleSubmit,
 		formState: { errors },
 	} = form;
@@ -71,7 +76,7 @@ const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
 		setSubmitting(true);
 		setServerErrors([]);
 		setError(false);
-		mutate(`/api/tag/crud/company/${editItem.id}`);
+
 		axios.put(`/api/tag/crud`, tag).then(function (response) {
 			if (response.data.errors) {
 				setServerErrors(response.data.errors);
@@ -83,7 +88,8 @@ const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
 				onReloadTagList();
 				handleMode();
 				handleSnackOpen('Tag Successfully Updated');
-				event.target.reset();
+				// event.target.reset();
+				reset({ name: '' });
 			}
 		});
 	};
@@ -99,25 +105,24 @@ const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
 			<div className={styles.title}>EDIT TAG</div>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className={styles.formGap}>
-					<TextField
-						type='text'
-						label='Tag Name'
-						margin='dense'
+					<Controller
 						name='name'
-						variant='standard'
-						size='small'
-						fullWidth
-						InputProps={{
-							className: classes.TextFieldProps,
-						}}
-						InputLabelProps={{
-							style: { color: '#fff' },
-						}}
-						style={{ borderRadius: '50px' }}
-						{...register('name')}
-						defaultValue={editItem.name}
+						control={control}
+						rules={{ required: true }}
+						render={({ field }) => (
+							<TextField
+								type='text'
+								label='Title'
+								margin='dense'
+								variant='standard'
+								size='small'
+								fullWidth
+								error={!!errors.name}
+								helperText={errors?.name?.message}
+								{...field}
+							/>
+						)}
 					/>
-					{errors.name && <span className='white-error'>{errors.name.message}</span>}
 				</div>
 				<div className={styles.textCenter}>
 					<ColorButton variant='contained' color='primary' className={classes.buttonProps} type='submit'>

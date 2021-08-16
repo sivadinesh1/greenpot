@@ -12,7 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the 
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
-const Navbar = ({ links, companyid }) => {
+const Navbar = ({ links }) => {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -42,19 +42,19 @@ const Navbar = ({ links, companyid }) => {
 
 							<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
 								<MenuItem onClick={handleClose}>
-									<Link href={`/admin/blogs/${companyid}`}>
+									<Link href={`/admin/blogs`}>
 										<a>Blogs</a>
 									</Link>
 								</MenuItem>
 
 								<MenuItem onClick={handleClose}>
-									<Link href={`/admin/category/${companyid}`}>
+									<Link href={`/admin/category`}>
 										<a>Categories</a>
 									</Link>
 								</MenuItem>
 
 								<MenuItem onClick={handleClose}>
-									<Link href={`/admin/tag/${companyid}`}>
+									<Link href={`/admin/tag`}>
 										<a>Tags</a>
 									</Link>
 								</MenuItem>

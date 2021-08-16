@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm, Controller, FieldErrors } from 'react-hook-form';
 import Button from '@material-ui/core/Button';
 
 import { withStyles, makeStyles } from '@material-ui/core/styles';
@@ -48,11 +48,14 @@ export default function AddTag({ tags, onReloadTagList, handleSnackOpen, company
 		name: yup.string().required().min(3).max(60),
 	});
 
+	const form = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
+
 	const {
-		register,
+		control,
 		handleSubmit,
+		reset,
 		formState: { errors },
-	} = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
+	} = form;
 
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
@@ -82,7 +85,8 @@ export default function AddTag({ tags, onReloadTagList, handleSnackOpen, company
 		if (response.status === 201) {
 			onReloadTagList();
 			handleSnackOpen('Tag Successfully Added');
-			event.target.reset();
+			// event.target.reset();
+			reset({ name: '' });
 		}
 	};
 
@@ -93,24 +97,24 @@ export default function AddTag({ tags, onReloadTagList, handleSnackOpen, company
 			<div className={styles.title}>ADD TAG</div>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className={styles.formGap}>
-					<TextField
-						type='text'
-						label='Tag Name'
-						margin='dense'
+					<Controller
 						name='name'
-						variant='standard'
-						size='small'
-						fullWidth
-						InputProps={{
-							className: classes.TextFieldProps,
-						}}
-						InputLabelProps={{
-							style: { color: '#fff' },
-						}}
-						style={{ borderRadius: '50px' }}
-						{...register('name')}
+						control={control}
+						rules={{ required: true }}
+						render={({ field }) => (
+							<TextField
+								type='text'
+								label='Tag Name'
+								margin='dense'
+								variant='standard'
+								size='small'
+								fullWidth
+								error={!!errors.name}
+								helperText={errors?.name?.message}
+								{...field}
+							/>
+						)}
 					/>
-					{errors.name && <span className='white-error'>{errors.name.message}</span>}
 				</div>
 				<div className={styles.textCenter}>
 					<ColorButton variant='contained' color='primary' disabled={submitting} className={classes.buttonProps} type='submit'>

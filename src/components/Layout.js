@@ -6,7 +6,7 @@ import React from 'react';
 const Layout = ({ children }) => {
 	return (
 		<>
-			<Navbar links={true} companyid={1} />
+			<Navbar links={true} />
 			<div className='global-main'>
 				<main>{children}</main>
 			</div>

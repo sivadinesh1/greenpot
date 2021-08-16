@@ -52,16 +52,14 @@ const SigninComponent = () => {
 
 	const { error, loading, message, showForm } = values;
 
-	const onSubmit =async (data) => {
-		debugger
+	const onSubmit = async (data) => {
 		setValues({ ...values, loading: true, error: false });
 		const body = {
 			username: data.email,
 			password: data.password,
-		  };
-	
-			axios.post(`/api/auth/login`, body).then( (response)=> {
-				debugger
+		};
+
+		axios.post(`/api/auth/login`, body).then((response) => {
 			if (!response.data.done) {
 				setValues({ ...values, loading: false });
 				showTest(true, response.data.error);
@@ -101,15 +99,7 @@ const SigninComponent = () => {
 						</div>
 					</div>
 
-					<TextField
-						type='text'
-						label='Enter Email'
-						fullWidth
-						margin='dense'
-						name='email'
-						autoComplete='off'
-						{...register('email')}
-					/>
+					<TextField type='text' label='Enter Email' fullWidth margin='dense' name='email' autoComplete='off' {...register('email')} />
 					<p style={errorStyle}>{errors.email?.message}</p>
 
 					<FormControl fullWidth>

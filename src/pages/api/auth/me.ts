@@ -12,11 +12,7 @@ import User from '../../admin/user';
 export default handler
 
 	.use(async (req, res, next) => {
-		console.log('inside me..middleware');
-
 		const token = req.cookies.authToken || undefined;
-
-		console.log('cookie ' + token);
 
 		if (token === undefined) {
 			res.status(200).json('UNAUTHORISED');
@@ -36,7 +32,6 @@ export default handler
 
 		let id = token.id;
 
-		console.log('dinesh id ' + id);
 		const result = await getUserById(id);
 
 		const returnValue = bigIntToString(result);

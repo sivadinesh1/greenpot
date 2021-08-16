@@ -1,5 +1,3 @@
-import Layout from '../../../components/Layout';
-
 import React, { useState } from 'react';
 import Router, { useRouter } from 'next/router';
 
@@ -13,47 +11,27 @@ import CategoryList from '../../../components/crud/Category/list-category';
 import AddCategory from '../../../components/crud/Category/add-category';
 import EditCategory from '../../../components/crud/Category/edit-category';
 import { getAllCategories } from '../../api/category/[...crud]';
-import axios from 'axios';
-import useSWR from 'swr';
-import {getLoginSession} from '../../../lib/auth'
+import { parseCookies } from '../../api/auth/user';
 
+import useSWR from 'swr';
 
 export const getServerSideProps = async (context) => {
-	const company_id = context.params.company_id as string;
+	let { user_id, company_id } = await parseCookies(context?.req);
+	if (user_id === undefined || company_id === undefined) {
+		return {
+			redirect: { destination: '/', permanent: false },
+		};
+	}
 
 	// both works dont delete
-	//const categorys = await getAllCategories(company_id);
-	let categorys = [];
-		//redirect login page
-		if (context.req.headers.cookie === undefined) {
-			return {
-			  redirect: { destination: '/', permanent: false },
-			}
-		  }
-		const cookie = context?.req?.headers?.cookie ;
-		let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`
-		, {
-			headers: {
-				cookie: cookie,
-			},}
-		);
-		if (resp.status === 200 && resp.data.status ==="INVALID") {
-			return {
-			  redirect: { destination: '/', permanent: false },
-			}
-		  }
-		categorys = resp.data;
-		return {
-			props: { categorys },
-		};
-	
+	const categorys = await getAllCategories(company_id);
+
+	return {
+		props: { categorys, company_id },
+	};
 };
 
-export default function Index({ categorys }) {
-	const router = useRouter();
-
-	const { company_id } = router.query;
-
+export default function Index({ categorys, company_id }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('add');
@@ -120,3 +98,11 @@ export default function Index({ categorys }) {
 		</>
 	);
 }
+
+// do not delete
+// const cookie = context?.req?.headers?.cookie;
+// 	let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
+// 		headers: {
+// 			cookie: cookie,
+// 		},
+// 	});

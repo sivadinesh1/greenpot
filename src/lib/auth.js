@@ -1,32 +1,29 @@
-import Iron from "@hapi/iron";
-import { MAX_AGE, setTokenCookie, getTokenCookie } from "./auth-cookies";
+import { MAX_AGE, setTokenCookie, getTokenCookie } from './auth-cookies';
 import Router from 'next/router';
-
+const jwt = require('jsonwebtoken');
 const TOKEN_SECRET = process.env.TOKEN_SECRET;
 
-export async function setLoginSession(res, session) {
-  const createdAt = Date.now();
-  // Create a session object with a max age that we can validate later
-  const obj = { id:session.id,companyid:session.companyid,email:session.email, createdAt, maxAge: MAX_AGE };
-  const token = await Iron.seal(obj, TOKEN_SECRET, Iron.defaults);
+export async function setLoginSession(res, user) {
+	const createdAt = Date.now();
 
-  setTokenCookie(res, token);
+	const token = jwt.sign({ id: user.id, companyid: user.companyid }, process.env.JWT_SECRET, {
+		expiresIn: '1d',
+	});
+
+	setTokenCookie(res, token);
 }
 
 export async function getLoginSession(req) {
-  const token = getTokenCookie(req);
-  if (!token) {
-    // Router.push(`/`);
-      return;
-    }
+	const token = getTokenCookie(req);
+	if (!token) {
+		// Router.push(`/`);
+		return;
+	}
 
-  const session = await Iron.unseal(token, TOKEN_SECRET, Iron.defaults);
-  const expiresAt = session.createdAt + session.maxAge * 1000;
+	// Validate the expiration date of the session
+	if (Date.now() > token.exp) {
+		return null;
+	}
 
-  // Validate the expiration date of the session
-  if (Date.now() > expiresAt) {
-    return null;
-  }
-
-  return session;
+	return session;
 }

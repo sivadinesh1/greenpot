@@ -70,11 +70,7 @@ export default handler
 		}
 	})
 	.post(async (req, res) => {
-		console.log('test blog request ----->', req.body);
-
 		const { title, description, author, articleDate, categories, tags, body, companyId } = req.body;
-
-		console.log('test blog  DESC request ----->', description);
 
 		const errors = [];
 
@@ -301,8 +297,6 @@ export const createBlogEntry = async (company_id) => {
 			published: 'N',
 		},
 	});
-
-	console.log('dummy blog created ' + JSON.stringify(bigIntToString(result)));
 
 	return bigIntToString(result);
 };

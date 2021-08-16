@@ -74,17 +74,6 @@ interface FormData {
 	tags: any[];
 }
 
-const useStyles = makeStyles((theme) => ({
-	root: {
-		'& .MuiTextField-root': {
-			margin: theme.spacing(1),
-		},
-	},
-	textarea: {
-		resize: 'both',
-	},
-}));
-
 type ErrorSummaryProps<T> = {
 	errors: FieldErrors<T>;
 };
@@ -141,7 +130,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		setError,
 		control,
 		reset,
-	} = useForm<FormData>({ defaultValues: preloadedValues, resolver: yupResolver(schema) });
+	} = useForm<FormData>({ defaultValues: preloadedValues, mode: 'onTouched', resolver: yupResolver(schema) });
 
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
@@ -192,8 +181,6 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	};
 
 	const onSubmit = async (formData, event) => {
-		console.log('test -->', formData);
-
 		if (submitting) {
 			return false;
 		}
@@ -247,7 +234,6 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 
 	//cloudinary delete image
 	const removeImage = async (data) => {
-		console.log('test image request data---->', data);
 		const response = await axios.post(`/api/blog/crud/image/delete`, data);
 		setUploadedFiles([...response.data]);
 	};

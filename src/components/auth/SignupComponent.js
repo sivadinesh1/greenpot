@@ -1,4 +1,4 @@
-import { useState} from 'react';
+import { useState } from 'react';
 import Router from 'next/router';
 import { Button } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
@@ -21,7 +21,7 @@ const SignupComponent = () => {
 	const [isError, setIsError] = useState(false);
 	const [ErMessage, setErMessage] = useState('');
 	let schema = yup.object().shape({
-		name:yup.string().required(),
+		name: yup.string().required(),
 		email: yup.string().email().required(),
 		password: yup.string().required().min(8).max(16),
 	});
@@ -39,26 +39,24 @@ const SignupComponent = () => {
 		resolver: yupResolver(schema),
 	});
 
-
 	const [showPassword, setShowPassword] = useState(false);
 
-	const onSubmit =async (data) => {
-		const body={
+	const onSubmit = async (data) => {
+		const body = {
 			name: data.name,
 			password: data.password,
 			email: data.email,
-			origin:"lapa"
-		  }
+			origin: 'lapa',
+		};
 
-		axios.post(`/api/auth/signup`, body).then( (response)=> {
-			debugger
-		if (!response.data.status) {
-			showTest(true, response.data.error);
-		} else {
-			Router.push(`/`);
-		}
-	});
-	}
+		axios.post(`/api/auth/signup`, body).then((response) => {
+			if (!response.data.status) {
+				showTest(true, response.data.error);
+			} else {
+				Router.push(`/`);
+			}
+		});
+	};
 
 	const showTest = (flag, data) => {
 		setErMessage(data);
@@ -68,33 +66,6 @@ const SignupComponent = () => {
 		}, 3000);
 	};
 
-	// const handleSubmit = (e) => {
-	// 	e.preventDefault();
-
-	// 	console.log("test signup values--->",values)
-	// 	//console.table({ name, email, password, error, loading, message, showForm });
-
-	// 	setValues({ ...values, loading: true, error: false });
-	// 	const user = { name, email, password };
-
-	// 	signup(user).then((res) => {
-	// 		if (res.data.error) {
-	// 			setValues({ ...values, error: res.data.error, loading: false });
-	// 		} else {
-	// 			setValues({
-	// 				...values,
-	// 				name: '',
-	// 				email: '',
-	// 				password: '',
-	// 				error: '',
-	// 				loading: false,
-	// 				message: res.data.message,
-	// 				showForm: false,
-	// 			});
-	// 		}
-	// 	});
-	// };
-
 	const handleClickShowPassword = () => {
 		setShowPassword(!showPassword);
 	};
@@ -102,7 +73,6 @@ const SignupComponent = () => {
 	const handleMouseDownPassword = (event) => {
 		event.preventDefault();
 	};
-
 
 	const signupForm = () => {
 		return (
@@ -113,49 +83,32 @@ const SignupComponent = () => {
 							<div className='academy__name'>Drafty Content Solutions</div>
 						</div>
 
-						<TextField
-						type='text'
-						label='Enter User Name *'
-						fullWidth
-						margin='dense'
-						name='name'
-						autoComplete='off'
-						{...register('name')}
-					/>
-					<p style={errorStyle}>{errors.name?.message}</p>
+						<TextField type='text' label='Enter User Name *' fullWidth margin='dense' name='name' autoComplete='off' {...register('name')} />
+						<p style={errorStyle}>{errors.name?.message}</p>
 
-
-						<TextField
-						type='email'
-						label='Enter Email *'
-						fullWidth
-						margin='dense'
-						name='email'
-						autoComplete='off'
-						{...register('email')}
-					/>
-					<p style={errorStyle}>{errors.email?.message}</p>
-					{isError && <p style={errorStyle}>{ErMessage}</p>}
-					<FormControl fullWidth>
-						<InputLabel htmlFor='standard-adornment-password'>Password *</InputLabel>
-						<Input
-							id='standard-adornment-password'
-							type={showPassword ? 'text' : 'password'}
-							name='password'
-							fullWidth
-							autoComplete='off'
-							margin='dense'
-							{...register('password')}
-							endAdornment={
-								<InputAdornment position='end'>
-									<IconButton aria-label='toggle password visibility' onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword}>
-										{showPassword ? <Visibility /> : <VisibilityOff />}
-									</IconButton>
-								</InputAdornment>
-							}
-						/>
-						<p style={errorStyle}>{errors.password?.message}</p>
-					</FormControl>
+						<TextField type='email' label='Enter Email *' fullWidth margin='dense' name='email' autoComplete='off' {...register('email')} />
+						<p style={errorStyle}>{errors.email?.message}</p>
+						{isError && <p style={errorStyle}>{ErMessage}</p>}
+						<FormControl fullWidth>
+							<InputLabel htmlFor='standard-adornment-password'>Password *</InputLabel>
+							<Input
+								id='standard-adornment-password'
+								type={showPassword ? 'text' : 'password'}
+								name='password'
+								fullWidth
+								autoComplete='off'
+								margin='dense'
+								{...register('password')}
+								endAdornment={
+									<InputAdornment position='end'>
+										<IconButton aria-label='toggle password visibility' onClick={handleClickShowPassword} onMouseDown={handleMouseDownPassword}>
+											{showPassword ? <Visibility /> : <VisibilityOff />}
+										</IconButton>
+									</InputAdornment>
+								}
+							/>
+							<p style={errorStyle}>{errors.password?.message}</p>
+						</FormControl>
 
 						<div className={styles.styl_center}>
 							<Button type='submit' variant='contained' color='primary'>
@@ -163,13 +116,6 @@ const SignupComponent = () => {
 							</Button>
 						</div>
 
-						{/* <div> */}
-						{/* <button className="btn btn-primary">Signup</button> */}
-
-						{/* <Button variant='contained' color='primary'>
-								Primary
-							</Button> */}
-						{/* </div> */}
 						<div>
 							Already a member?{' '}
 							<Link href='/'>

@@ -15,52 +15,24 @@ import EditTag from '../../../components/crud/Tag/edit-tag';
 import { getAllTags } from '../../api/tag/[...crud]';
 import axios from 'axios';
 import useSWR from 'swr';
-import {getLoginSession} from '../../../lib/auth'
-
+import { parseCookies } from '../../api/auth/user';
 
 export const getServerSideProps = async (context) => {
-	const company_id = context.params.company_id as string;
-	if (context.req.headers.cookie === undefined) {
+	let { user_id, company_id } = await parseCookies(context?.req);
+	if (user_id === undefined || company_id === undefined) {
 		return {
-		  redirect: { destination: '/', permanent: false },
-		}
-	  }
-	//   let tags = [];
-	 const tags = await getAllTags(company_id);
-	//redirect login page
-	if (context.req.headers.cookie === undefined) {
-		return {
-		  redirect: { destination: '/', permanent: false },
-		}
-	  }
-	// const cookie = context?.req?.headers?.cookie ;
-	// let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`
-	// , {
-	// 	headers: {
-	// 		cookie: cookie,
-	// 	},}
-	// );
+			redirect: { destination: '/', permanent: false },
+		};
+	}
 
-	// if (resp.status === 200 && !resp.data.session) {
-	// 	return {
-	// 	  redirect: { destination: '/', permanent: false },
-	// 	}
-	//   }
-	// tags = resp.data;
+	const tags = await getAllTags(company_id);
+
 	return {
-		props: { tags },
+		props: { tags, company_id },
 	};
 };
 
-export interface TagProps {
-	tags: Tag[];
-}
-
-export default function Index({ tags }: TagProps) {
-	const router = useRouter();
-
-	const { company_id } = router.query;
-
+export default function Index({ tags, company_id }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('add');
@@ -69,7 +41,6 @@ export default function Index({ tags }: TagProps) {
 
 	const { data, mutate } = useSWR(`/api/tag/crud/company/${company_id}`, {
 		initialData: tags,
-		revalidateOnMount: true,
 	});
 
 	const handleSnackOpen = (message) => {

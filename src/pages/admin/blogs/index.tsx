@@ -10,7 +10,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import styles from '../../../styles/Category.module.scss';
 
 import BlogList from '../../../components/crud/Blog/blog-list';
-import { getAllBlogs, getBlogsByCompany } from '../../api/blog/[...crud]';
+import { getBlogsByCompany } from '../../api/blog/[...crud]';
 
 import axios from 'axios';
 import useSWR, { mutate, trigger } from 'swr';
@@ -18,31 +18,29 @@ import { Button } from '@material-ui/core';
 import Link from 'next/link';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import {getLoginSession} from '../../../lib/auth'
-
-import { getBlogById, getBlog, createBlogEntry } from '../../api/blog/[...crud]';
 import Router from 'next/router';
+import { parseCookies } from '../../api/auth/user';
 
 export const getServerSideProps = async (context) => {
-	const currentLogin=await getLoginSession(context.req);
-	const company_id = context.params.company_id as string;
+	let { user_id, company_id } = await parseCookies(context?.req);
+	if (user_id === undefined || company_id === undefined) {
+		return {
+			redirect: { destination: '/', permanent: false },
+		};
+	}
+
 	const blogs = await getBlogsByCompany(company_id);
 	return {
 		props: { blogs, company_id },
 	};
 };
 
-export interface BlogProps {
-	blogs: Blog[];
-	company_id: string;
-}
-
-export default function Index({ blogs, company_id }: BlogProps) {
+export default function Index({ blogs, company_id }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('list');
 
-	const { data: result } = useSWR(`/api/blog/crud/company/${company_id}`, { initialData: blogs, revalidateOnMount: true });
+	const { data: result } = useSWR(`/api/blog/crud/company/${company_id}`, { initialData: blogs });
 
 	let blogsList: Blog[] = result;
 
@@ -65,8 +63,6 @@ export default function Index({ blogs, company_id }: BlogProps) {
 		event.stopPropagation();
 
 		const blog = await axios.get(`/api/blog/crud/new/${company_id}`);
-
-		debugger;
 
 		Router.push(`/admin/blog-edit/${company_id}/${blog.data.id}`);
 	};

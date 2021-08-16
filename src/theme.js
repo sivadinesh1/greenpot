@@ -1,7 +1,4 @@
-// import { createTheme } from '@material-ui/core/styles';
-// check: to supress warning of findDOMNode
-import { unstable_createMuiStrictModeTheme as createTheme } from '@material-ui/core';
-
+import { createTheme } from '@material-ui/core/styles';
 import { red } from '@material-ui/core/colors';
 
 // Create a theme instance.

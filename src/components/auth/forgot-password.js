@@ -21,71 +21,63 @@ import { useForm } from 'react-hook-form';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 
-
 const ForgotPassword = () => {
 	const [isError, setIsError] = useState(false);
-    const [ErMessage, setErMessage] = useState('');
-    const [snack, setSnack] = useState(false);
-    const [alertStatus, setAlertStatus] = useState("success");
-    const [message, setMessage] = useState('');
+	const [ErMessage, setErMessage] = useState('');
+	const [snack, setSnack] = useState(false);
+	const [alertStatus, setAlertStatus] = useState('success');
+	const [message, setMessage] = useState('');
 
-
-    
-    
 	let schema = yup.object().shape({
-        email: yup.string().email().required(),
+		email: yup.string().email().required(),
 	});
 	//error style
 	let errorStyle = {
-        color: 'red',
+		color: 'red',
 		content: '⚠ ',
 	};
 	const {
-        register,
+		register,
 		handleSubmit,
 		formState: { errors },
 	} = useForm({
-        resolver: yupResolver(schema),
+		resolver: yupResolver(schema),
 	});
-    
+
 	const [values, setValues] = useState({
-        email: '',
-        link:'',
+		email: '',
+		link: '',
 		error: '',
 		loading: false,
 		message: '',
 		showForm: true,
 	});
 	const showLoading = () => (loading ? <div className='alert alert-info'>Loading...</div> : '');
-    
-    const { error, loading, showForm } = values;
-        const handleSnackOpen = (data,status) => {
-            setMessage(data);
-            if(status) setAlertStatus("error")
-            else setAlertStatus("success")
-            setSnack(true);
-        };
 
-	const onSubmit =async (data) => {
-        
-        setValues({ ...values, loading: true, error: false });
+	const { error, loading, showForm } = values;
+	const handleSnackOpen = (data, status) => {
+		setMessage(data);
+		if (status) setAlertStatus('error');
+		else setAlertStatus('success');
+		setSnack(true);
+	};
+
+	const onSubmit = async (data) => {
+		setValues({ ...values, loading: true, error: false });
 		const body = {
 			email: data.email,
-		
-		  };
-	
-			axios.post(`/api/auth/forgot-password`, body).then( (response)=> {
-                debugger
-                if (response.status === 200 && response.data.isError) {
-                    showError(true, response.data.message);
-                    handleSnackOpen("User Not Found",true);
-                    setValues({ ...values, loading: false });
-                } else{
-                    console.log("reset link---->",response.data.link)
-                    setValues({ ...values, loading: false ,link:response.data.link});
-                     handleSnackOpen("Reset Link send successfully",false);
-                    //   Router.push(`/`);
-            }
+		};
+
+		axios.post(`/api/auth/forgot-password`, body).then((response) => {
+			if (response.status === 200 && response.data.isError) {
+				showError(true, response.data.message);
+				handleSnackOpen('User Not Found', true);
+				setValues({ ...values, loading: false });
+			} else {
+				setValues({ ...values, loading: false, link: response.data.link });
+				handleSnackOpen('Reset Link send successfully', false);
+				//   Router.push(`/`);
+			}
 		});
 	};
 
@@ -97,42 +89,31 @@ const ForgotPassword = () => {
 		}, 3000);
 	};
 
-
 	const ForgotForm = () => {
 		return (
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className={styles.login_flex_container}>
-                <div className={styles.login_caps}>
+					<div className={styles.login_caps}>
 						<div className='academy__name'>
 							<h3>Forgot password</h3>
 						</div>
 					</div>
-					<TextField
-						type='text'
-						label='Enter Email *'
-						fullWidth
-						margin='dense'
-						name='email'
-						autoComplete='off'
-						{...register('email')}
-					/>
+					<TextField type='text' label='Enter Email *' fullWidth margin='dense' name='email' autoComplete='off' {...register('email')} />
 					<p style={errorStyle}>{errors.email?.message}</p>
-				
+
 					<div className={styles.styl_center}>
-						<Button type='submit' variant='contained' color='primary' style={{marginRight:'10px'}}>
-						     Reset
+						<Button type='submit' variant='contained' color='primary' style={{ marginRight: '10px' }}>
+							Reset
 						</Button>
-                        
-                        <Link href='/' >
-                        <Button  variant='contained' color='primary' style={{marginLeft:'10px'}}>
-							cancel
-						</Button>
-                        </Link>
+
+						<Link href='/'>
+							<Button variant='contained' color='primary' style={{ marginLeft: '10px' }}>
+								cancel
+							</Button>
+						</Link>
 
 						{isError && <p style={errorStyle}>{ErMessage}</p>}
 					</div>
-				
-					
 				</div>
 			</form>
 		);
@@ -140,17 +121,17 @@ const ForgotPassword = () => {
 
 	return (
 		<>
-        <div>
-        {showLoading()}
-			{ ForgotForm()}
-            <div>
-            <Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
-				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled' severity={alertStatus}>
-					{message}
-				</MuiAlert>
-			</Snackbar>
-            </div>
-            </div>
+			<div>
+				{showLoading()}
+				{ForgotForm()}
+				<div>
+					<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
+						<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled' severity={alertStatus}>
+							{message}
+						</MuiAlert>
+					</Snackbar>
+				</div>
+			</div>
 		</>
 	);
 };
