@@ -98,11 +98,3 @@ export default function Index({ categorys, company_id }) {
 		</>
 	);
 }
-
-// do not delete
-// const cookie = context?.req?.headers?.cookie;
-// 	let resp = await axios.get(`${process.env.API_URL}/category/crud/company/${company_id}`, {
-// 		headers: {
-// 			cookie: cookie,
-// 		},
-// 	});

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
@@ -41,21 +41,35 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen }) => {
+	const preloadedValues = {
+		name: editItem.name,
+	};
+
 	let schema = yup.object().shape({
 		name: yup.string().required().min(3).max(60),
 	});
 
-	const form = useForm<FormData>({ mode: 'onTouched', resolver: yupResolver(schema) });
+	const form = useForm<FormData>({
+		defaultValues: preloadedValues,
+		mode: 'onTouched',
+		resolver: yupResolver(schema),
+	});
 
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 	const [error, setError] = useState(false);
 
 	const {
-		register,
+		setValue,
+		control,
+		reset,
 		handleSubmit,
 		formState: { errors },
 	} = form;
+
+	useEffect(() => {
+		setValue('name', editItem.name);
+	}, [editItem.name]);
 
 	const onSubmit = (formData, event) => {
 		if (submitting) {
@@ -71,7 +85,7 @@ const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen 
 		setSubmitting(true);
 		setServerErrors([]);
 		setError(false);
-		// mutate(`/api/category/crud/company/${editItem.id}`);
+
 		axios.put(`/api/category/crud`, category).then(function (response) {
 			if (response.data.errors) {
 				setServerErrors(response.data.errors);
@@ -83,7 +97,7 @@ const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen 
 				onReloadCategoryList();
 				handleMode();
 				handleSnackOpen('Category Successfully Updated');
-				event.target.reset();
+				reset({ name: '' });
 			}
 		});
 	};
@@ -99,25 +113,24 @@ const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen 
 			<div className={styles.title}>EDIT CATEGORY</div>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className={styles.formGap}>
-					<TextField
-						type='text'
-						label='Company Name'
-						margin='dense'
+					<Controller
 						name='name'
-						variant='standard'
-						size='small'
-						fullWidth
-						InputProps={{
-							className: classes.TextFieldProps,
-						}}
-						InputLabelProps={{
-							style: { color: '#fff' },
-						}}
-						style={{ borderRadius: '50px' }}
-						{...register('name')}
-						defaultValue={editItem.name}
+						control={control}
+						rules={{ required: true }}
+						render={({ field }) => (
+							<TextField
+								type='text'
+								label='Title'
+								margin='dense'
+								variant='standard'
+								size='small'
+								fullWidth
+								error={!!errors.name}
+								helperText={errors?.name?.message}
+								{...field}
+							/>
+						)}
 					/>
-					{errors.name && <span className='white-error'>{errors.name.message}</span>}
 				</div>
 				<div className={styles.textCenter}>
 					<ColorButton variant='contained' color='primary' className={classes.buttonProps} type='submit'>

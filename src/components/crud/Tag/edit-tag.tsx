@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { useForm, Controller, FieldErrors } from 'react-hook-form';
 import Button from '@material-ui/core/Button';
@@ -56,11 +56,16 @@ const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
 	const [error, setError] = useState(false);
 
 	const {
+		setValue,
 		control,
 		reset,
 		handleSubmit,
 		formState: { errors },
 	} = form;
+
+	useEffect(() => {
+		setValue('name', editItem.name);
+	}, [editItem.name]);
 
 	const onSubmit = (formData, event) => {
 		if (submitting) {
@@ -88,7 +93,7 @@ const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
 				onReloadTagList();
 				handleMode();
 				handleSnackOpen('Tag Successfully Updated');
-				// event.target.reset();
+
 				reset({ name: '' });
 			}
 		});

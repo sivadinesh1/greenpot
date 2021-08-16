@@ -73,9 +73,6 @@ export default function Index({ blogs, company_id }) {
 				<div className={styles.left}>
 					<div className={styles.blogAdd} onClick={handleAddBlog}>
 						+ Add Blog
-						{/* <Link href={`/admin/blog-edit/${company_id}/0`}>
-							<a>+ Add Blog</a>
-						</Link> */}
 					</div>
 				</div>
 

@@ -146,6 +146,7 @@ export default handler
 	})
 	.put(async (req, res) => {
 		const { id, title, description, author, articleDate, categories, tags, body, companyId, status } = req.body;
+
 		const errors = [];
 
 		const isdata = await checkDuplicateTitle(title, companyId);
@@ -174,7 +175,7 @@ export default handler
 		if (typeof companyId === 'string') {
 			companyid = Number(companyId);
 		}
-
+		console.log('cmp id ' + companyid);
 		let newCatArr = arrayOfCategories.map((e) => {
 			return parseInt(e.id);
 		});

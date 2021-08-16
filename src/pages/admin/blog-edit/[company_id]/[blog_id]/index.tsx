@@ -228,7 +228,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 
 			event.target.reset();
 			reset();
-			Router.push(`/admin/blogs/${company_id}`);
+			Router.push(`/admin/blogs`);
 		}
 	};
 
