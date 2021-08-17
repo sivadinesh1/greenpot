@@ -30,9 +30,9 @@ import stylesd from '../../../../../styles/dropZone.module.css';
 
 import BlogPreview from '../../../../../components/crud/Blog/blog-preview';
 
-import { getAllCategories, getCategories } from '../../../../api/category/[...crud]';
-import { getAllTags, getTags } from '../../../../api/tag/[...crud]';
-import { getBlogById, getBlog, createBlogEntry } from '../../../../api/blog/[...crud]';
+import { getTags, getAllTags } from '../../../../../service/tag.service';
+import { getCategories, getAllCategories } from '../../../../../service/category.service';
+
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
@@ -51,12 +51,17 @@ export const getServerSideProps = async (context) => {
 	const blog_id = context.params.blog_id as string;
 
 	let path = `C${company_id}/B${blog_id}`;
-	const blog = await getBlogById(blog_id);
+
+	let resp = await axios.get(`${process.env.API_URL}/blog/blogid/${blog_id}`);
+	const blog = resp.data;
 
 	const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
 	const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
+
 	const categories = await getAllCategories(company_id);
+
 	const tags = await getAllTags(company_id);
+
 	const selectedImages = await getImages(path);
 
 	return {
@@ -211,7 +216,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		setSubmitting(true);
 		setServerErrors([]);
 
-		const response = await axios.put(`/api/blog/crud`, values);
+		const response = await axios.put(`/api/blog`, values);
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
 		}

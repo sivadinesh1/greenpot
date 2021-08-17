@@ -86,7 +86,7 @@ const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen 
 		setServerErrors([]);
 		setError(false);
 
-		axios.put(`/api/category/crud`, category).then(function (response) {
+		axios.put(`/api/category`, category).then(function (response) {
 			if (response.data.errors) {
 				setServerErrors(response.data.errors);
 				setError(true);

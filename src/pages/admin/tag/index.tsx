@@ -12,7 +12,7 @@ import styles from '../../../styles/Tag.module.scss';
 import TagList from '../../../components/crud/Tag/list-tag';
 import AddTag from '../../../components/crud/Tag/add-tag';
 import EditTag from '../../../components/crud/Tag/edit-tag';
-import { getAllTags } from '../../api/tag/[...crud]';
+
 import axios from 'axios';
 import useSWR from 'swr';
 import { parseCookies } from '../../api/auth/user';
@@ -25,7 +25,10 @@ export const getServerSideProps = async (context) => {
 		};
 	}
 
-	const tags = await getAllTags(company_id);
+	// const tags = await getAllTags(company_id);
+
+	let resp = await axios.get(`${process.env.API_URL}/tag/${company_id}`);
+	let tags = resp.data;
 
 	return {
 		props: { tags, company_id },
@@ -39,7 +42,7 @@ export default function Index({ tags, company_id }) {
 
 	const [editRowItem, setEditRowItem] = useState<Tag>();
 
-	const { data, mutate } = useSWR(`/api/tag/crud/company/${company_id}`, {
+	const { data, mutate } = useSWR(`/api/tag/${company_id}`, {
 		initialData: tags,
 	});
 

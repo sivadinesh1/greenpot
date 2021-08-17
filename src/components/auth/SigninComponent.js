@@ -19,7 +19,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 
 const SigninComponent = () => {
-	const { formatMessage: f } = useIntl();
+	//	const { formatMessage: f } = useIntl();
 	const [isError, setIsError] = useState(false);
 	const [ErMessage, setErMessage] = useState('');
 
@@ -94,9 +94,7 @@ const SigninComponent = () => {
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className={styles.login_flex_container}>
 					<div className={styles.login_caps}>
-						<div className='academy__name'>
-							<h4>{f({ id: 'APP_NAME' })}</h4>
-						</div>
+						<div className='academy__name'>{/* <h4>{f({ id: 'APP_NAME' })}</h4> */}</div>
 					</div>
 
 					<TextField type='text' label='Enter Email' fullWidth margin='dense' name='email' autoComplete='off' {...register('email')} />
@@ -140,7 +138,7 @@ const SigninComponent = () => {
 						{isError && <p style={errorStyle}>{ErMessage}</p>}
 					</div>
 					<div>
-						{f({ id: 'NOT_A_MEMBER' })}{' '}
+						{/* {f({ id: 'NOT_A_MEMBER' })}{' '} */}
 						<Link href='/signup'>
 							<a>Signup</a>
 						</Link>
