@@ -82,7 +82,7 @@ const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
 		setServerErrors([]);
 		setError(false);
 
-		axios.put(`/api/tag/crud`, tag).then(function (response) {
+		axios.put(`/api/tag`, tag).then(function (response) {
 			if (response.data.errors) {
 				setServerErrors(response.data.errors);
 				setError(true);

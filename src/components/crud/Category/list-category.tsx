@@ -13,7 +13,7 @@ export default function CategoryList({ categories, onMode, onEditRow, onReloadCa
 	const handleConfirm = async () => {
 		setOpenDialog(false);
 		try {
-			let response = await axios.delete(`/api/category/crud/${currentId}`);
+			let response = await axios.delete(`/api/category/${currentId}`);
 			if (response.status === 200) {
 				handleSnackOpen('Category Successfully Deleted');
 				onReloadCategoryList();

@@ -10,9 +10,9 @@ import styles from '../../../styles/Category.module.scss';
 import CategoryList from '../../../components/crud/Category/list-category';
 import AddCategory from '../../../components/crud/Category/add-category';
 import EditCategory from '../../../components/crud/Category/edit-category';
-import { getAllCategories } from '../../api/category/[...crud]';
+// import { getAllCategories } from '../../api/category/[...company_id]';
 import { parseCookies } from '../../api/auth/user';
-
+import axios from 'axios';
 import useSWR from 'swr';
 
 export const getServerSideProps = async (context) => {
@@ -24,7 +24,10 @@ export const getServerSideProps = async (context) => {
 	}
 
 	// both works dont delete
-	const categorys = await getAllCategories(company_id);
+	//const categorys = await getAllCategories(company_id);
+
+	let resp = await axios.get(`${process.env.API_URL}/category/${company_id}`);
+	let categorys = resp.data;
 
 	return {
 		props: { categorys, company_id },
@@ -37,7 +40,7 @@ export default function Index({ categorys, company_id }) {
 	const [mode, setMode] = useState('add');
 	const [editRowItem, setEditRowItem] = useState<Category>();
 
-	const { data, mutate } = useSWR(`/api/category/crud/company/${company_id}`, {
+	const { data, mutate } = useSWR(`/api/category/${company_id}`, {
 		initialData: categorys,
 	});
 

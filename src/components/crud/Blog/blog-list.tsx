@@ -19,12 +19,12 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 	const handleConfirm = async () => {
 		setOpenDialog(false);
 		mutate(
-			`/api/blog/crud/company/${company_id}`,
+			`/api/blog/company/${company_id}`,
 			blogs.filter((c) => c.id !== currentId),
 			false,
 		);
 
-		let response = await axios.delete(`/api/blog/crud/${currentId}`);
+		let response = await axios.delete(`/api/blog/${currentId}`);
 
 		if (response.status === 200) {
 			handleSnackOpen('blog Successfully Deleted');
@@ -46,7 +46,7 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 
 	const viewRow = (id: string, event: any) => {
 		event.stopPropagation();
-		Router.push(`/admin/blogt/${id}`);
+		Router.push(`/admin/blog/${id}`);
 	};
 
 	// `/admin/blog-edit/${item.id}

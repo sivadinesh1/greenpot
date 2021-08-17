@@ -10,7 +10,7 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import styles from '../../../styles/Category.module.scss';
 
 import BlogList from '../../../components/crud/Blog/blog-list';
-import { getBlogsByCompany } from '../../api/blog/[...crud]';
+// import { getBlogsByCompany } from '../../api/blog/[...slug]';
 
 import axios from 'axios';
 import useSWR, { mutate, trigger } from 'swr';
@@ -29,7 +29,11 @@ export const getServerSideProps = async (context) => {
 		};
 	}
 
-	const blogs = await getBlogsByCompany(company_id);
+	// const blogs = await getBlogsByCompany(company_id);
+
+	let resp = await axios.get(`${process.env.API_URL}/blog/company/${company_id}`);
+	let blogs = resp.data;
+
 	return {
 		props: { blogs, company_id },
 	};
@@ -40,7 +44,7 @@ export default function Index({ blogs, company_id }) {
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('list');
 
-	const { data: result } = useSWR(`/api/blog/crud/company/${company_id}`, { initialData: blogs });
+	const { data: result } = useSWR(`/api/blog/company/${company_id}`, { initialData: blogs });
 
 	let blogsList: Blog[] = result;
 
@@ -50,9 +54,9 @@ export default function Index({ blogs, company_id }) {
 	};
 
 	const reloadBlogList = async () => {
-		mutate(`/api/blog/crud/company/${company_id}`);
-		await axios.get(`/api/blog/crud/company/${company_id}`);
-		trigger(`/api/blog/crud/company/${company_id}`);
+		mutate(`/api/blog/company/${company_id}`);
+		await axios.get(`/api/blog/company/${company_id}`);
+		trigger(`/api/blog/company/${company_id}`);
 	};
 
 	const chooseMode = (mode: string) => {
@@ -62,7 +66,7 @@ export default function Index({ blogs, company_id }) {
 	const handleAddBlog = async (event) => {
 		event.stopPropagation();
 
-		const blog = await axios.get(`/api/blog/crud/new/${company_id}`);
+		const blog = await axios.get(`/api/blog/new/${company_id}`);
 
 		Router.push(`/admin/blog-edit/${company_id}/${blog.data.id}`);
 	};

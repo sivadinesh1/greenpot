@@ -14,12 +14,12 @@ export default function TagList({ tags, onMode, onEditRow, onReloadTagList, hand
 		setOpenDialog(false);
 
 		mutate(
-			`/api/tag/crud/company/${company_id}`,
+			`/api/tag/${company_id}`,
 			tags.filter((c) => c.id !== currentId),
 			false,
 		);
 
-		let response = await axios.delete(`/api/tag/crud/${currentId}`);
+		let response = await axios.delete(`/api/tag/${currentId}`);
 
 		if (response.status === 200) {
 			handleSnackOpen('Tag Successfully Deleted');

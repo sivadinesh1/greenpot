@@ -70,7 +70,7 @@ export default function AddCategory({ categories, onReloadCategoryList, handleSn
 		setServerErrors([]);
 		setError(false);
 
-		const response = await axios.post(`/api/category/crud`, values);
+		const response = await axios.post(`/api/category`, values);
 
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);

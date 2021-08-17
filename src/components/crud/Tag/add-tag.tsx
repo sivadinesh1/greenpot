@@ -73,7 +73,7 @@ export default function AddTag({ tags, onReloadTagList, handleSnackOpen, company
 		setServerErrors([]);
 		setError(false);
 
-		const response = await axios.post(`/api/tag/crud`, values);
+		const response = await axios.post(`/api/tag`, values);
 
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
