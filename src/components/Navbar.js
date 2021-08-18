@@ -1,4 +1,3 @@
-import { signout } from './auth/auth';
 import Link from 'next/link';
 import Router from 'next/router';
 
@@ -23,7 +22,6 @@ const Navbar = ({ links }) => {
 	};
 
 	const handleSignout = () => {
-		signout();
 		axios.post(`/api/auth/logout`, {}).then(function (response) {
 			Router.push(`/`);
 		});

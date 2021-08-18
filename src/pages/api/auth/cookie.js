@@ -1,5 +1,5 @@
 import { getLoginSession } from "../../../lib/auth";
-import { getUser } from "../auth/common";
+import { getUser } from "../../../service/auth/auth.service";
 
 export default async function user(req, res) {
   try {

@@ -6,7 +6,7 @@ const TOKEN_SECRET = process.env.TOKEN_SECRET;
 export async function setLoginSession(res, user) {
 	const createdAt = Date.now();
 
-	const token = jwt.sign({ id: user.id, companyid: user.companyid }, process.env.JWT_SECRET, {
+	const token = jwt.sign({ id: user.id, companyid: user.companyid,role:user.role }, process.env.JWT_SECRET, {
 		expiresIn: '1d',
 	});
 

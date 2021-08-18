@@ -1,5 +1,5 @@
 import handler from '../handler';
-import {checkEmailExists,insertUser} from './common'
+import {checkEmailExists,insertUser} from "../../../service/auth/auth.service";
 import nextConnect from 'next-connect';
 import { NextApiRequest, NextApiResponse } from 'next';
 

@@ -74,6 +74,7 @@ const ForgotPassword = () => {
 				handleSnackOpen('User Not Found', true);
 				setValues({ ...values, loading: false });
 			} else {
+				console.log("reset password link-->",response.data.link)
 				setValues({ ...values, loading: false, link: response.data.link });
 				handleSnackOpen('Reset Link send successfully', false);
 				//   Router.push(`/`);

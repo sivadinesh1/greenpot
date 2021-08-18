@@ -22,8 +22,9 @@ import Router from 'next/router';
 import { parseCookies } from '../../api/auth/user';
 
 export const getServerSideProps = async (context) => {
-	let { user_id, company_id } = await parseCookies(context?.req);
-	if (user_id === undefined || company_id === undefined) {
+	let { user_id, company_id,role_id } = await parseCookies(context?.req);
+	console.log("role id--->",role_id)
+	if (user_id === undefined || company_id === undefined ) {
 		return {
 			redirect: { destination: '/', permanent: false },
 		};

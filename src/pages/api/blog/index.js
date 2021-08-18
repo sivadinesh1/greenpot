@@ -3,84 +3,19 @@ const { stripHtml } = require('string-strip-html');
 const slugify = require('slugify');
 import { smartTrim } from '../../../components/utils/util';
 import { checkDuplicateTitle, createBlog, updateBlog } from '../../../service/blog.service';
+import {deleteImage,getImages } from '../../../service/cloudinary.service';
 
 import { bigIntToString } from '../../../dbconfig/utils';
 
 const handler = nc()
 	.post(async (req, res) => {
-		const { title, description, author, articleDate, categories, tags, body, companyId } = req.body;
-
-		const errors = [];
-
-		const isdata = await checkDuplicateTitle(title, companyId);
-
-		if (isdata > 0) {
-			errors.push('Duplicate entry');
-			if (errors.length > 0) {
-				res.status(200).json({ errors });
-				return;
+		if (req.body.operation === "DELETE") {
+			const data = await deleteImage(req.body.publicId);
+			if (data.result === 'ok') {
+				const result = await getImages(req.body.folder);
+				res.status(200).json(result.length > 0 ? result : []);
 			}
 		}
-
-		let arrayOfCategories = categories;
-		//&& categories.split(',');
-		let arrayOfTags = tags;
-		// && tags.split(',');
-
-		let slug = slugify(title).toLowerCase();
-		let mtitle = `${title} | ${process.env.APP_NAME}`;
-
-		let mdesc = stripHtml(body).result.substring(0, 160);
-
-		let excerpt = smartTrim(body, 320, '', ' ...');
-
-		let companyid = companyId;
-		if (typeof companyId === 'string') {
-			companyid = Number(companyId);
-		}
-
-		let newCatArr = arrayOfCategories.map((e) => {
-			return parseInt(e.id);
-		});
-
-		let newTagArr = arrayOfTags.map((e) => {
-			return parseInt(e.id);
-		});
-		// both works do not delete
-		// let status= 'D';
-		//   let	published= 'N';
-		//   let isdelete='N';
-
-		// db.one(
-		// 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, companyid,isdelete, description, author,article_date,status,published) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9,$10,$11,$12,$13,$14,$15) RETURNING id',
-		// 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, companyid,isdelete, description, author, articleDate,status,published],
-		// ).then((data) => {
-
-		// 	// res.json({ title: title, message: 'success' });
-		// 	res.status(201).send({ title: title, message: 'success' });
-		// });
-
-		const result = await prisma.blog.create({
-			data: {
-				title: title,
-				slug: slug,
-				body: body,
-				excerpt: excerpt,
-				mtitle: mtitle,
-				mdesc: mdesc,
-				categories: newCatArr,
-				tags: newTagArr,
-				companyid: companyid,
-				isdelete: 'N',
-				description: description,
-				author: author,
-				article_date: articleDate,
-				status: 'D',
-				published: 'N',
-			},
-		});
-
-		res.status(201).send({ title: title, message: 'success' });
 	})
 	.put(async (req, res) => {
 		const { id, title, description, author, articleDate, categories, tags, body, companyId, status } = req.body;
