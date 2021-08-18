@@ -1,5 +1,5 @@
 import nextConnect from 'next-connect';
-import { getUserByEmail } from './common';
+import { getUserByEmail } from '../../../service/auth/auth.service';
 const mail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
 mail.setApiKey(process.env.SENDGRID_API_KEY);

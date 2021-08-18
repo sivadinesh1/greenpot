@@ -41,7 +41,7 @@ import { format, parseISO, formatDistance, formatRelative, subDays } from 'date-
 // do not delete this import, prevents warnings
 import { alpha } from '@material-ui/core/styles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { getImages } from '../../../../api/cloudinary/[...path]';
+import { getImages } from '../../../../../service/cloudinary.service';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { isEmpty } from '../../../../../components/utils/util';
@@ -238,8 +238,9 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	};
 
 	//cloudinary delete image
-	const removeImage = async (data) => {
-		const response = await axios.post(`/api/blog/crud/image/delete`, data);
+	const removeImage = async (file) => {
+		const data={ publicId: file.public_id, folder: file.folder,operation:"DELETE" }
+		const response = await axios.post(`/api/blog`, data);
 		setUploadedFiles([...response.data]);
 	};
 
@@ -465,7 +466,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 								<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
 									{uploadedFiles.map((file) => (
 										<div key={file.public_id} style={{ margin: '10px auto' }}>
-											<div onClick={() => removeImage({ publicId: file.public_id, folder: file.folder })}>
+											<div onClick={() => removeImage(file)}>
 												<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
 											</div>
 											<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />

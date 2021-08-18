@@ -1,7 +1,7 @@
 import { TextField } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
 import { Button } from '@material-ui/core';
-import { getUserById } from '../../api/auth/common';
+import { getUserById } from "../../../service/auth/auth.service";
 import axios from 'axios';
 import Router from 'next/router';
 

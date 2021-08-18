@@ -1,6 +1,6 @@
 import Local from "passport-local";
 import { validatePassword } from "./user";
-import {getUserByEmail} from '../../src/pages/api/auth/common'
+ import {getUserByEmail} from '../service/auth/auth.service'
 
 export const localStrategy = new Local.Strategy(async function (
   username,
@@ -17,15 +17,4 @@ export const localStrategy = new Local.Strategy(async function (
             done(new Error("User Not Found"));
       }
 
-//   findUser({ email })
-//     .then((user) => {
-//       if (user && validatePassword(user, password)) {
-//         done(null, user);
-//       } else {
-//         done(new Error("Invalid username and password combination"));
-//       }
-//     })
-//     .catch((error) => {
-//       done(error);
-//     });
 });

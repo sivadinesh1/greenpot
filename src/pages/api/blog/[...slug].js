@@ -42,13 +42,6 @@ const handler = nc()
 		var returnValue = bigIntToString(result);
 
 		res.send(returnValue);
-	})
-	.post('/api/blog/crud/image/delete', async (req, res) => {
-		const data = await deleteImage(req.body.publicId);
-		if (data.result === 'ok') {
-			const result = await getImages(req.body.folder);
-			res.status(200).json(result.length > 0 ? result : []);
-		}
 	});
 
 export default handler;

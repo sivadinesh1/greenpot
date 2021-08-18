@@ -6,7 +6,6 @@ const slugify = require('slugify');
 const { nanoid } = require('nanoid');
 import { smartTrim } from '../components/utils/util';
 const { stripHtml } = require('string-strip-html');
-import { getImages, deleteImage } from '../pages/api/cloudinary/[...path]';
 
 export const getAllBlogs = async () => {
 	const result = await prisma.blog.findMany({});
