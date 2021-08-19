@@ -16,12 +16,14 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
+import { da } from 'date-fns/locale';
 
 const SignupComponent = () => {
 	const [isError, setIsError] = useState(false);
 	const [ErMessage, setErMessage] = useState('');
 	let schema = yup.object().shape({
 		name: yup.string().required(),
+		compnayName:yup.string().required(),
 		email: yup.string().email().required(),
 		password: yup.string().required().min(8).max(16),
 	});
@@ -46,6 +48,7 @@ const SignupComponent = () => {
 			name: data.name,
 			password: data.password,
 			email: data.email,
+			compnayName:data.compnayName,
 			origin: 'lapa',
 		};
 
@@ -53,7 +56,9 @@ const SignupComponent = () => {
 			if (!response.data.status) {
 				showTest(true, response.data.error);
 			} else {
-				Router.push(`/`);
+				console.log("test signup response",response)
+				 Router.push(`/dashboard`);
+				// Router.push(`/`);
 			}
 		});
 	};
@@ -85,6 +90,9 @@ const SignupComponent = () => {
 
 						<TextField type='text' label='Enter User Name *' fullWidth margin='dense' name='name' autoComplete='off' {...register('name')} />
 						<p style={errorStyle}>{errors.name?.message}</p>
+
+						<TextField type='text' label='Enter Company Name *' fullWidth margin='dense' name='compnayName' autoComplete='off' {...register('compnayName')} />
+						<p style={errorStyle}>{errors.compnayName?.message}</p>
 
 						<TextField type='email' label='Enter Email *' fullWidth margin='dense' name='email' autoComplete='off' {...register('email')} />
 						<p style={errorStyle}>{errors.email?.message}</p>
