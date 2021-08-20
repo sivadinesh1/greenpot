@@ -38,8 +38,10 @@ model blog {
   status        String?   @db.VarChar(1)
   published     String?   @db.VarChar(1)
   published_datetime  DateTime? @db.Timestamp(6)
-
-  @@unique([title, companyid], name: "blog_unique")
+  // blog_id       String    @db.VarChar(20)
+  repo          repo   @relation(fields: [repo_id], references: [id])
+  repo_id       BigInt 
+  // @@unique([blog_id], name: "blog_unique")
 }
 
 model categories {
@@ -52,13 +54,19 @@ model categories {
 }
 
 model company {
-  id          Int       @id @default(autoincrement())
+  id          BigInt       @id @default(autoincrement())
   name        String?   @db.VarChar(60)
   status      String?   @db.VarChar(10)
-  isdelete    Boolean?
+  is_delete   String?   @db.VarChar(5)
   createddate DateTime? @db.Timestamp(6)
   updateddate DateTime? @db.Timestamp(6)
-  slug        String?   @db.VarChar(60)
+  logo        String?   @db.VarChar(500)
+  about       String?   @db.VarChar(500)
+  website_url String?   @db.VarChar(100)
+  company_id  String?   @db.VarChar(20)
+  repos repo[]
+  @@unique([company_id], name: "company_unique")
+
 }
 
 model role {
@@ -103,4 +111,18 @@ model users {
   profile_url       String?     @db.VarChar(300)
   companyid         BigInt?
   user_role         user_role[]
+}
+
+model repo{
+    id            BigInt    @id @default(autoincrement())
+    repo_id       String    @db.VarChar(20)
+    name          String    @db.VarChar(150)
+    company_id    BigInt
+    status        String?   @db.VarChar(10)
+    isdelete      String?   @db.VarChar(5)
+    createddate   DateTime? @db.Timestamp(6)
+    updateddate   DateTime? @db.Timestamp(6)
+    company    company   @relation(fields: [company_id], references: [id])
+    blogs blog[]
+     @@unique([repo_id], name: "repo_unique")
 }

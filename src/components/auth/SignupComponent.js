@@ -23,7 +23,7 @@ const SignupComponent = () => {
 	const [ErMessage, setErMessage] = useState('');
 	let schema = yup.object().shape({
 		name: yup.string().required(),
-		compnayName:yup.string().required(),
+		companyName:yup.string().required(),
 		email: yup.string().email().required(),
 		password: yup.string().required().min(8).max(16),
 	});
@@ -48,10 +48,10 @@ const SignupComponent = () => {
 			name: data.name,
 			password: data.password,
 			email: data.email,
-			compnayName:data.compnayName,
+			companyName:data.companyName,
 			origin: 'lapa',
 		};
-
+		 
 		axios.post(`/api/auth/signup`, body).then((response) => {
 			if (!response.data.status) {
 				showTest(true, response.data.error);
@@ -91,8 +91,8 @@ const SignupComponent = () => {
 						<TextField type='text' label='Enter User Name *' fullWidth margin='dense' name='name' autoComplete='off' {...register('name')} />
 						<p style={errorStyle}>{errors.name?.message}</p>
 
-						<TextField type='text' label='Enter Company Name *' fullWidth margin='dense' name='compnayName' autoComplete='off' {...register('compnayName')} />
-						<p style={errorStyle}>{errors.compnayName?.message}</p>
+						<TextField type='text' label='Enter Company Name *' fullWidth margin='dense' name='companyName' autoComplete='off' {...register('companyName')} />
+						<p style={errorStyle}>{errors.companyName?.message}</p>
 
 						<TextField type='email' label='Enter Email *' fullWidth margin='dense' name='email' autoComplete='off' {...register('email')} />
 						<p style={errorStyle}>{errors.email?.message}</p>

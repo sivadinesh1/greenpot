@@ -26,6 +26,7 @@ export const getServerSideProps = async (context) => {
 };
 
 const Dashboard = ({repos}) => {
+	console.log("test available repository--->",repos)
 	const [message,setMessage]=useState(repos.length > 0 ? false :true)
 	return (
 		<>

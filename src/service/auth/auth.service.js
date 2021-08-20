@@ -55,11 +55,11 @@ export const checkIdExists = (id) => {
 	});
 };
 
-export const insertUser = async (name, email, password, origin) => {
+export const insertUser = async (name, email, password, origin,companyId) => {
 	const salt = crypto.randomBytes(16).toString('hex');
 	const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 	let username = nanoid(11);
-	let companyid = 2;
+	let companyid = companyId;
 
 	let profile = `${process.env.CLIENT_URL}/profile/${username}`;
 	let status = `A`;
