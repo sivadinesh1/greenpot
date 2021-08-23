@@ -34,15 +34,14 @@ export const createRepo = async (data) => {
 };
 
 export const updateRepo = async (data) => {
-    const {name,status,company_id,id}=data
-
+    const {name,status,companyId,id}=data
 	const result = await prisma.repo.update({
         where:{
             id:Number(id)
         },
 		data: {
 			name: name,
-            company_id: Number(company_id),
+            company_id: Number(companyId),
             status:status,
             updateddate:new Date()
 		},
@@ -148,3 +147,14 @@ export const checkDuplicateName = async (name, companyId) => {
 
 	return result;
 };
+
+export const getRepo = async (id) => {
+
+	const result = await prisma.repo.findUnique({
+        where:{
+            id:Number(id)
+        }
+		
+    });
+    return bigIntToString(result);
+}

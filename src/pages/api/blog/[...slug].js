@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { getBlogsByCompany, createBlogEntry, getBlogById } from '../../../service/blog.service';
+import { getBlogsByCompany, createBlogEntry, getBlogById,getBlogsByRepo } from '../../../service/blog.service';
 
 const handler = nc()
 	.get(async (req, res) => {
@@ -12,7 +12,10 @@ const handler = nc()
 			const result = await getBlogById(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'new') {
-			const result = await createBlogEntry(slug[1]);
+			const result = await createBlogEntry(slug[1],slug[2]);
+			res.status(200).json(result);
+		}else if (slug[0] === 'repo') {
+			const result = await getBlogsByRepo(slug[1]);
 			res.status(200).json(result);
 		}
 	})

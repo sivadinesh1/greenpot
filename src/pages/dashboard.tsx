@@ -4,6 +4,9 @@ import Router from 'next/router';
 import { parseCookies } from './api/auth/user';
 import axios from 'axios';
 import { useState } from 'react';
+import RepoList from '../components/crud/Repo/repo-list'
+import useSWR, { mutate, trigger } from 'swr';
+
 
 
 export const getServerSideProps = async (context) => {
@@ -21,23 +24,25 @@ export const getServerSideProps = async (context) => {
 	let repos = resp.data;
 
 	return {
-		props: { repos },
+		props: { repos ,company_id},
 	};
 };
 
-const Dashboard = ({repos}) => {
-	console.log("test available repository--->",repos)
+const Dashboard = ({repos,company_id}) => {
 	const [message,setMessage]=useState(repos.length > 0 ? false :true)
+
+	const { data } = useSWR(`/api/repository/${company_id}`, {
+		initialData: repos,
+	});
+
 	return (
 		<>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-		<br/>
-			<div>Welcome back !!!</div>
 			{message && <div>Your did'n have any repo Create new </div> }
+			<br/>
+		<br/>
+			<RepoList repos={data} companyId={company_id} />
+			<br/>
+		<br/>
 		</>
 	);
 };

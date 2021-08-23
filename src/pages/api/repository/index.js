@@ -23,5 +23,4 @@ const handler = nc().post(async(req,res)=>{
 });
 
 
-
 export default handler;
