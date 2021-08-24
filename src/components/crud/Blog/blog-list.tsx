@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import Router from 'next/router';
 
-export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode, company_id,repo_id }) {
+export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode, company_id,repo_id,company_nano }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
 	//	const router = useRouter();
@@ -44,14 +44,14 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 		setOpenDialog(true);
 	};
 
-	const editRow = (id: string, event: any) => {
+	const editRow = (nanoId: string, event: any) => {
 		event.stopPropagation();
-		Router.push(`/admin/blog-edit/${company_id}/${id}`);
+		Router.push(`/admin/blog-edit/${company_nano}/${nanoId}`);
 	};
 
-	const viewRow = (id: string, event: any) => {
+	const viewRow = (nanoId: string, event: any) => {
 		event.stopPropagation();
-		Router.push(`/admin/blog/${id}`);
+		Router.push(`/admin/blog/${nanoId}`);
 	};
 
 	// `/admin/blog-edit/${item.id}
@@ -80,10 +80,10 @@ export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onM
 										</div>
 									</div>
 									<div className={styles.blogDel}>
-										<div className={styles.btnGroup} onClick={(event) => editRow(item.id, event)}>
+										<div className={styles.btnGroup} onClick={(event) => editRow(item.blog_id, event)}>
 											<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
 										</div>
-										<div className={styles.btnGroup} onClick={(event) => viewRow(item.id, event)}>
+										<div className={styles.btnGroup} onClick={(event) => viewRow(item.blog_id, event)}>
 											<Image src='/static/images/preview.svg' alt='preview' width='15px' height='15px' />
 										</div>
 										<div className={styles.btnGroup} onClick={(event) => deleteRow(item.id, event)}>

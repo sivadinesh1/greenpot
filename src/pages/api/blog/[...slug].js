@@ -1,5 +1,6 @@
 import nc from 'next-connect';
-import { getBlogsByCompany, createBlogEntry, getBlogById,getBlogsByRepo } from '../../../service/blog.service';
+import { getBlogsByCompany, createBlogEntry, getBlogById,getBlogsByRepo ,getBlogByNanoId} from '../../../service/blog.service';
+import { bigIntToString } from '../../../dbconfig/utils';
 
 const handler = nc()
 	.get(async (req, res) => {
@@ -10,6 +11,9 @@ const handler = nc()
 			res.status(200).json(result);
 		} else if (slug[0] === 'blogid') {
 			const result = await getBlogById(slug[1]);
+			res.status(200).json(result);
+		}else if (slug[0] === 'blogByNano') {
+			const result = await getBlogByNanoId(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'new') {
 			const result = await createBlogEntry(slug[1],slug[2]);

@@ -20,28 +20,31 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Router from 'next/router';
 import { parseCookies } from '../../api/auth/user';
+import {getRepoByNano} from '../../../service/repository.service'
+import {getById} from '../../../service/company.service'
 
 export const getServerSideProps = async (context) => {
 	let { user_id, company_id,role_id } = await parseCookies(context?.req);
-	console.log("role id--->",role_id)
 	if (user_id === undefined || company_id === undefined ) {
 		return {
 			redirect: { destination: '/', permanent: false },
 		};
 	}
-	console.log("test request repo id--->",context.query.repo_id)
-	const repo_id=context.query.repo_id
-	// const blogs = await getBlogsByCompany(company_id);
 
-	let resp = await axios.get(`${process.env.API_URL}/blog/repo/${repo_id}`);
+	const company=await getById(company_id);
+	const company_nano=company[0].company_id.trim();
+	const repo_nano=context.query.repo_id
+	const repo=	await getRepoByNano(repo_nano)
+	const repo_id=repo.id
+	let resp = await axios.get(`${process.env.API_URL}/blog/repo/${repo.id}`);
 	let blogs = resp.data;
 
 	return {
-		props: { blogs, company_id,repo_id },
+		props: { blogs, company_id,repo_id,company_nano },
 	};
 };
 
-export default function Index({ blogs, company_id,repo_id }) {
+export default function Index({ blogs, company_id,repo_id,company_nano }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('list');
@@ -71,7 +74,7 @@ export default function Index({ blogs, company_id,repo_id }) {
 		debugger
 		const blog = await axios.get(`/api/blog/new/${company_id}/${repo_id}`);
 
-		Router.push(`/admin/blog-edit/${company_id}/${blog.data.id}`);
+		Router.push(`/admin/blog-edit/${company_nano}/${blog.data.blog_id}`);
 	};
 
 	return (
@@ -92,6 +95,7 @@ export default function Index({ blogs, company_id,repo_id }) {
 							onMode={chooseMode}
 							company_id={company_id}
 							repo_id={repo_id}
+							company_nano={company_nano}
 						/>
 					)}
 				</div>

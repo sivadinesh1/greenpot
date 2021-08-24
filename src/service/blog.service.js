@@ -40,6 +40,15 @@ export const getBlogById = async (blogId) => {
 	return bigIntToString(result);
 };
 
+export const getBlogByNanoId = async (blogId) => {
+	const result = await prisma.blog.findUnique({
+		where: {
+			blog_id: blogId,
+		},
+	});
+	return bigIntToString(result);
+};
+
 export const getBlog = async (blogId) => {
 	let query = `SELECT b.id, b.title, b.slug, b.body, 
 		b.description,b.author,CAST(b.article_date AS char) as article_date,b.status,
@@ -72,6 +81,7 @@ export const checkDuplicateTitle = async (title, companyid) => {
 };
 
 export const createBlogEntry = async (company_id,repo_id) => {
+	let currentDate = new Date();
 	const result = await prisma.blog.create({
 		data: {
 			title: `Untitled - ${nanoid(11)}`,
@@ -87,6 +97,9 @@ export const createBlogEntry = async (company_id,repo_id) => {
 			status: 'D',
 			published: 'N',
 			description: '',
+			created_by: Number(company_id),
+			created_date:currentDate,
+			blog_id:nanoid(11),
 			repo_id:Number(repo_id)
 		},
 	});
@@ -94,7 +107,7 @@ export const createBlogEntry = async (company_id,repo_id) => {
 	return bigIntToString(result);
 };
 
-export const updateBlog = async (id, title, description, author, articleDate, categories, tags, body, companyId, status) => {
+export const updateBlog = async (id, title, description, author, articleDate, categories, tags, body, companyId, status,createdDate) => {
 	let arrayOfCategories = categories;
 	//&& categories.split(',');
 	let arrayOfTags = tags;
@@ -155,7 +168,11 @@ export const updateBlog = async (id, title, description, author, articleDate, ca
 			article_date: articleDate,
 			status: status === 'N' ? 'D' : 'P',
 			published: status,
-			published_datetime: currentDate,
+			modified_by:companyid,
+			modified_date:currentDate,
+			published_datetime:status === 'N' ? createdDate: currentDate
 		},
 	});
+
+	return bigIntToString(result);
 };

@@ -158,3 +158,14 @@ export const getRepo = async (id) => {
     });
     return bigIntToString(result);
 }
+
+export const getRepoByNano = async (id) => {
+
+	const result = await prisma.repo.findUnique({
+        where:{
+            repo_id:id
+        }
+		
+    });
+    return bigIntToString(result);
+}
