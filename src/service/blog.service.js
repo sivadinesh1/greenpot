@@ -21,6 +21,16 @@ export const getBlogsByCompany = async (companyId) => {
 	return bigIntToString(result);
 };
 
+export const getBlogsByRepo = async (repoId) => {
+	const result = await prisma.blog.findMany({
+		where: {
+			AND: [{ repo_id: { equals: Number(repoId) || undefined } }, { isdelete: { equals: 'N' || undefined } }],
+		},
+	});
+	return bigIntToString(result);
+};
+
+
 export const getBlogById = async (blogId) => {
 	const result = await prisma.blog.findUnique({
 		where: {
@@ -61,7 +71,7 @@ export const checkDuplicateTitle = async (title, companyid) => {
 	return result;
 };
 
-export const createBlogEntry = async (company_id) => {
+export const createBlogEntry = async (company_id,repo_id) => {
 	const result = await prisma.blog.create({
 		data: {
 			title: `Untitled - ${nanoid(11)}`,
@@ -71,12 +81,13 @@ export const createBlogEntry = async (company_id) => {
 			mtitle: '',
 			mdesc: '',
 			author: '',
-			description: '',
 			companyid: Number(company_id),
 			isdelete: 'N',
 			article_date: new Date(),
 			status: 'D',
 			published: 'N',
+			description: '',
+			repo_id:Number(repo_id)
 		},
 	});
 

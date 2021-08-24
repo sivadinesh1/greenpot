@@ -11,15 +11,20 @@ import Link from 'next/link';
 import { Button } from '@material-ui/core';
 import Router from 'next/router';
 
-export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode, company_id }) {
+export default function BlogList({ blogs, onReloadBlogList, handleSnackOpen, onMode, company_id,repo_id }) {
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
 	//	const router = useRouter();
 
 	const handleConfirm = async () => {
 		setOpenDialog(false);
+		// mutate(
+		// 	`/api/blog/company/${company_id}`,
+		// 	blogs.filter((c) => c.id !== currentId),
+		// 	false,
+		// );
 		mutate(
-			`/api/blog/company/${company_id}`,
+			`/api/blog/repo/${repo_id}`,
 			blogs.filter((c) => c.id !== currentId),
 			false,
 		);

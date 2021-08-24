@@ -29,24 +29,26 @@ export const getServerSideProps = async (context) => {
 			redirect: { destination: '/', permanent: false },
 		};
 	}
-
+	console.log("test request repo id--->",context.query.repo_id)
+	const repo_id=context.query.repo_id
 	// const blogs = await getBlogsByCompany(company_id);
 
-	let resp = await axios.get(`${process.env.API_URL}/blog/company/${company_id}`);
+	let resp = await axios.get(`${process.env.API_URL}/blog/repo/${repo_id}`);
 	let blogs = resp.data;
 
 	return {
-		props: { blogs, company_id },
+		props: { blogs, company_id,repo_id },
 	};
 };
 
-export default function Index({ blogs, company_id }) {
+export default function Index({ blogs, company_id,repo_id }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('list');
 
-	const { data: result } = useSWR(`/api/blog/company/${company_id}`, { initialData: blogs });
-
+	// const { data: result } = useSWR(`/api/blog/company/${company_id}`, { initialData: blogs });
+	const { data: result } = useSWR(`/api/blog/repo/${repo_id}`, { initialData: blogs });
+	
 	let blogsList: Blog[] = result;
 
 	const handleSnackOpen = (message) => {
@@ -55,9 +57,9 @@ export default function Index({ blogs, company_id }) {
 	};
 
 	const reloadBlogList = async () => {
-		mutate(`/api/blog/company/${company_id}`);
-		await axios.get(`/api/blog/company/${company_id}`);
-		trigger(`/api/blog/company/${company_id}`);
+		mutate(`/api/blog/repo/${repo_id}`);
+		await axios.get(`/api/blog/repo/${repo_id}`);
+		trigger(`/api/blog/repo/${repo_id}`);
 	};
 
 	const chooseMode = (mode: string) => {
@@ -66,8 +68,8 @@ export default function Index({ blogs, company_id }) {
 
 	const handleAddBlog = async (event) => {
 		event.stopPropagation();
-
-		const blog = await axios.get(`/api/blog/new/${company_id}`);
+		debugger
+		const blog = await axios.get(`/api/blog/new/${company_id}/${repo_id}`);
 
 		Router.push(`/admin/blog-edit/${company_id}/${blog.data.id}`);
 	};
@@ -89,6 +91,7 @@ export default function Index({ blogs, company_id }) {
 							handleSnackOpen={handleSnackOpen}
 							onMode={chooseMode}
 							company_id={company_id}
+							repo_id={repo_id}
 						/>
 					)}
 				</div>

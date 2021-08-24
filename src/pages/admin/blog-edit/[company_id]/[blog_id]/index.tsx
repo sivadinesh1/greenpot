@@ -43,18 +43,25 @@ import { alpha } from '@material-ui/core/styles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getImages } from '../../../../../service/cloudinary.service';
 import { ErrorMessage } from '@hookform/error-message';
+import { parseCookies } from '../../../../api/auth/user';
 
 import { isEmpty } from '../../../../../components/utils/util';
 
 export const getServerSideProps = async (context) => {
-	const company_id = context.params.company_id as string;
-	const blog_id = context.params.blog_id as string;
+	// const company_id = context.params.company_id as string;
+	 const blog_id = context.params.blog_id as string;
+	let { user_id, company_id,role_id } = await parseCookies(context?.req);
+	if (user_id === undefined || company_id === undefined ) {
+		return {
+			redirect: { destination: '/', permanent: false },
+		};
+	}
 
 	let path = `C${company_id}/B${blog_id}`;
 
 	let resp = await axios.get(`${process.env.API_URL}/blog/blogid/${blog_id}`);
 	const blog = resp.data;
-
+	const repo_id=resp.data.repo_id;
 	const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
 	const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
 
@@ -65,7 +72,7 @@ export const getServerSideProps = async (context) => {
 	const selectedImages = await getImages(path);
 
 	return {
-		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages },
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages,repo_id },
 	};
 };
 
@@ -100,7 +107,7 @@ type ErrorMessageContainerProps = {
 };
 const ErrorMessageContainer = ({ children }: ErrorMessageContainerProps) => <span className='error'>{children}</span>;
 
-export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages }) {
+export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages ,repo_id}) {
 	const preloadedValues = {
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
 		description: blog.description,
@@ -233,7 +240,8 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 
 			event.target.reset();
 			reset();
-			Router.push(`/admin/blogs`);
+			console.log("test repo id---->",repo_id)
+			Router.push(`/admin/blogs/${Number(repo_id)}`);
 		}
 	};
 

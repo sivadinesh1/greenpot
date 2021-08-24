@@ -2,7 +2,7 @@ import nextConnect from 'next-connect';
 import { getUserByEmail } from '../../../service/auth/auth.service';
 const mail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
-mail.setApiKey(process.env.SENDGRID_API_KEY);
+mail.setApiKey(process.env.NEXT_PUBLIC_SG_SECRET_KEY);
 
 export default nextConnect().post(async (req, res) => {
 	const { email } = req.body;

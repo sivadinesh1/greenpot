@@ -55,26 +55,45 @@ export const checkIdExists = (id) => {
 	});
 };
 
-export const insertUser = async (name, email, password, origin) => {
+export const insertUser = async (name, email, password, origin,companyId) => {
 	const salt = crypto.randomBytes(16).toString('hex');
 	const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 	let username = nanoid(11);
-	let companyid = 2;
+	let companyid = companyId;
 
 	let profile = `${process.env.CLIENT_URL}/profile/${username}`;
 	let status = `A`;
 
-	db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid) VALUES($1, $2, $3, $4, $5,$6,$7) RETURNING id', [
-		name,
-		email,
-		hash,
-		salt,
-		status,
-		profile,
-		companyid,
-	]).then((data) => {
-		db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1]);
-	});
+	// db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid) VALUES($1, $2, $3, $4, $5,$6,$7) RETURNING id', [
+	// 	name,
+	// 	email,
+	// 	hash,
+	// 	salt,
+	// 	status,
+	// 	profile,
+	// 	companyid,
+	// ]).then((data) => {
+	// 	db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1]).then((data) =>{
+
+    //     });
+    // });
+    
+    return new Promise(function (resolve) {
+        db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid) VALUES($1, $2, $3, $4, $5,$6,$7) RETURNING id', [
+            name,
+            email,
+            hash,
+            salt,
+            status,
+            profile,
+            companyid,
+        ]).then((data) => {
+            db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1]).then((d) =>{
+
+                resolve({ message: 'success',role:d.id,companyid:companyid,id:data.id });
+            });
+        });
+    });
 };
 
 export const getUser = async ({ email }) => {

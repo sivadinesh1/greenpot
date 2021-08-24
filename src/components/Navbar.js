@@ -39,11 +39,11 @@ const Navbar = ({ links }) => {
 							<FontAwesomeIcon icon={faUser} onClick={handleClick} style={{ fontSize: '2rem', color: '#234' }}></FontAwesomeIcon>
 
 							<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-								<MenuItem onClick={handleClose}>
+								{/* <MenuItem onClick={handleClose}>
 									<Link href={`/admin/blogs`}>
 										<a>Blogs</a>
 									</Link>
-								</MenuItem>
+								</MenuItem> */}
 
 								<MenuItem onClick={handleClose}>
 									<Link href={`/admin/category`}>
