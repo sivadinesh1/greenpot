@@ -47,13 +47,13 @@ export default function RepoList({ repos ,companyId}) {
                     return (
                         <div>
                         <div className={styles.card}>
-                        <Link href={`/admin/blogs/${d.id}`}>
+                        <Link href={`/admin/blogs/${d.repo_id}`}>
                             <div className={styles.card_title}>
                                 <p> {d.name}</p>
                             </div>
                         </Link>
                         <div>
-                                <div className={styles.btnGroup} onClick={(event) => editRow(d.id, event)}>
+                                <div className={styles.btnGroup} onClick={(event) => editRow(d.repo_id, event)}>
                                     Click to Edit<Image src='/static/images/edit.svg' alt='edit' width='15px' height='15px' />
                                 </div>
 						</div>

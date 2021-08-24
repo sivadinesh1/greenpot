@@ -54,13 +54,14 @@ export const getById = async (id) => {
 
     });
     return bigIntToString(result);
+    
 };
 
 export const getByNano = async (id) => {
 
-    const result = await prisma.company.findMany({
+    const result = await prisma.company.findUnique({
         where: {
-            AND: [{ company_id: { equals: id || undefined } }, { is_delete: { equals: 'N' || undefined } }],
+             company_id: id 
         }
     });
     return bigIntToString(result);

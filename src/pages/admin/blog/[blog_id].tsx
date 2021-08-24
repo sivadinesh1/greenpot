@@ -18,7 +18,7 @@ export const getServerSideProps = async (context) => {
 
 	const cookie = context?.req?.headers.cookie;
 
-	let resp = await axios.get(`${process.env.API_URL}/blog/blogid/${blog_id}`);
+	let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`);
 	const blog = resp.data;
 
 	return {

@@ -38,10 +38,10 @@ model blog {
   status        String?   @db.VarChar(1)
   published     String?   @db.VarChar(1)
   published_datetime  DateTime? @db.Timestamp(6)
-  // blog_id       String    @db.VarChar(20)
+  blog_id       String    @db.VarChar(20)
   repo          repo   @relation(fields: [repo_id], references: [id])
   repo_id       BigInt 
-  // @@unique([blog_id], name: "blog_unique")
+  @@unique([blog_id], name: "blog_unique")
 }
 
 model categories {

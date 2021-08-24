@@ -13,7 +13,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { getRepo } from '../../../../service/repository.service'
+import { getRepo,getRepoByNano } from '../../../../service/repository.service'
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ConfirmDialog from '../../../../components/elements/ui/Dialog/ConfirmDialog';
 
@@ -28,8 +28,9 @@ export const getServerSideProps = async (context) => {
             redirect: { destination: '/', permanent: false },
         };
     }
-    const repo_id = context.query.id
-    const repo = await getRepo(repo_id);
+    const repo_nano = context.query.id
+    // const repo = await getRepo(repo_id);
+    const repo = await getRepoByNano(repo_nano)
     return {
         props: { company_id, repo },
     };

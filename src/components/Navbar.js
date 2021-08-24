@@ -63,7 +63,11 @@ const Navbar = ({ links }) => {
 									</Link>
 								</MenuItem>
 
-								<MenuItem onClick={handleClose}>Profile</MenuItem>
+								<MenuItem onClick={handleClose}>
+								<Link href='/admin/company'>
+										<a>Profile</a>
+									</Link>
+									</MenuItem>
 								<MenuItem onClick={handleClose}>My account</MenuItem>
 								<MenuItem onClick={handleSignout}>Singout</MenuItem>
 								{/* <MenuItem onClick={() => signout(() => Router.replace(`/`))}>Singout</MenuItem> */}

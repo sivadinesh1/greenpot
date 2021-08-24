@@ -44,7 +44,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getImages } from '../../../../../service/cloudinary.service';
 import { ErrorMessage } from '@hookform/error-message';
 import { parseCookies } from '../../../../api/auth/user';
-
+import {getRepo} from '../../../../../service/repository.service';
 import { isEmpty } from '../../../../../components/utils/util';
 
 export const getServerSideProps = async (context) => {
@@ -59,20 +59,19 @@ export const getServerSideProps = async (context) => {
 
 	let path = `C${company_id}/B${blog_id}`;
 
-	let resp = await axios.get(`${process.env.API_URL}/blog/blogid/${blog_id}`);
+	let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`);
 	const blog = resp.data;
-	const repo_id=resp.data.repo_id;
 	const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
 	const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
-
+	const repo=	await getRepo(resp.data.repo_id);
+	const repo_nano=repo.repo_id;
 	const categories = await getAllCategories(company_id);
-
 	const tags = await getAllTags(company_id);
 
 	const selectedImages = await getImages(path);
 
 	return {
-		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages,repo_id },
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages,repo_nano },
 	};
 };
 
@@ -107,7 +106,7 @@ type ErrorMessageContainerProps = {
 };
 const ErrorMessageContainer = ({ children }: ErrorMessageContainerProps) => <span className='error'>{children}</span>;
 
-export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages ,repo_id}) {
+export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages ,repo_nano}) {
 	const preloadedValues = {
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
 		description: blog.description,
@@ -219,6 +218,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 			companyId: company_id,
 			body: contentBody || '',
 			status: status,
+			createdDate:blog.published_datetime
 		};
 		setSubmitting(true);
 		setServerErrors([]);
@@ -240,8 +240,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 
 			event.target.reset();
 			reset();
-			console.log("test repo id---->",repo_id)
-			Router.push(`/admin/blogs/${Number(repo_id)}`);
+			Router.push(`/admin/blogs/${repo_nano}`);
 		}
 	};
 
