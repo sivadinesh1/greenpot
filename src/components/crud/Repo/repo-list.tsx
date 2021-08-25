@@ -24,6 +24,10 @@ export default function RepoList({ repos ,companyId}) {
         Router.push("admin/repo/add")
     }
 
+    const addAuthor = () =>{
+        Router.push("admin/author/add")
+    }
+
     const editRow = (id: string, event: any) => {
 		event.stopPropagation();
 		Router.push(`/admin/repo/edit/${id}`);
@@ -32,11 +36,14 @@ export default function RepoList({ repos ,companyId}) {
 
     return (
         <div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 200px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px' }}>
 				<div> &nbsp;</div>
 				<div style={{ fontSize: '1.3rem', padding: '1rem' }}>
-					<Button onClick={() => add()} type='button' variant='contained' color='primary'>
+					<Button onClick={() => add()} type='button' variant='contained' color='primary' style={{float:'left',marginRight:'10px'}}>
 						Add New
+					</Button>
+                    <Button onClick={() => addAuthor()} type='button' variant='contained' color='primary'style={{float:'left'}}>
+						Author
 					</Button>
 				</div>
 			</div>

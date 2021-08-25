@@ -46,6 +46,7 @@ import { ErrorMessage } from '@hookform/error-message';
 import { parseCookies } from '../../../../api/auth/user';
 import {getRepo} from '../../../../../service/repository.service';
 import { isEmpty } from '../../../../../components/utils/util';
+import {getUserById} from '../../../../../service/auth/auth.service'
 
 export const getServerSideProps = async (context) => {
 	// const company_id = context.params.company_id as string;
@@ -56,6 +57,7 @@ export const getServerSideProps = async (context) => {
 			redirect: { destination: '/', permanent: false },
 		};
 	}
+
 
 	let path = `C${company_id}/B${blog_id}`;
 
