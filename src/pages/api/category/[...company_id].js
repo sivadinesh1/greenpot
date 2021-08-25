@@ -2,7 +2,7 @@ import nc from 'next-connect';
 import { getAllCategories, deleteCategory } from '../../../service/category.service';
 
 const handler = nc()
-	.get(async (req, res) => {
+	.get(b, async (req, res) => {
 		const { company_id } = req.query;
 		const returnValue = await getAllCategories(company_id);
 		res.status(200).json(returnValue);
@@ -15,3 +15,8 @@ const handler = nc()
 	});
 
 export default handler;
+
+function b(req, res, next) {
+	console.log('b>>>>>>>>>>>>>');
+	next();
+}

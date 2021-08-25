@@ -1,7 +1,7 @@
 import { TextField } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
 import { Button } from '@material-ui/core';
-import { getUserById } from "../../../service/auth/auth.service";
+import { getUserById } from '../../../service/auth/auth.service';
 import axios from 'axios';
 import Router from 'next/router';
 
@@ -15,7 +15,7 @@ export const getServerSideProps = async (context) => {
 		response = 'User Not Found';
 	} else {
 		try {
-			const secret = process.env.JWT_SECRET;
+			const secret = process.env.ACCESS_TOKEN_SECRET;
 			const user = jwt.verify(token, secret);
 			response = user;
 		} catch (error) {}

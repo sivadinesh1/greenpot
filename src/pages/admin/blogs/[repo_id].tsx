@@ -20,38 +20,38 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Router from 'next/router';
 import { parseCookies } from '../../api/auth/user';
-import {getRepoByNano} from '../../../service/repository.service'
-import {getById} from '../../../service/company.service'
+import { getRepoByNano } from '../../../service/repository.service';
+import { getById } from '../../../service/company.service';
 
 export const getServerSideProps = async (context) => {
-	let { user_id, company_id,role_id } = await parseCookies(context?.req);
-	if (user_id === undefined || company_id === undefined ) {
+	let { user_id, company_id, role_id } = await parseCookies(context?.req);
+	if (user_id === undefined || company_id === undefined) {
 		return {
 			redirect: { destination: '/', permanent: false },
 		};
 	}
 
-	const company=await getById(company_id);
-	const company_nano=company[0].company_id.trim();
-	const repo_nano=context.query.repo_id
-	const repo=	await getRepoByNano(repo_nano)
-	const repo_id=repo.id
+	const company = await getById(company_id);
+	const company_nano = company[0].company_id.trim();
+	const repo_nano = context.query.repo_id;
+	const repo = await getRepoByNano(repo_nano);
+	const repo_id = repo.id;
 	let resp = await axios.get(`${process.env.API_URL}/blog/repo/${repo.id}`);
 	let blogs = resp.data;
 
 	return {
-		props: { blogs, company_id,repo_id,company_nano },
+		props: { blogs, company_id, repo_id, company_nano },
 	};
 };
 
-export default function Index({ blogs, company_id,repo_id,company_nano }) {
+export default function Index({ blogs, company_id, repo_id, company_nano }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('list');
 
 	// const { data: result } = useSWR(`/api/blog/company/${company_id}`, { initialData: blogs });
 	const { data: result } = useSWR(`/api/blog/repo/${repo_id}`, { initialData: blogs });
-	
+
 	let blogsList: Blog[] = result;
 
 	const handleSnackOpen = (message) => {
@@ -71,7 +71,7 @@ export default function Index({ blogs, company_id,repo_id,company_nano }) {
 
 	const handleAddBlog = async (event) => {
 		event.stopPropagation();
-		debugger
+
 		const blog = await axios.get(`/api/blog/new/${company_id}/${repo_id}`);
 
 		Router.push(`/admin/blog-edit/${company_nano}/${blog.data.blog_id}`);

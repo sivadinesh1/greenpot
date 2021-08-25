@@ -20,6 +20,10 @@ import 'nprogress/nprogress.css';
 import NProgress from 'nprogress';
 import Layout from '../components/Layout';
 
+import { state } from './../pages/state';
+
+import { useSnapshot } from 'valtio';
+
 config.autoAddCss = false;
 
 Router.events.on('routeChangeStart', () => NProgress.start());
@@ -30,11 +34,20 @@ Router.events.on('routeChangeError', () => NProgress.done());
 export default function MyApp(props) {
 	const { Component, pageProps } = props;
 	const { locale } = useRouter();
+
+	const router1 = useRouter();
+
 	React.useEffect(() => {
 		// Remove the server-side injected CSS.
 		const jssStyles = document.querySelector('#jss-server-side');
 		if (jssStyles) {
 			jssStyles.parentElement.removeChild(jssStyles);
+		}
+		if (localStorage.getItem('islogged') && router1.pathname !== '/') {
+			state.islogged = true;
+		} else if (localStorage.getItem('islogged') && router1.pathname === '/') {
+			state.islogged = true;
+			Router.push('/dashboard');
 		}
 	}, []);
 

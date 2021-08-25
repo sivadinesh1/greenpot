@@ -18,7 +18,7 @@ export default nextConnect().post(async (req, res) => {
 		//   }).then(() => {
 		//     res.status(200).json({ status: 'Ok' });
 		//   });
-		const secret = process.env.JWT_SECRET;
+		const secret = process.env.ACCESS_TOKEN_SECRET;
 		const payload = {
 			id: user.id,
 			salt: user.salt,
