@@ -6,6 +6,8 @@ const slugify = require('slugify');
 const { nanoid } = require('nanoid');
 import { smartTrim } from '../components/utils/util';
 const { stripHtml } = require('string-strip-html');
+import {getUserById} from '../service/auth/auth.service'
+
 
 export const getAllBlogs = async () => {
 	const result = await prisma.blog.findMany({});
@@ -80,7 +82,8 @@ export const checkDuplicateTitle = async (title, companyid) => {
 	return result;
 };
 
-export const createBlogEntry = async (company_id,repo_id) => {
+export const createBlogEntry = async (company_id,repo_id,user_id) => {
+	const user=await getUserById(user_id);
 	let currentDate = new Date();
 	const result = await prisma.blog.create({
 		data: {
@@ -90,7 +93,7 @@ export const createBlogEntry = async (company_id,repo_id) => {
 			excerpt: '',
 			mtitle: '',
 			mdesc: '',
-			author: '',
+			author: user.first_name,
 			companyid: Number(company_id),
 			isdelete: 'N',
 			article_date: new Date(),

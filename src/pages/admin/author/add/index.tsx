@@ -53,7 +53,7 @@ export const getServerSideProps = async (context) => {
     }
 
     return {
-        props: { company_id },
+        props: { company_id},
     };
 };
 
@@ -111,7 +111,7 @@ export default function Index({company_id}) {
 
 			setSubmitting(false);
 			if (response.status === 201) {
-				handleSnackOpen('Sub User Successfully Created');
+				handleSnackOpen('Author Successfully Created');
 			}
 		});    
     }
