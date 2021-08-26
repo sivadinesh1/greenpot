@@ -60,6 +60,7 @@ export const insertUser = async (name, email, password, origin,companyId) => {
 	const hash = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
 	let username = nanoid(11);
 	let companyid = companyId;
+	let accessRights='A';
 
 	let profile = `${process.env.CLIENT_URL}/profile/${username}`;
 	let status = `A`;
@@ -79,14 +80,16 @@ export const insertUser = async (name, email, password, origin,companyId) => {
     // });
     
     return new Promise(function (resolve) {
-        db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid) VALUES($1, $2, $3, $4, $5,$6,$7) RETURNING id', [
+        db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid,access_rights,user_id) VALUES($1, $2, $3, $4, $5,$6,$7,$8,$9) RETURNING id', [
             name,
             email,
             hash,
             salt,
             status,
             profile,
-            companyid,
+			companyid,
+			accessRights,
+			nanoid(11)
         ]).then((data) => {
             db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1]).then((d) =>{
 
@@ -127,6 +130,16 @@ export const getUserByEmail = async (email) => {
 
 export const getUserById = async (id) => {
 	let query = 'select * from users where id=$1';
+
+	return new Promise(function (resolve) {
+		db.oneOrNone(query, [id]).then((data) => {
+			resolve(data);
+		});
+	});
+};
+
+export const getUserByNano = async (id) => {
+	let query = 'select * from users where user_id=$1';
 
 	return new Promise(function (resolve) {
 		db.oneOrNone(query, [id]).then((data) => {

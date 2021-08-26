@@ -16,7 +16,7 @@ const handler = nc()
 			const result = await getBlogByNanoId(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'new') {
-			const result = await createBlogEntry(slug[1],slug[2]);
+			const result = await createBlogEntry(slug[1],slug[2],slug[3]);
 			res.status(200).json(result);
 		}else if (slug[0] === 'repo') {
 			const result = await getBlogsByRepo(slug[1]);
