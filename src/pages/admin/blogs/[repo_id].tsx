@@ -40,11 +40,11 @@ export const getServerSideProps = async (context) => {
 	let blogs = resp.data;
 
 	return {
-		props: { blogs, company_id, repo_id, company_nano },
+		props: { blogs, company_id, repo_id, company_nano, user_id },
 	};
 };
 
-export default function Index({ blogs, company_id, repo_id, company_nano }) {
+export default function Index({ blogs, company_id, repo_id, company_nano, user_id }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('list');
@@ -71,8 +71,8 @@ export default function Index({ blogs, company_id, repo_id, company_nano }) {
 
 	const handleAddBlog = async (event) => {
 		event.stopPropagation();
-
-		const blog = await axios.get(`/api/blog/new/${company_id}/${repo_id}`);
+		debugger;
+		const blog = await axios.get(`/api/blog/new/${company_id}/${repo_id}/${user_id}`);
 
 		Router.push(`/admin/blog-edit/${company_nano}/${blog.data.blog_id}`);
 	};
