@@ -1,9 +1,17 @@
 import nc from 'next-connect';
 
-const slugify = require('slugify');
-import { checkDuplicateNames, createTag, updateTag } from '../../../service/tag.service';
+import { getAllTags, checkDuplicateNames, createTag, updateTag } from '../../../service/tag.service';
+import { auth } from '../../../middlewares/auth';
 
 const handler = nc()
+	.get(auth('getUsers'), async (req, res) => {
+		console.log('ffdfffff');
+		let company_id = req.user.companyid;
+
+		const tags = await getAllTags(company_id);
+
+		res.status(200).json({ company_id, tags });
+	})
 	// create method
 	.post(async (req, res) => {
 		const { name, companyid } = req.body;

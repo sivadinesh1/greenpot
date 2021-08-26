@@ -3,6 +3,7 @@ import Image from 'next/image';
 
 import styles from '../styles/Home.module.scss';
 import SigninComponent from '../components/auth/SigninComponent';
+import React, { useMemo, useEffect } from 'react';
 
 const IndexPage = () => {
 	return (

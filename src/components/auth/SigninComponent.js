@@ -18,6 +18,8 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 
+import { state } from './../../pages/state';
+
 const SigninComponent = () => {
 	//	const { formatMessage: f } = useIntl();
 	const [isError, setIsError] = useState(false);
@@ -64,6 +66,8 @@ const SigninComponent = () => {
 				setValues({ ...values, loading: false });
 				showTest(true, response.data.error);
 			} else {
+				state.islogged = true;
+				localStorage.setItem('islogged', true);
 				Router.push(`/dashboard`);
 			}
 		});

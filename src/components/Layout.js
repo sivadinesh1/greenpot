@@ -3,15 +3,20 @@ import Footer from '../components/Footer';
 
 import React from 'react';
 
+import { state } from './../pages/state';
+import { useSnapshot } from 'valtio';
+
 const Layout = ({ children }) => {
+	const snap = useSnapshot(state);
+
 	return (
 		<>
-			<Navbar links={true} />
+			{snap.islogged ? <Navbar /> : ''}
+
 			<div className='global-main'>
 				<main>{children}</main>
 			</div>
-
-			<Footer />
+			{snap.islogged ? <Footer /> : ''}
 		</>
 	);
 };

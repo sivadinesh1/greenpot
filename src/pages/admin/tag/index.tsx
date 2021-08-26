@@ -1,9 +1,5 @@
-import Layout from '../../../components/Layout';
+import React, { useState, useEffect } from 'react';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-
-// import SnackBar from '../../../components/elements/ui/Dialog/SnackBar';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Tag } from '../../../modal/Tag';
@@ -15,27 +11,44 @@ import EditTag from '../../../components/crud/Tag/edit-tag';
 
 import axios from 'axios';
 import useSWR from 'swr';
-import { parseCookies } from '../../api/auth/user';
+import { forceLogout } from '../../../components/auth/auth';
+import { errorUtils } from '../../../utils/error-utils';
 
 export const getServerSideProps = async (context) => {
-	let { user_id, company_id } = await parseCookies(context?.req);
-	if (user_id === undefined || company_id === undefined) {
-		return {
-			redirect: { destination: '/', permanent: false },
-		};
-	}
+	let isError = false;
+	const cookie = context?.req?.headers.cookie;
 
-	// const tags = await getAllTags(company_id);
+	let tags = null;
+	let company_id = null;
 
-	let resp = await axios.get(`${process.env.API_URL}/tag/${company_id}`);
-	let tags = resp.data;
+	await axios
+		.get(`${process.env.API_URL}/tag`, {
+			headers: {
+				cookie: cookie!,
+			},
+		})
+		.then((response) => {
+			company_id = response.data.company_id;
+			tags = response.data.tags;
+		})
+		.catch((error) => {
+			let err = errorUtils.getError(error);
+			console.log('print error ' + err);
+			isError = true;
+		});
 
 	return {
-		props: { tags, company_id },
+		props: { tags, company_id, isError },
 	};
 };
 
-export default function Index({ tags, company_id }) {
+export default function Index({ tags, company_id, isError }) {
+	useEffect(() => {
+		if (isError) {
+			forceLogout();
+		}
+	}, []);
+
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('add');

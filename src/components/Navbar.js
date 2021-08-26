@@ -11,7 +11,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the 
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
-const Navbar = ({ links }) => {
+import { state } from './../pages/state';
+
+const Navbar = () => {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -23,6 +25,8 @@ const Navbar = ({ links }) => {
 
 	const handleSignout = () => {
 		axios.post(`/api/auth/logout`, {}).then(function (response) {
+			localStorage.removeItem('islogged');
+			state.islogged = false;
 			Router.push(`/`);
 		});
 	};
@@ -34,48 +38,44 @@ const Navbar = ({ links }) => {
 					<Link href={`/dashboard`}>DRAFTY</Link>
 				</div>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
-					{links ? (
-						<div style={{ zIndex: '10', position: 'relative', paddingLeft: '16px' }}>
-							<FontAwesomeIcon icon={faUser} onClick={handleClick} style={{ fontSize: '2rem', color: '#234' }}></FontAwesomeIcon>
+					<div style={{ zIndex: '10', position: 'relative', paddingLeft: '16px' }}>
+						<FontAwesomeIcon icon={faUser} onClick={handleClick} style={{ fontSize: '2rem', color: '#234' }}></FontAwesomeIcon>
 
-							<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-								{/* <MenuItem onClick={handleClose}>
+						<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
+							{/* <MenuItem onClick={handleClose}>
 									<Link href={`/admin/blogs`}>
 										<a>Blogs</a>
 									</Link>
 								</MenuItem> */}
 
-								<MenuItem onClick={handleClose}>
-									<Link href={`/admin/category`}>
-										<a>Categories</a>
-									</Link>
-								</MenuItem>
+							<MenuItem onClick={handleClose}>
+								<Link href={`/admin/category`}>
+									<a>Categories</a>
+								</Link>
+							</MenuItem>
 
-								<MenuItem onClick={handleClose}>
-									<Link href={`/admin/tag`}>
-										<a>Tags</a>
-									</Link>
-								</MenuItem>
+							<MenuItem onClick={handleClose}>
+								<Link href={`/admin/tag`}>
+									<a>Tags</a>
+								</Link>
+							</MenuItem>
 
-								<MenuItem onClick={handleClose}>
-									<Link href='/admin/user'>
-										<a>User</a>
-									</Link>
-								</MenuItem>
+							<MenuItem onClick={handleClose}>
+								<Link href='/admin/user'>
+									<a>User</a>
+								</Link>
+							</MenuItem>
 
-								<MenuItem onClick={handleClose}>
+							<MenuItem onClick={handleClose}>
 								<Link href='/admin/company'>
-										<a>Profile</a>
-									</Link>
-									</MenuItem>
-								<MenuItem onClick={handleClose}>My account</MenuItem>
-								<MenuItem onClick={handleSignout}>Singout</MenuItem>
-								{/* <MenuItem onClick={() => signout(() => Router.replace(`/`))}>Singout</MenuItem> */}
-							</Menu>
-						</div>
-					) : (
-						''
-					)}
+									<a>Profile</a>
+								</Link>
+							</MenuItem>
+							<MenuItem onClick={handleClose}>My account</MenuItem>
+							<MenuItem onClick={handleSignout}>Singout</MenuItem>
+							{/* <MenuItem onClick={() => signout(() => Router.replace(`/`))}>Singout</MenuItem> */}
+						</Menu>
+					</div>
 				</div>
 			</div>
 		</>

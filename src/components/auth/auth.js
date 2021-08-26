@@ -23,3 +23,11 @@
 // 	setLocalStorage('user', data.user);
 // 	next();
 // };
+import { state } from '../../pages/state';
+import Router, { useRouter } from 'next/router';
+
+export const forceLogout = () => {
+	localStorage.removeItem('islogged');
+	state.islogged = false;
+	Router.push('/');
+};
