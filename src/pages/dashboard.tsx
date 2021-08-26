@@ -11,7 +11,6 @@ import useSWR, { mutate, trigger } from 'swr';
 
 export const getServerSideProps = async (context) => {
 	let { user_id, company_id,role_id } = await parseCookies(context?.req);
-	console.log("",role_id,user_id)
 	if (user_id === undefined || company_id === undefined ) {
 		return {
 			redirect: { destination: '/', permanent: false },

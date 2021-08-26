@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { makeStyles } from '@material-ui/core/styles';
 
 import TextField from '@material-ui/core/TextField';
-import { Button } from '@material-ui/core';
+import { Button, MenuItem } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -46,9 +46,11 @@ import { ErrorMessage } from '@hookform/error-message';
 import { parseCookies } from '../../../../api/auth/user';
 import {getRepo} from '../../../../../service/repository.service';
 import { isEmpty } from '../../../../../components/utils/util';
+import {getUserById} from '../../../../../service/auth/auth.service'
+import ReactHookFormSelect from '../../../../../components/ReactHookFormSelect'
+
 
 export const getServerSideProps = async (context) => {
-	// const company_id = context.params.company_id as string;
 	 const blog_id = context.params.blog_id as string;
 	let { user_id, company_id,role_id } = await parseCookies(context?.req);
 	if (user_id === undefined || company_id === undefined ) {
@@ -56,9 +58,12 @@ export const getServerSideProps = async (context) => {
 			redirect: { destination: '/', permanent: false },
 		};
 	}
+	const user=await getUserById(user_id);
+	let accessRights=user.access_rights;
 
 	let path = `C${company_id}/B${blog_id}`;
-
+	let {data} = await axios.get(`${process.env.API_URL}/author/company/${company_id}`);
+	let authors=data
 	let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`);
 	const blog = resp.data;
 	const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
@@ -71,7 +76,7 @@ export const getServerSideProps = async (context) => {
 	const selectedImages = await getImages(path);
 
 	return {
-		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages,repo_nano },
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages,repo_nano,accessRights,authors },
 	};
 };
 
@@ -106,7 +111,7 @@ type ErrorMessageContainerProps = {
 };
 const ErrorMessageContainer = ({ children }: ErrorMessageContainerProps) => <span className='error'>{children}</span>;
 
-export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages ,repo_nano}) {
+export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages ,repo_nano,accessRights,authors}) {
 	const preloadedValues = {
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
 		description: blog.description,
@@ -195,6 +200,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		if (submitting) {
 			return false;
 		}
+		console.log("test form data---->",formData);
 		if (!selectedTags.length || !selectedCategorys.length) {
 			setIsError(true);
 			return;
@@ -385,24 +391,21 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 							</div>
 							<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 								<div style={{ marginRight: '10px', marginTop: '10px' }}>
-									<Controller
-										name='author'
-										control={control}
-										rules={{ required: true }}
-										render={({ field }) => (
-											<TextField
-												type='text'
-												label='Author'
-												margin='dense'
-												variant='standard'
-												size='small'
-												fullWidth
-												error={!!errors.author}
-												helperText={errors?.author?.message}
-												{...field}
-											/>
-										)}
-									/>
+									 <ReactHookFormSelect
+                                        id="author1"
+                                        name="author"
+                                        label="Author"
+                                        className={styles.textField}
+                                        control={control}
+                                        defaultValue={blog.author}
+                                        >
+											{authors.map((author,index) => (
+												<MenuItem key={index} value={author.first_name}>
+													{author.first_name}
+												</MenuItem>
+												))}
+
+                                    </ReactHookFormSelect>
 								</div>
 
 								<div style={{ marginLeft: '10px' }}>
@@ -453,9 +456,9 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 								<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
 									Save
 								</Button>
-								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
+								{accessRights != "W" && <Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
 									Publish
-								</Button>
+								</Button>}
 							</div>
 						</form>
 					</div>
