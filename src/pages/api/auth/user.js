@@ -1,24 +1,12 @@
-import { getLoginSession } from '../../../lib/auth';
+import { getLoginSession } from '../../../middlewares/auth';
 import { getUser } from '../../../service/auth/auth.service';
 const jwt = require('jsonwebtoken');
 import cookie from 'cookie';
 import { isEmpty } from '../../../components/utils/util';
 
-export default async function user(req, res) {
-	try {
-		const session = await getLoginSession(req);
-		const user = (session && (await getUser(session))) ?? null;
-
-		res.status(200).json({ user });
-	} catch (error) {
-		console.error(error);
-		res.status(500).end('Authentication token is invalid, please log in');
-	}
-}
-
 export const parseCookies = async (req) => {
 	let cCookie = cookie.parse(req ? req.headers.cookie || '' : document.cookie);
-
+	console.log('dinesh....**...' + JSON.stringify(cCookie));
 	if (!isEmpty(cCookie)) {
 		let est = jwt.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
 		let user_id = est.id;

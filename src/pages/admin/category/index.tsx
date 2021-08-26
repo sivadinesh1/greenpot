@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
-import Router, { useRouter } from 'next/router';
+import React, { useState, useEffect } from 'react';
 
-// import SnackBar from '../../../components/elements/ui/Dialog/SnackBar';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { Category } from '../../../modal/Category';
@@ -10,41 +8,53 @@ import styles from '../../../styles/Category.module.scss';
 import CategoryList from '../../../components/crud/Category/list-category';
 import AddCategory from '../../../components/crud/Category/add-category';
 import EditCategory from '../../../components/crud/Category/edit-category';
-// import { getAllCategories } from '../../api/category/[...company_id]';
-import { parseCookies } from '../../api/auth/user';
+
 import axios from 'axios';
 import useSWR from 'swr';
 
+import { forceLogout } from '../../../components/auth/auth';
+
 export const getServerSideProps = async (context) => {
-	let { user_id, company_id } = await parseCookies(context?.req);
-	if (user_id === undefined || company_id === undefined) {
-		return {
-			redirect: { destination: '/', permanent: false },
-		};
-	}
+	let isError = false;
+	const cookie = context?.req?.headers.cookie;
 
-	// both works dont delete
-	//const categorys = await getAllCategories(company_id);
+	let categorys = null;
+	let company_id = null;
 
-	let resp = await axios.get(`${process.env.API_URL}/category/${company_id}`);
-	let categorys = resp.data;
+	await axios
+		.get(`${process.env.API_URL}/category`, {
+			headers: {
+				cookie: cookie!,
+			},
+		})
+		.then((response) => {
+			company_id = response.data.company_id;
+			categorys = response.data.categories;
+		})
+		.catch((error) => {
+			isError = true;
+		});
 
 	return {
-		props: { categorys, company_id },
+		props: { categorys, company_id, isError },
 	};
 };
 
-export default function Index({ categorys, company_id }) {
+export default function Index({ categorys, company_id, isError }) {
+	useEffect(() => {
+		if (isError) {
+			forceLogout();
+		}
+	}, []);
+
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('add');
 	const [editRowItem, setEditRowItem] = useState<Category>();
 
-	const { data, mutate } = useSWR(`/api/category/${company_id}`, {
+	const { data, mutate, error } = useSWR(`/api/category/${company_id}`, {
 		initialData: categorys,
 	});
-
-	//let categorysList: Category[] = data;
 
 	const handleSnackOpen = (message) => {
 		setSnack(true);

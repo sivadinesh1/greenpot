@@ -1,0 +1,101 @@
+import { MAX_AGE, setTokenCookie, getTokenCookie } from '../utils/auth-cookies';
+import Router from 'next/router';
+const JWT = require('jsonwebtoken');
+import cookie from 'cookie';
+import { isEmpty } from '../components/utils/util';
+
+export async function setLoginSession(res, user) {
+	const token = await signAccessToken(user.id, user.companyid, user.role);
+
+	setTokenCookie(res, token);
+}
+
+export async function getLoginSession(req) {
+	const token = getTokenCookie(req);
+	if (!token) {
+		return;
+	}
+
+	// Validate the expiration date of the session
+	if (Date.now() > token.exp) {
+		return null;
+	}
+
+	return session;
+}
+
+const signAccessToken = (id, companyid, role) => {
+	return new Promise((resolve, reject) => {
+		const payload = { id: id, companyid: companyid, role };
+		const secret = process.env.ACCESS_TOKEN_SECRET;
+		const options = { expiresIn: '1d' };
+
+		JWT.sign(payload, secret, options, (err, token) => {
+			if (err) return reject(err);
+			resolve(token);
+		});
+	});
+};
+
+const signRefreshToken = (id, companyid, role) => {
+	return new Promise((resolve, reject) => {
+		const payload = { id: id, companyid: companyid, role };
+		const secret = process.env.REFRESH_TOKEN_SECRET;
+		const options = { expiresIn: '1y' };
+
+		JWT.sign(payload, secret, options, (err, token) => {
+			if (err) return reject(err);
+			resolve(token);
+		});
+	});
+};
+
+export const auth =
+	(...requiredRights) =>
+	async (req, res, next) => {
+		let cCookie = cookie.parse(req ? req.headers.cookie || '' : document.cookie);
+		if (!isEmpty(cCookie)) {
+			try {
+				let user = JWT.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
+				req.user = user;
+
+				next();
+			} catch (error) {
+				throw new Error('Authorization Failed');
+			}
+		}
+	};
+
+export const parseCookies = async (req) => {
+	let cCookie = cookie.parse(req ? req.headers.cookie || '' : document.cookie);
+
+	if (!isEmpty(cCookie)) {
+		try {
+			let user = JWT.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
+			req.user = user;
+		} catch (err) {
+			throw new Error(httpStatus.UNAUTHORIZE);
+		}
+	}
+
+	// if (!isEmpty(cCookie)) {
+	// let user = JWT.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
+	// let user_id = est.id;
+	// let company_id = est.companyid;
+	// let role_id = est.role;
+	// console.log('dinesh....**..company_id.' + company_id);
+	// if (est.exp < new Date().getTime() / 1000) {
+	// 	let user_id = undefined;
+	// 	let company_id = undefined;
+	// 	let role_id = undefined;
+	// 	return { user_id, company_id, role_id };
+	// } else {
+	// 	return { user_id, company_id, role_id };
+	// }
+	// } else {
+	// 	let user_id = undefined;
+	// 	let company_id = undefined;
+	// 	let role_id = undefined;
+	// 	return { user_id, company_id, role_id };
+	// }
+};

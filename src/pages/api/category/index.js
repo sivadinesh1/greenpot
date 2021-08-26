@@ -1,9 +1,16 @@
 import nc from 'next-connect';
+import { auth } from '../../../middlewares/auth';
 
 const slugify = require('slugify');
-import { checkDuplicateNames, createCategory, updateCategory } from '../../../service/category.service';
+import { getAllCategories, checkDuplicateNames, createCategory, updateCategory } from '../../../service/category.service';
 
 const handler = nc()
+	.get(auth('getUsers'), async (req, res) => {
+		let company_id = req.user.company_id;
+		const categories = await getAllCategories(company_id);
+
+		res.status(200).json({ company_id, categories });
+	})
 	// create method
 	.post(async (req, res) => {
 		const { name, companyid } = req.body;
