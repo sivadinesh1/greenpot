@@ -33,51 +33,17 @@ const Navbar = () => {
 
 	return (
 		<>
-			<div className={styles.toolbar__wrapper}>
-				<div>
-					<Link href={`/dashboard`}>DRAFTY</Link>
-				</div>
-				<div style={{ display: 'flex', alignItems: 'center' }}>
-					<div style={{ zIndex: '10', position: 'relative', paddingLeft: '16px' }}>
-						<FontAwesomeIcon icon={faUser} onClick={handleClick} style={{ fontSize: '2rem', color: '#234' }}></FontAwesomeIcon>
-
-						<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} onClose={handleClose}>
-							{/* <MenuItem onClick={handleClose}>
-									<Link href={`/admin/blogs`}>
-										<a>Blogs</a>
-									</Link>
-								</MenuItem> */}
-
-							<MenuItem onClick={handleClose}>
-								<Link href={`/admin/category`}>
-									<a>Categories</a>
-								</Link>
-							</MenuItem>
-
-							<MenuItem onClick={handleClose}>
-								<Link href={`/admin/tag`}>
-									<a>Tags</a>
-								</Link>
-							</MenuItem>
-
-							<MenuItem onClick={handleClose}>
-								<Link href='/admin/user'>
-									<a>User</a>
-								</Link>
-							</MenuItem>
-
-							<MenuItem onClick={handleClose}>
-								<Link href='/admin/company'>
-									<a>Profile</a>
-								</Link>
-							</MenuItem>
-							<MenuItem onClick={handleClose}>My account</MenuItem>
-							<MenuItem onClick={handleSignout}>Singout</MenuItem>
-							{/* <MenuItem onClick={() => signout(() => Router.replace(`/`))}>Singout</MenuItem> */}
-						</Menu>
-					</div>
-				</div>
-			</div>
+			<nav className={styles.main_menu}>
+				<div># webb</div>
+				<ul>
+					<li>
+						<a href='http://startific.com'>
+							<i class='fa fa-envelope-o fa-lg'></i>
+							<span className={styles.nav_text}>Contact</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
 		</>
 	);
 };

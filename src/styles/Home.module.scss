@@ -124,13 +124,63 @@
 	background-color: #fff;
 }
 .author_signup_flex_container {
-  display: grid;
-  border: 1px solid #f2f2f2;
-  padding: 20px;
-  box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.25);
-  width: 50%;
-  margin:auto 25%;
-  align-items: center;
-  justify-content: center;
-  // width: 15%;
+	display: grid;
+	border: 1px solid #f2f2f2;
+	padding: 20px;
+	box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.25);
+	width: 50%;
+	margin: auto 25%;
+	align-items: center;
+	justify-content: center;
+	// width: 15%;
+}
+
+// menu
+
+.main_menu {
+	background: #f7f7f7;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	height: 100%;
+	left: 0;
+	width: 72px;
+	overflow: hidden;
+
+	transition: width 0.2s linear;
+
+	box-shadow: 1px 0 15px rgba(0, 0, 0, 0.07);
+	opacity: 1;
+	outline: 0;
+	margin: 0;
+	padding: 0;
+	text-transform: uppercase;
+}
+
+.main-menu .nav-text {
+	position: relative;
+	display: table-cell;
+	vertical-align: middle;
+	width: 190px;
+}
+
+.main-menu:hover,
+nav.main-menu.expanded {
+	width: 250px;
+	overflow: hidden;
+	opacity: 1;
+}
+
+.main-menu li:hover > a,
+nav.main-menu li.active > a,
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.dropdown-menu > .active > a,
+.dropdown-menu > .active > a:hover,
+.dropdown-menu > .active > a:focus,
+.no-touch .dashboard-page nav.dashboard-menu ul li:hover a,
+.dashboard-page nav.dashboard-menu ul li.active a {
+	color: #fff;
+	background-color: #00bbbb;
+	text-shadow: 0px 0px 0px;
 }
