@@ -1,6 +1,8 @@
 import { getDB } from '../../dbconfig/db';
 const { db } = getDB();
 import crypto from "crypto";
+import prisma from '../../dbconfig/prisma';
+import { bigIntToString } from '../../dbconfig/utils';
 
 export const passwordReset = async (password,id) =>{
     const salt1 = crypto.randomBytes(16).toString("hex");
@@ -8,9 +10,21 @@ export const passwordReset = async (password,id) =>{
       .pbkdf2Sync(password, salt1, 1000, 64, "sha512")
       .toString("hex");
         
-        return new Promise(function (resolve) {
-            db.any('update users set salt=$1,hashed_password=$2 where id=$3 RETURNING id',[salt1,hash,id]).then((data) => {
-                resolve({ message: 'success' });
-            });
-        });
+      const user = await prisma.users.update({
+        where: {
+            id: Number(id),
+          },
+        data: {
+          salt:salt1,
+          hashed_password:hash
+        },
+        select:{
+            id: true,
+            companyid: true
+           
+        }
+      });
+      const returnValue=bigIntToString(user);
+      return { message: 'success',id:returnValue.id,companyId:returnValue.companyid };
 }
+

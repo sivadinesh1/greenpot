@@ -51,25 +51,25 @@ export const getBlogByNanoId = async (blogId) => {
 	return bigIntToString(result);
 };
 
-export const getBlog = async (blogId) => {
-	let query = `SELECT b.id, b.title, b.slug, b.body, 
-		b.description,b.author,CAST(b.article_date AS char) as article_date,b.status,
-		array_agg(distinct(c )) as categories, 	
-		array_agg(distinct(t.name )) as tags
+// export const getBlog = async (blogId) => {
+// 	let query = `SELECT b.id, b.title, b.slug, b.body, 
+// 		b.description,b.author,CAST(b.article_date AS char) as article_date,b.status,
+// 		array_agg(distinct(c )) as categories, 	
+// 		array_agg(distinct(t.name )) as tags
 	
-		FROM blog b
-			 LEFT outer JOIN categories as c ON c.id = SOME(b.categories)
-			 LEFT  JOIN tags as t ON t.id = SOME(b.tags)
-		WHERE
-			b.id = ${blogId}	
-		 GROUP BY title, b.id ORDER BY id`;
+// 		FROM blog b
+// 			 LEFT outer JOIN categories as c ON c.id = SOME(b.categories)
+// 			 LEFT  JOIN tags as t ON t.id = SOME(b.tags)
+// 		WHERE
+// 			b.id = ${blogId}	
+// 		 GROUP BY title, b.id ORDER BY id`;
 
-	return new Promise(function (resolve) {
-		db.oneOrNone(query, []).then((data) => {
-			resolve(data);
-		});
-	});
-};
+// 	return new Promise(function (resolve) {
+// 		db.oneOrNone(query, []).then((data) => {
+// 			resolve(data);
+// 		});
+// 	});
+// };
 
 export const checkDuplicateTitle = async (title, companyid) => {
 	const result = await prisma.blog.count({

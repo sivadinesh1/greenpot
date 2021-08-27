@@ -1,6 +1,6 @@
 import nc from 'next-connect';
 import {getVerifiedAuthor,passwordReset } from '../../../service/auth/subUser.service';
-import {setLoginSession} from '../../../lib/auth'
+import {setLoginSession} from '../../../middlewares/auth'
 
 const handler = nc()
 	.get(async (req, res) => {

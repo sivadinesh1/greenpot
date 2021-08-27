@@ -6,7 +6,6 @@ import { isEmpty } from '../../../components/utils/util';
 
 export const parseCookies = async (req) => {
 	let cCookie = cookie.parse(req ? req.headers.cookie || '' : document.cookie);
-	console.log('dinesh....**...' + JSON.stringify(cCookie));
 	if (!isEmpty(cCookie)) {
 		let est = jwt.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
 		let user_id = est.id;

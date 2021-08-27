@@ -110,7 +110,12 @@ model users {
   status            String?     @db.VarChar(10)
   profile_url       String?     @db.VarChar(300)
   companyid         BigInt?
+  source            String?     @db.VarChar(10)
+  socialmedia_id    String?     @db.VarChar(100)
+  access_rights     String?     @db.VarChar(5)
+  user_id           String?     @db.VarChar(20)
   user_role         user_role[]
+  @@unique([email], name: "users_email_key")
 }
 
 model repo{

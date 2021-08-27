@@ -1,58 +1,54 @@
-import { getDB } from '../../dbconfig/db';
-const { db } = getDB();
 const { nanoid } = require('nanoid');
 const { encryptPassword } = require('../../dbconfig/utils');
 import crypto from 'crypto';
+import prisma from '../../dbconfig/prisma';
+import { bigIntToString } from '../../dbconfig/utils';
 
-export const checkEmailExists = (email) => {
-	let query = ` select u.*, r.name as role_name, r.description as role_desc,
-ur.role_id as role
-    from 
-    users u,
-    role r,
-    user_role ur
-    where
-    u.id = ur.user_id and
-    ur.role_id = r.id and email = $1 `;
+export const checkEmailExists = async(email) => {
 
-	return new Promise(function (resolve) {
-		db.oneOrNone(query, email).then((user) => {
-			if (user) {
-				resolve(user); // user found
-			} else {
-				resolve(0); // null, user not found
+	const users = await prisma.users.findMany({
+        where: {
+			email:email
+        },
+		include: {
+            user_role:{
+				include: {
+					role: true, // Include role categories
+				  },
 			}
-		});
-		// .catch((error) => {
-		//     // something went wrong;
-		// });
-	});
+        },
+	  });
+	  
+	  const returnValue=bigIntToString(users);
+	  returnValue[0]["role_name"]=returnValue[0].user_role[0].role.name
+	  returnValue[0]["role_desc"]=returnValue[0].user_role[0].role.description
+	  returnValue[0]["role"]=returnValue[0].user_role[0].role_id
+	  returnValue[0].user_role=""
+
+	return returnValue[0];
 };
 
-export const checkIdExists = (id) => {
-	let query = ` select u.*, r.name as role_name, 
-    r.description as role_desc,
-    ur.role_id as role
-    from 
-    users u,
-    role r,
-    user_role ur
-    where
-    u.id = ur.user_id and
-    ur.role_id = r.id and id = $1 `;
-
-	return new Promise(function (resolve) {
-		db.oneOrNone(query, id).then((user) => {
-			if (user) {
-				resolve(user); // user found
-			} else {
-				resolve(0); // null, user not found
+export const checkIdExists = async(id) => {
+	const users = await prisma.users.findMany({
+        where: {
+			id:Number(id)
+        },
+		include: {
+            user_role:{
+				include: {
+					role: true, // Include role categories
+				  },
 			}
-		});
-		// .catch((error) => {
-		//     // something went wrong;
-		// });
-	});
+        },
+	  });
+	  
+	  const returnValue=bigIntToString(users);
+	  returnValue[0]["role_name"]=returnValue[0].user_role[0].role.name
+	  returnValue[0]["role_desc"]=returnValue[0].user_role[0].role.description
+	  returnValue[0]["role"]=returnValue[0].user_role[0].role_id
+	  returnValue[0].user_role=""
+
+	return returnValue[0];
 };
 
 export const insertUser = async (name, email, password, origin,companyId) => {
@@ -65,85 +61,94 @@ export const insertUser = async (name, email, password, origin,companyId) => {
 	let profile = `${process.env.CLIENT_URL}/profile/${username}`;
 	let status = `A`;
 
-	// db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid) VALUES($1, $2, $3, $4, $5,$6,$7) RETURNING id', [
-	// 	name,
-	// 	email,
-	// 	hash,
-	// 	salt,
-	// 	status,
-	// 	profile,
-	// 	companyid,
-	// ]).then((data) => {
-	// 	db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1]).then((data) =>{
 
-    //     });
-    // });
-    
-    return new Promise(function (resolve) {
-        db.one('INSERT INTO users(first_name, email, hashed_password, salt, status, profile_url,companyid,access_rights,user_id) VALUES($1, $2, $3, $4, $5,$6,$7,$8,$9) RETURNING id', [
-            name,
-            email,
-            hash,
-            salt,
-            status,
-            profile,
-			companyid,
-			accessRights,
-			nanoid(11)
-        ]).then((data) => {
-            db.one('INSERT INTO user_role(user_id, role_id) VALUES($1, $2) RETURNING id', [data.id, 1]).then((d) =>{
+	const user = await prisma.users.create({
+        data: {
+            first_name:name,
+          	email: email,
+			status:status,
+			salt:salt,
+            hashed_password:hash,
+          	profile_url:profile,
+         	companyid:Number(companyid),
+            access_rights:accessRights,
+            user_id: nanoid(11),
+            user_role: {
+				create: [
+				{ role_id: 1 }
+				],
+         	 },
+        },
+        include: {
+            user_role: true, // users all user_role in the returned object
+        },
+      })
+	  const returnValue=bigIntToString(user);
 
-                resolve({ message: 'success',role:d.id,companyid:companyid,id:data.id });
-            });
-        });
-    });
+	  let returnObj={ 
+		message: 'success',
+		id:returnValue.id,
+		role:returnValue.user_role[0].role_id,
+		companyid:returnValue.companyid 
+	  };
+
+	  return returnObj;
 };
 
 export const getUser = async ({ email }) => {
-	let query = 'select * from users where email=$1';
 
-	return new Promise(function (resolve) {
-		db.oneOrNone(query, [email]).then((data) => {
-			resolve(data);
-		});
-	});
+	const user = await prisma.users.findMany({
+        where: {
+			email:email
+        }
+	  });
+	  const returnValue=bigIntToString(user);
+	  console.log("test author singup--->",returnValue)
+	  return returnValue[0];
 };
 
 export const getUserByEmail = async (email) => {
-    // let query = 'select * from users where email=$1';
-    let query=`select u.*, r.name as role_name, r.description as role_desc,
-    ur.role_id as role
-        from 
-        users u,
-        role r,
-        user_role ur
-        where
-        u.id = ur.user_id and
-        ur.role_id = r.id and email =$1`
+		const users = await prisma.users.findMany({
+			where: {
+				email:email
+			},
+			include: {
+				user_role:{
+					include: {
+						role: true, // Include role categories
+					  },
+				}
+			},
+		  });
+		  
+		  const returnValue=bigIntToString(users);
+		  returnValue[0]["role_name"]=returnValue[0].user_role[0].role.name
+		  returnValue[0]["role_desc"]=returnValue[0].user_role[0].role.description
+		  returnValue[0]["role"]=returnValue[0].user_role[0].role_id
+		  returnValue[0].user_role=""
+	
+		return returnValue[0];
 
-	return new Promise(function (resolve) {
-		db.oneOrNone(query, [email]).then((data) => {
-			resolve(data);
-		});
-	});
 };
 
 export const getUserById = async (id) => {
-	let query = 'select * from users where id=$1';
+	const user = await prisma.users.findUnique({
+        where: {
+			id:Number(id)
+        }
+	  });
 
-	return new Promise(function (resolve) {
-		db.oneOrNone(query, [id]).then((data) => {
-			resolve(data);
-		});
-	});
+	  return bigIntToString(user)
 };
 
 export const getUserByNano = async (id) => {
-	let query = 'select * from users where user_id=$1';
 
-	return new Promise(function (resolve) {
-		db.oneOrNone(query, [id]).then((data) => {
-			resolve(data);
-		});
-	});
+	const user = await prisma.users.findMany({
+        where: {
+			user_id:id
+        }
+	  });
+	  const returnValue=bigIntToString(user);
+	  console.log("test author singup--->",returnValue)
+	  return returnValue[0];
 };

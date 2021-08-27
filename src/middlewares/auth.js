@@ -6,7 +6,6 @@ import { isEmpty } from '../components/utils/util';
 
 export async function setLoginSession(res, user) {
 	const token = await signAccessToken(user.id, user.companyid, user.role);
-
 	setTokenCookie(res, token);
 }
 
