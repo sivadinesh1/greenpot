@@ -67,6 +67,18 @@ export const getVerifiedAuthor = async (companyId) => {
       return returnValue;
 };
 
+export const getAllAuthor = async (companyId) => {
+    let status = `U`;
+    
+    const authors = await prisma.users.findMany({
+        where: {
+            companyid: Number(companyId)
+        }
+      })
+      const returnValue=bigIntToString(authors);
+      return returnValue;
+};
+
 export const passwordReset = async (body) =>{
     const {password,id}=body;
     const salt1 = crypto.randomBytes(16).toString("hex");

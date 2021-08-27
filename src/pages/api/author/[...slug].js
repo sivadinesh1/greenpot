@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import {getVerifiedAuthor,passwordReset } from '../../../service/auth/subUser.service';
+import {getVerifiedAuthor,passwordReset,getAllAuthor } from '../../../service/auth/subUser.service';
 import {setLoginSession} from '../../../middlewares/auth'
 
 const handler = nc()
@@ -8,6 +8,9 @@ const handler = nc()
 
 		if (slug[0] === 'company') {
 			const result = await getVerifiedAuthor(slug[1]);
+			res.status(200).json(result);
+		}else if(slug[0] === 'getAll') {
+			const result = await getAllAuthor(slug[1]);
 			res.status(200).json(result);
 		}
 	}).post(async(req,res)=>{
