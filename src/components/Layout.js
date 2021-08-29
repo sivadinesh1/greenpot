@@ -1,4 +1,5 @@
 import Navbar from './Navbar';
+import Header from './Header';
 import Footer from '../components/Footer';
 
 import React from 'react';
@@ -11,12 +12,12 @@ const Layout = ({ children }) => {
 
 	return (
 		<>
+			{snap.islogged ? <Header /> : ''}
 			{snap.islogged ? <Navbar /> : ''}
 
 			<div className='global-main'>
 				<main>{children}</main>
 			</div>
-			{snap.islogged ? <Footer /> : ''}
 		</>
 	);
 };

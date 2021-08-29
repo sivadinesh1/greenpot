@@ -1,10 +1,10 @@
 import { TextField, InputAdornment, IconButton } from '@material-ui/core';
 import { useForm } from 'react-hook-form';
 import { Button } from '@material-ui/core';
-import { getUserByNano } from "../../../service/auth/auth.service";
+import { getUserByNano } from '../../../service/auth/auth.service';
 import axios from 'axios';
 import Router from 'next/router';
-import styles from '../../..//styles/Home.module.scss'
+import styles from '../../..//styles/Home.module.scss';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ export const getServerSideProps = async (context) => {
 		response = 'User Not Found';
 	} else {
 		try {
-			const secret = process.env.JWT_SECRET;
+			const secret = process.env.ACCESS_TOKEN_SECRET;
 			const user = jwt.verify(token, secret);
 			response = user;
 		} catch (error) {}
@@ -37,10 +37,9 @@ export const getServerSideProps = async (context) => {
 };
 
 const Token = ({ user }) => {
-
 	let schema = yup.object().shape({
 		password: yup.string().required().min(8).max(16),
-		confirmPassword: yup.string().oneOf([yup.ref('password'), null], 'Password miss match')
+		confirmPassword: yup.string().oneOf([yup.ref('password'), null], 'Password miss match'),
 	});
 
 	let errorStyle = {
@@ -48,7 +47,11 @@ const Token = ({ user }) => {
 		content: '⚠ ',
 	};
 
-	const { register, handleSubmit ,formState: { errors }} = useForm({resolver: yupResolver(schema)});
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm({ resolver: yupResolver(schema) });
 	const [showPassword, setShowPassword] = useState(false);
 	const handleClickShowPassword = () => {
 		setShowPassword(!showPassword);
@@ -70,14 +73,14 @@ const Token = ({ user }) => {
 	};
 	return (
 		<>
-			<div >
+			<div>
 				<div className={styles.author_signup_flex_container}>
 					<br />
 					<br />
 					<br />
 					<div className={styles.login_caps}>
-							<div className='academy__name'>Author Signup</div>
-						</div>
+						<div className='academy__name'>Author Signup</div>
+					</div>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<TextField type='text' label='New password' fullWidth margin='dense' name='password' autoComplete='off' {...register('password')} />
 						<p style={errorStyle}>{errors.password?.message}</p>
@@ -103,10 +106,9 @@ const Token = ({ user }) => {
 						</FormControl>
 						<div className={styles.styl_center}>
 							<Button type='submit' variant='contained' color='primary'>
-							Submit
+								Submit
 							</Button>
 						</div>
-						
 					</form>
 				</div>
 			</div>

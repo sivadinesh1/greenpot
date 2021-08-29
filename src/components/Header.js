@@ -11,9 +11,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the 
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 
-import { state } from './../pages/state';
+import { state } from '../pages/state';
+import Image from 'next/image';
 
-const Navbar = () => {
+const Header = () => {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -35,7 +36,11 @@ const Navbar = () => {
 		<>
 			<div className={styles.toolbar__wrapper}>
 				<div>
-					<Link href={`/dashboard`}>DRAFTY</Link>
+					<Link href={`/dashboard`}>
+						<a style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+							<Image src='/static/images/webb1.svg' alt='edit' width='80px' height='42px' />
+						</a>
+					</Link>
 				</div>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<div style={{ zIndex: '10', position: 'relative', paddingLeft: '16px' }}>
@@ -82,7 +87,7 @@ const Navbar = () => {
 	);
 };
 
-export default Navbar;
+export default Header;
 
 // .settings {
 

@@ -9,7 +9,7 @@ const LocalStrategy = require('passport-local').Strategy;
 
 const validateUser = async (username, password, done) => {
 	const user = await getUserByEmail(username);
-	if (user && validatePassword(user, password)) {
+	if (user !== null && validatePassword(user, password)) {
 		done(null, user);
 	} else {
 		if (user) done(new Error('Invalid username and password combination'));

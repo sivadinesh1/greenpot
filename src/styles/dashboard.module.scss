@@ -1,0 +1,38 @@
+.wrapper {
+	display: grid;
+	width: 100%;
+	padding-top: 69px;
+	min-height: 100vh;
+	padding-left: 260px;
+
+	padding-right: 1rem;
+	padding-bottom: 1rem;
+	background-color: #fafafa;
+}
+
+.repo_creator {
+	display: grid;
+	width: 370px;
+	height: 210px;
+	grid-template-columns: 1fr 1fr;
+
+	border-radius: 1rem;
+	border-radius: 8px;
+	box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
+	animation: 0.3s ease-in-out 0s 1 normal none running lbWRkT;
+	transition: all 0.2s ease-in 0s;
+	background-color: rgb(255, 255, 255);
+
+	.left {
+		display: grid;
+		grid-template-rows: 1fr 80px;
+		background-color: rgb(4, 135, 175);
+		padding: 24px 16px;
+		border-radius: 8px;
+		color: #fff;
+		font-size: 20px;
+	}
+	.right {
+		padding: 1rem;
+	}
+}
