@@ -1,9 +1,13 @@
 import nc from 'next-connect';
-import { getBlogsByCompany, createBlogEntry, getBlogById,getBlogsByRepo ,getBlogByNanoId} from '../../../service/blog.service';
+import { getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId } from '../../../service/blog.service';
 import { bigIntToString } from '../../../dbconfig/utils';
+import { auth } from '../../../middlewares/auth';
 
 const handler = nc()
-	.get(async (req, res) => {
+	.get(auth('getUsers'), async (req, res) => {
+		let company_id = req.user.companyid;
+		let user_id = req.user.id;
+
 		const { slug } = req.query;
 
 		if (slug[0] === 'company') {
@@ -12,13 +16,13 @@ const handler = nc()
 		} else if (slug[0] === 'blogid') {
 			const result = await getBlogById(slug[1]);
 			res.status(200).json(result);
-		}else if (slug[0] === 'blogByNano') {
+		} else if (slug[0] === 'blogByNano') {
 			const result = await getBlogByNanoId(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'new') {
-			const result = await createBlogEntry(slug[1],slug[2],slug[3]);
+			const result = await createBlogEntry(company_id, slug[1], user_id);
 			res.status(200).json(result);
-		}else if (slug[0] === 'repo') {
+		} else if (slug[0] === 'repo') {
 			const result = await getBlogsByRepo(slug[1]);
 			res.status(200).json(result);
 		}

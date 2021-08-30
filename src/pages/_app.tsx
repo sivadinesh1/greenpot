@@ -45,10 +45,12 @@ export default function MyApp(props) {
 		}
 		if (localStorage.getItem('islogged') && router1.pathname !== '/') {
 			state.islogged = true;
-		} else if (localStorage.getItem('islogged') && router1.pathname === '/') {
-			state.islogged = true;
-			Router.push('/dashboard');
 		}
+
+		// else if (localStorage.getItem('islogged') && router1.pathname === '/') {
+		// 	state.islogged = true;
+		// 	Router.push('/dashboard');
+		// }
 	}, []);
 
 	return (
@@ -56,7 +58,7 @@ export default function MyApp(props) {
 			{/* <Loading isRouteChanging={state.isRouteChanging} key={state.loadingKey} /> */}
 			<IntlProvider locale={locale} messages={messages[locale]}>
 				<Head>
-					<title>Red Apple Content Management System</title>
+					<title># Webb Business Landing pages / Blogs / Banners</title>
 					<meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
 				</Head>
 				<ThemeProvider theme={theme}>

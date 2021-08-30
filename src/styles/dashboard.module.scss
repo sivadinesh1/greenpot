@@ -36,3 +36,42 @@
 		padding: 1rem;
 	}
 }
+
+.list_blogs {
+	display: grid;
+	width: 180px;
+	height: 210px;
+	grid-template-rows: 1fr 60px;
+	border-radius: 1rem;
+	border-radius: 8px;
+	box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
+	animation: 0.3s ease-in-out 0s 1 normal none running lbWRkT;
+	transition: all 0.2s ease-in 0s;
+	background-color: rgb(255, 255, 255);
+	background-color: #c5e0dc;
+
+	cursor: pointer;
+	color: #774f38;
+	font-size: 16px;
+	font-weight: 400;
+
+	.blog_title {
+		display: grid;
+		place-content: center;
+	}
+
+	.footer {
+		background-color: #fff;
+		display: grid;
+		grid-template-columns: 1fr 30px;
+		padding: 1rem;
+		.right {
+			text-align: center;
+		}
+	}
+}
+
+.repo_list {
+	display: flex;
+	gap: 1rem;
+}

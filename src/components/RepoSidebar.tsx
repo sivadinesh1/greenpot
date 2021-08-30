@@ -23,7 +23,32 @@ interface FormData {
 	name: string;
 }
 
-const Navbar = () => {
+export const getServerSideProps = async (context) => {
+	let isError = false;
+	const cookie = context?.req?.headers.cookie;
+	let repos = null;
+	let company_id = null;
+
+	await axios
+		.get(`${process.env.API_URL}/repository`, {
+			headers: {
+				cookie: cookie!,
+			},
+		})
+		.then((response) => {
+			company_id = response.data.company_id;
+			repos = response.data.repos;
+		})
+		.catch((error) => {
+			isError = true;
+		});
+
+	return {
+		props: { repos, company_id, isError },
+	};
+};
+
+const RepoSidebar = ({ repos, company_id, isError }) => {
 	let schema = yup.object().shape({
 		name: yup.string().required().max(70),
 	});
@@ -91,12 +116,6 @@ const Navbar = () => {
 			event.target.reset();
 		}
 	};
-	// React.useEffect(() => {
-	// 	const subscription = watch(('name') => console.log(value,));
-	// 	return () => subscription.unsubscribe();
-	//   }, [watch]);
-
-	const [counter, setCounter] = useState(watch('name'));
 
 	return (
 		<>
@@ -112,8 +131,15 @@ const Navbar = () => {
 						</div>
 					</div>
 				</div>
-				<div>Workspaces</div>
-				<div>Workspaces</div>
+				{repos &&
+					repos?.map((item, index) => {
+						return (
+							<div key={index}>
+								<div>{item.name}</div>
+							</div>
+						);
+					})}
+
 				<div className={styles.last}>
 					<li className={styles.ul}>
 						<a className={styles.a} href='http://startific.com'>
@@ -182,4 +208,4 @@ const Navbar = () => {
 	);
 };
 
-export default Navbar;
+export default RepoSidebar;
