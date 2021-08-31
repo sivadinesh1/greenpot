@@ -74,15 +74,16 @@ const SignupComponent = () => {
 		};
 
 		axios.post(`/api/auth/signup`, body).then((response) => {
-			debugger;
 			if (!response.data.status) {
 				if (response.data.error === 'email taken') {
 					setIsEmailTaken(true);
 				}
 			} else {
-				console.log('test signup response', response);
+				localStorage.setItem('islogged', true);
+
 				Router.push(`/dashboard`);
-				// Router.push(`/`);
+				state.islogged = true;
+				state.user = response.data.user;
 			}
 		});
 	};

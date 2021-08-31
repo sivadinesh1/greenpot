@@ -397,3 +397,28 @@
 	color: red;
 	padding: 0.9rem 0.2rem;
 }
+
+.repo_list {
+	padding: 10px 32px;
+	font-size: 14px;
+	color: #737373;
+	display: grid;
+	grid-template-columns: 136px 30px;
+	cursor: pointer;
+	.name {
+		overflow: hidden;
+	}
+
+	.count {
+		text-align: right;
+	}
+}
+
+.repo_list:hover {
+	background-color: #f0f0f0;
+}
+
+.highlightrepo {
+	background-color: #f0f0f0;
+	color: #262627;
+}

@@ -81,8 +81,10 @@ const SigninComponent = () => {
 				setIsInvalidCredentialsError(true);
 			} else {
 				localStorage.setItem('islogged', true);
+
 				Router.push(`/dashboard`);
 				state.islogged = true;
+				state.user = response.data.user;
 			}
 		});
 	};

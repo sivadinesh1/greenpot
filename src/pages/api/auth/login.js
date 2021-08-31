@@ -35,7 +35,7 @@ export default nextConnect().post(async (req, res) => {
 
 	if (login) {
 		await setLoginSession(res, user);
-		res.status(200).send({ done: true });
+		res.status(200).send({ done: true, user });
 	} else {
 		res.status(200).send({ done: login, error: error?.message });
 	}

@@ -10,7 +10,6 @@ import { getUserById } from '../../../service/auth/auth.service';
 
 const handler = nc().get(auth('getUsers'), async (req, res) => {
 	const user = await getUserById(req.user.id);
-
 	res.status(200).json(user);
 });
 

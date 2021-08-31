@@ -1,5 +1,4 @@
 .wrapper {
-	display: grid;
 	width: 100%;
 	padding-top: 69px;
 	min-height: 100vh;
@@ -57,7 +56,8 @@
 
 	.blog_title {
 		display: grid;
-		place-content: center;
+		place-items: center;
+		padding: 1rem;
 	}
 
 	.footer {
@@ -74,4 +74,11 @@
 .repo_list {
 	display: flex;
 	gap: 1rem;
+
+	flex-wrap: wrap;
+}
+
+.page_header {
+	height: 60px;
+	padding: 1rem 0;
 }

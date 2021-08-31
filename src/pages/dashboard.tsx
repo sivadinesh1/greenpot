@@ -6,7 +6,7 @@ import Router from 'next/router';
 import axios from 'axios';
 
 import RepoList from '../components/crud/Repo/repo-list';
-import useSWR, { mutate, trigger } from 'swr';
+import useSWR from 'swr';
 import styles from '../styles/dashboard.module.scss';
 import Image from 'next/image';
 import { forceLogout } from '../components/auth/auth';
@@ -16,6 +16,8 @@ import Button from '@material-ui/core/Button';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
@@ -23,47 +25,59 @@ export const getServerSideProps = async (context) => {
 	let repos = null;
 	let blogs = null;
 	let company_id = null;
+	let repo_id = null;
 
 	try {
-		let result = await axios.get(`${process.env.API_URL}/repository`, {
+		let result = await axios.get(`${process.env.API_URL}/blog/reposummary`, {
 			headers: {
 				cookie: cookie!,
 			},
 		});
-		company_id = result.data.company_id;
-		repos = result.data.repos;
+		repos = result.data;
+		repo_id = repos[0].id;
 
-		let result1 = await axios.get(`${process.env.API_URL}/blog/repo/${repos[0].repo_id}`, {
+		// fetch blogs
+		let result1 = await axios.get(`${process.env.API_URL}/blog/repo/${repo_id}`, {
 			headers: {
 				cookie: cookie!,
 			},
 		});
 
-		blogs = result1.data.blogs;
+		blogs = result1.data;
 	} catch (error) {
+		console.log(`error in dashboard ${error}`);
 		isError = true;
 	}
 
 	return {
-		props: { repos, company_id, isError },
+		props: { repos, company_id, blogs, repo_id, isError },
 	};
 };
 
-const Dashboard = ({ repos, company_id, isError }) => {
-	const [message, setMessage] = useState(true);
-	const [article, setArticle] = useState({});
-
+const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 	useEffect(() => {
 		if (isError) {
-			forceLogout();
-		}
-
-		if (repos === null) {
-			setMessage(false);
+			return forceLogout();
 		}
 	}, []);
 
-	const { data } = useSWR(`/api/repository/${company_id}`, {
+	const [selectedRepo, setSelectedRepo] = useState(repos ? repos[0] : null);
+
+	const {
+		data: blogarr,
+		mutate,
+		error,
+	} = useSWR(`/api/blog/repo/${selectedRepo?.id}`, {
+		initialData: blogs,
+	});
+
+	const [blogItem, setBlogItem] = useState<any>();
+
+	const {
+		data: repoarr,
+		mutate: mutaterepo,
+		error: errorrepo,
+	} = useSWR(`/api/repository/${company_id}`, {
 		initialData: repos,
 	});
 
@@ -71,16 +85,26 @@ const Dashboard = ({ repos, company_id, isError }) => {
 
 	const handleClick = (event, item) => {
 		setAnchorEl(event.currentTarget);
-		setArticle(item);
+		setBlogItem(item);
 	};
 
-	const viewRepo = (item) => {
-		debugger;
-		Router.push(`/admin/blogs/${item.repo_id}`);
+	const editBlog = (item) => {
+		Router.push(`/admin/blog-edit/${item.blog_id}`);
 	};
 
 	const handleClose = () => {
 		setAnchorEl(null);
+	};
+
+	const handleBlogDelete = async () => {
+		setAnchorEl(null);
+		handleOpenDialog();
+	};
+
+	const confirmBlogDelete = async () => {
+		let response = await axios.delete(`/api/blog/${blogItem.id}`);
+		handleCloseDialog();
+		mutate();
 	};
 
 	const handleNewArticle = async (event) => {
@@ -89,28 +113,43 @@ const Dashboard = ({ repos, company_id, isError }) => {
 		Router.push(`/admin/blog-edit/${blog.data.blog_id}`);
 	};
 
+	const [openDialog, setOpenDialog] = useState(false);
+	const handleOpenDialog = () => {
+		setOpenDialog(true);
+	};
+
+	const handleCloseDialog = () => {
+		setOpenDialog(false);
+	};
+
+	const reloadBlogs = async (repo) => {
+		setSelectedRepo(repo);
+		mutate();
+	};
+
 	return (
 		<>
-			<RepoSidebar repos={repos} company_id={company_id} isError={isError} />
+			{repoarr !== null ? <RepoSidebar repos={repoarr} company_id={company_id} isError={isError} reloadBlogs={reloadBlogs} /> : ''}
 
 			<div className={styles.wrapper}>
+				<div className={styles.page_header}>{selectedRepo?.name}</div>
 				<div className={styles.repo_list}>
 					<div className={styles.repo_creator}>
 						<div className={styles.left} onClick={(event) => handleNewArticle(event)}>
 							<div>New Article</div>
-							<div>
+							<div style={{ placeSelf: 'center' }}>
 								<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
 							</div>
 						</div>
 						<div className={styles.right}>right</div>
 					</div>
 
-					{repos &&
-						repos?.map((item, index) => {
+					{blogarr &&
+						blogarr?.map((item, index) => {
 							return (
 								<div key={index} className={styles.list_blogs}>
-									<div className={styles.blog_title} onClick={() => viewRepo(item)}>
-										{item.name}
+									<div className={styles.blog_title} onClick={() => editBlog(item)}>
+										{item.title}
 									</div>
 									<div className={styles.footer}>
 										<div>&nbsp;</div>
@@ -130,10 +169,44 @@ const Dashboard = ({ repos, company_id, isError }) => {
 				<MenuItem onClick={handleClose}>Profile</MenuItem>
 				<MenuItem onClick={handleClose}>My account</MenuItem>
 				<Divider />
-				<MenuItem onClick={handleClose}>
+				<MenuItem onClick={handleBlogDelete}>
 					<span style={{ color: 'red', fontSize: '12px' }}>Delete</span>
 				</MenuItem>
 			</Menu>
+
+			<Dialog open={openDialog} onClose={handleCloseDialog}>
+				<DialogContent style={{ width: '500px' }}>
+					<div className='dialog_pop'>
+						<div style={{ fontSize: '20px' }}>Delete this article?</div>
+						<div style={{ cursor: 'pointer' }}>
+							<Image src='/static/images/close.svg' alt='edit' width='16px' height='16px' onClick={handleCloseDialog} />
+						</div>
+					</div>
+
+					<div className={styles.formGap}>
+						<p>
+							You are about to delete <b>{blogItem?.title}</b>.
+						</p>
+						<p>It will be unpublised and deleted and won't be able to revover it.</p>
+					</div>
+
+					<div className='action_btns'>
+						<Button onClick={handleCloseDialog} disableFocusRipple disableElevation className={styles.cancel_button} style={{ margin: '6px 10px' }}>
+							Cancel
+						</Button>
+						<Button
+							variant='contained'
+							style={{ margin: '6px 10px', backgroundColor: '#af0404', color: '#fff' }}
+							onClick={confirmBlogDelete}
+							type='button'
+							className={styles.submit_button}
+							disableFocusRipple
+							disableElevation>
+							Yes, delete it
+						</Button>
+					</div>
+				</DialogContent>
+			</Dialog>
 		</>
 	);
 };

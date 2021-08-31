@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Router from 'next/router';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/Home.module.scss';
 
 import Image from 'next/image';
@@ -23,32 +23,9 @@ interface FormData {
 	name: string;
 }
 
-export const getServerSideProps = async (context) => {
-	let isError = false;
-	const cookie = context?.req?.headers.cookie;
-	let repos = null;
-	let company_id = null;
+const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
+	const [currentRepo, setCurrentRepo] = useState(repos[0]);
 
-	await axios
-		.get(`${process.env.API_URL}/repository`, {
-			headers: {
-				cookie: cookie!,
-			},
-		})
-		.then((response) => {
-			company_id = response.data.company_id;
-			repos = response.data.repos;
-		})
-		.catch((error) => {
-			isError = true;
-		});
-
-	return {
-		props: { repos, company_id, isError },
-	};
-};
-
-const RepoSidebar = ({ repos, company_id, isError }) => {
 	let schema = yup.object().shape({
 		name: yup.string().required().max(70),
 	});
@@ -100,7 +77,7 @@ const RepoSidebar = ({ repos, company_id, isError }) => {
 
 		setServerErrors([]);
 		setError(false);
-		debugger;
+
 		const response = await axios.post(`/api/repository`, values);
 
 		if (response.data.errors) {
@@ -115,6 +92,13 @@ const RepoSidebar = ({ repos, company_id, isError }) => {
 			//	reloadList();
 			event.target.reset();
 		}
+	};
+
+	const handleRepoSelect = (event, item) => {
+		event.preventDefault();
+
+		setCurrentRepo(item);
+		reloadBlogs(item);
 	};
 
 	return (
@@ -134,8 +118,12 @@ const RepoSidebar = ({ repos, company_id, isError }) => {
 				{repos &&
 					repos?.map((item, index) => {
 						return (
-							<div key={index}>
-								<div>{item.name}</div>
+							<div
+								key={index}
+								className={`${styles.repo_list} ${currentRepo.id === item.id ? styles.highlightrepo : ''} `}
+								onClick={(e) => handleRepoSelect(e, item)}>
+								<div className={styles.name}>{item.name}</div>
+								<div className={styles.count}>{item.count}</div>
 							</div>
 						);
 					})}

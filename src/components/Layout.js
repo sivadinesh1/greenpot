@@ -12,7 +12,7 @@ const Layout = ({ children }) => {
 
 	return (
 		<>
-			{snap.islogged ? <Header /> : ''}
+			{snap.islogged ? <Header username={snap.user.first_name} /> : ''}
 
 			<div className='global-main'>
 				<main>{children}</main>
