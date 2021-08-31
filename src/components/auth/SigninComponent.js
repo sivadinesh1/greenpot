@@ -18,7 +18,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 
-import { state } from './../../pages/state';
+import { state } from '../../utils/state';
 import Checkbox from '@material-ui/core/Checkbox';
 import Image from 'next/image';
 import clsx from 'clsx';

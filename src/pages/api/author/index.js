@@ -4,8 +4,11 @@ const mail = require('@sendgrid/mail');
 const jwt = require('jsonwebtoken');
 mail.setApiKey(process.env.NEXT_PUBLIC_SG_SECRET_KEY);
 
-const handler = nc().post(async (req, res) => {
-	const result = await insertSubUser(req.body);
+const handler = nc().post(auth('getUsers'), async (req, res) => {
+	let user = req.user;
+	const { name, email, accessRights } = req.body;
+
+	const result = await insertSubUser({ name, email, companyId: user.company_id, accessRights });
 	if (result.message === 'success') {
 		req.body['userId'] = result.userId;
 		req.body['id'] = result.id;

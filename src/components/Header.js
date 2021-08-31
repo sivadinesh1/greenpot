@@ -9,7 +9,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import axios from 'axios';
 
-import { state } from '../pages/state';
+import { state } from '../utils/state';
 import Image from 'next/image';
 import Divider from '@material-ui/core/Divider';
 

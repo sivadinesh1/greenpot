@@ -33,14 +33,14 @@ export const createRepo = async (data) => {
 };
 
 export const updateRepo = async (data) => {
-	const { name, status, companyId, id } = data;
+	const { name, status, id } = data;
 	const result = await prisma.repo.update({
 		where: {
 			id: Number(id),
 		},
 		data: {
 			name: name,
-			company_id: Number(companyId),
+
 			status: status,
 			updateddate: new Date(),
 		},

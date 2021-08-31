@@ -4,7 +4,7 @@ import Footer from '../components/Footer';
 
 import React from 'react';
 
-import { state } from './../pages/state';
+import { state } from '../utils/state';
 import { useSnapshot } from 'valtio';
 
 const Layout = ({ children }) => {

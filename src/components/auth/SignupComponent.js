@@ -212,7 +212,7 @@ const SignupComponent = () => {
 											color: '#317C89',
 										}}
 									/>{' '}
-									I agree to # Webb's Terms of Service and Privacy Policy
+									I agree to # Webbs Terms of Service and Privacy Policy
 								</div>
 							</div>
 						</div>

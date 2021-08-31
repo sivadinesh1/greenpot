@@ -63,7 +63,7 @@ a:active {
 	color: red;
 	min-height: 18px;
 }
-/** pop up dialog **/
+
 .dialog_pop {
 	display: flex;
 	justify-content: space-between;

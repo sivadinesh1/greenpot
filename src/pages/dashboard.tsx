@@ -5,7 +5,6 @@ import Router from 'next/router';
 
 import axios from 'axios';
 
-import RepoList from '../components/crud/Repo/repo-list';
 import useSWR from 'swr';
 import styles from '../styles/dashboard.module.scss';
 import Image from 'next/image';
@@ -187,7 +186,7 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 						<p>
 							You are about to delete <b>{blogItem?.title}</b>.
 						</p>
-						<p>It will be unpublised and deleted and won't be able to revover it.</p>
+						<p>It will be unpublised and deleted and wont be able to revover it.</p>
 					</div>
 
 					<div className='action_btns'>

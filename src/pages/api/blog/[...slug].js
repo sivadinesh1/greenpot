@@ -25,11 +25,9 @@ const handler = nc()
 			const result = await createBlogEntry(company_id, slug[1], user_id);
 			res.status(200).json(result);
 		} else if (slug[0] === 'repo') {
-			console.log('dinesh...1ss' + slug[1]);
 			const result = await getBlogsByRepo(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'reposummary') {
-			console.log('dinesh...1ss');
 			let arra1 = await getList(company_id);
 			let arra2 = await getRepoSummary(company_id);
 

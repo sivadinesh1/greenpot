@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.scss';
 
 import Image from 'next/image';
 
-import { state } from '../pages/state';
+import { state } from '../utils/state';
 import axios from 'axios';
 import Dialog from '@material-ui/core/Dialog';
 
