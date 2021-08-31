@@ -6,7 +6,7 @@ import { getAllCategories, checkDuplicateNames, createCategory, updateCategory }
 
 const handler = nc()
 	.get(auth('getUsers'), async (req, res) => {
-		let company_id = req.user.company_id;
+		let company_id = req.user.companyid;
 		const categories = await getAllCategories(company_id);
 
 		res.status(200).json({ company_id, categories });

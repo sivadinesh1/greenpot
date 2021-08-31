@@ -22,7 +22,7 @@ export default nextConnect<NextApiRequest, NextApiResponse>().post(async (req, r
 
 		await setLoginSession(res, data);
 		res.json({
-			user: { name, email, password },
+			user: { first_name: name, email, password },
 			data: data,
 			status: true,
 		});

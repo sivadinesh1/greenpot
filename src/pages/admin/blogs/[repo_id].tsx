@@ -19,19 +19,12 @@ import Link from 'next/link';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import Router from 'next/router';
-import { parseCookies } from '../../api/auth/user';
+
 import { getRepoByNano } from '../../../service/repository.service';
 import { getById } from '../../../service/company.service';
 
 export const getServerSideProps = async (context) => {
-	let { user_id, company_id, role_id } = await parseCookies(context?.req);
-	if (user_id === undefined || company_id === undefined) {
-		return {
-			redirect: { destination: '/', permanent: false },
-		};
-	}
-
-	const company = await getById(company_id);
+	const company = '1';
 	const company_nano = company[0].company_id.trim();
 	const repo_nano = context.query.repo_id;
 	const repo = await getRepoByNano(repo_nano);
@@ -71,7 +64,7 @@ export default function Index({ blogs, company_id, repo_id, company_nano, user_i
 
 	const handleAddBlog = async (event) => {
 		event.stopPropagation();
-		debugger;
+
 		const blog = await axios.get(`/api/blog/new/${company_id}/${repo_id}/${user_id}`);
 
 		Router.push(`/admin/blog-edit/${company_nano}/${blog.data.blog_id}`);

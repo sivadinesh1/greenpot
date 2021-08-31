@@ -6,8 +6,7 @@ const slugify = require('slugify');
 const { nanoid } = require('nanoid');
 import { smartTrim } from '../components/utils/util';
 const { stripHtml } = require('string-strip-html');
-import {getUserById} from '../service/auth/auth.service'
-
+import { getUserById } from '../service/auth/auth.service';
 
 export const getAllBlogs = async () => {
 	const result = await prisma.blog.findMany({});
@@ -32,7 +31,6 @@ export const getBlogsByRepo = async (repoId) => {
 	return bigIntToString(result);
 };
 
-
 export const getBlogById = async (blogId) => {
 	const result = await prisma.blog.findUnique({
 		where: {
@@ -51,17 +49,47 @@ export const getBlogByNanoId = async (blogId) => {
 	return bigIntToString(result);
 };
 
+export const getRepoSummary = async (companyId) => {
+	let result = null;
+	try {
+		result = await prisma.blog.groupBy({
+			by: ['repo_id'],
+			_count: {
+				id: true,
+			},
+
+			where: {
+				companyid: Number(companyId),
+			},
+		});
+	} catch (error) {
+		console.log('dine' + error);
+	}
+	let tempArr = bigIntToString(result);
+
+	let returnArr = tempArr.map((e) => {
+		return { repo_id: e.repo_id, count: e._count.id };
+	});
+
+	return returnArr;
+};
+
+//   select repo_id, count(*) as blog_cnt from blog
+// where
+// companyid = 1
+// group by repo_id
+
 // export const getBlog = async (blogId) => {
-// 	let query = `SELECT b.id, b.title, b.slug, b.body, 
+// 	let query = `SELECT b.id, b.title, b.slug, b.body,
 // 		b.description,b.author,CAST(b.article_date AS char) as article_date,b.status,
-// 		array_agg(distinct(c )) as categories, 	
+// 		array_agg(distinct(c )) as categories,
 // 		array_agg(distinct(t.name )) as tags
-	
+
 // 		FROM blog b
 // 			 LEFT outer JOIN categories as c ON c.id = SOME(b.categories)
 // 			 LEFT  JOIN tags as t ON t.id = SOME(b.tags)
 // 		WHERE
-// 			b.id = ${blogId}	
+// 			b.id = ${blogId}
 // 		 GROUP BY title, b.id ORDER BY id`;
 
 // 	return new Promise(function (resolve) {
@@ -82,8 +110,8 @@ export const checkDuplicateTitle = async (title, companyid) => {
 	return result;
 };
 
-export const createBlogEntry = async (company_id,repo_id,user_id) => {
-	const user=await getUserById(user_id);
+export const createBlogEntry = async (company_id, repo_id, user_id) => {
+	const user = await getUserById(user_id);
 	let currentDate = new Date();
 	const result = await prisma.blog.create({
 		data: {
@@ -101,16 +129,16 @@ export const createBlogEntry = async (company_id,repo_id,user_id) => {
 			published: 'N',
 			description: '',
 			created_by: Number(company_id),
-			created_date:currentDate,
-			blog_id:nanoid(11),
-			repo_id:Number(repo_id)
+			created_date: currentDate,
+			blog_id: nanoid(11),
+			repo_id: Number(repo_id),
 		},
 	});
 
 	return bigIntToString(result);
 };
 
-export const updateBlog = async (id, title, description, author, articleDate, categories, tags, body, companyId, status,createdDate) => {
+export const updateBlog = async (id, title, description, author, articleDate, categories, tags, body, companyId, status, createdDate) => {
 	let arrayOfCategories = categories;
 	//&& categories.split(',');
 	let arrayOfTags = tags;
@@ -171,9 +199,9 @@ export const updateBlog = async (id, title, description, author, articleDate, ca
 			article_date: articleDate,
 			status: status === 'N' ? 'D' : 'P',
 			published: status,
-			modified_by:companyid,
-			modified_date:currentDate,
-			published_datetime:status === 'N' ? createdDate: currentDate
+			modified_by: companyid,
+			modified_date: currentDate,
+			published_datetime: status === 'N' ? createdDate : currentDate,
 		},
 	});
 

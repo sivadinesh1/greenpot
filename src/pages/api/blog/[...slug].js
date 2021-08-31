@@ -1,9 +1,15 @@
 import nc from 'next-connect';
-import { getBlogsByCompany, createBlogEntry, getBlogById,getBlogsByRepo ,getBlogByNanoId} from '../../../service/blog.service';
+import { getRepoSummary, getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId } from '../../../service/blog.service';
+import { getList } from '../../../service/repository.service';
 import { bigIntToString } from '../../../dbconfig/utils';
+import { auth } from '../../../middlewares/auth';
+import { isConstructSignatureDeclaration } from 'typescript';
 
 const handler = nc()
-	.get(async (req, res) => {
+	.get(auth('getUsers'), async (req, res) => {
+		let company_id = req.user.companyid;
+		let user_id = req.user.id;
+
 		const { slug } = req.query;
 
 		if (slug[0] === 'company') {
@@ -12,25 +18,29 @@ const handler = nc()
 		} else if (slug[0] === 'blogid') {
 			const result = await getBlogById(slug[1]);
 			res.status(200).json(result);
-		}else if (slug[0] === 'blogByNano') {
+		} else if (slug[0] === 'blogByNano') {
 			const result = await getBlogByNanoId(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'new') {
-			const result = await createBlogEntry(slug[1],slug[2],slug[3]);
+			const result = await createBlogEntry(company_id, slug[1], user_id);
 			res.status(200).json(result);
-		}else if (slug[0] === 'repo') {
+		} else if (slug[0] === 'repo') {
+			console.log('dinesh...1ss' + slug[1]);
 			const result = await getBlogsByRepo(slug[1]);
+			res.status(200).json(result);
+		} else if (slug[0] === 'reposummary') {
+			console.log('dinesh...1ss');
+			let arra1 = await getList(company_id);
+			let arra2 = await getRepoSummary(company_id);
+
+			let result = arra1.map((item) => {
+				let item2 = arra2.find((i2) => i2.repo_id === item.id);
+				return item2 ? { ...item, ...item2 } : item;
+			});
+
 			res.status(200).json(result);
 		}
 	})
-
-	// default routes
-	// .get(async (req, res) => {
-	// 	const result = await prisma.categories.findMany({});
-
-	// 	const returnValue = bigIntToString(result);
-	// 	res.status(200).json(returnValue);
-	// })
 
 	.delete(async (req, res) => {
 		const { slug } = req.query;
@@ -48,16 +58,7 @@ const handler = nc()
 
 		var returnValue = bigIntToString(result);
 
-		res.send(returnValue);
+		res.status(200).json(returnValue);
 	});
 
 export default handler;
-
-// // with parameters - new dummy entry
-// .post(async (req, res) => {
-// 	const { company_id } = req.query;
-// 	const result = await createBlogEntry(company_id);
-
-// 	const returnValue = bigIntToString(result);
-// 	res.status(200).json(returnValue);
-// });

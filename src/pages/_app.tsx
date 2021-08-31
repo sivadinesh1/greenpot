@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -35,20 +35,29 @@ export default function MyApp(props) {
 	const { Component, pageProps } = props;
 	const { locale } = useRouter();
 
-	const router1 = useRouter();
-
-	React.useEffect(() => {
+	useEffect(() => {
 		// Remove the server-side injected CSS.
 		const jssStyles = document.querySelector('#jss-server-side');
 		if (jssStyles) {
 			jssStyles.parentElement.removeChild(jssStyles);
 		}
-		if (localStorage.getItem('islogged') && router1.pathname !== '/') {
+
+		//console.log('rrr ' + localStorage.getItem('user'));
+		const getLoggedUser = async () => {
+			let user = await axios.get(`/api/auth/user`);
+
 			state.islogged = true;
-		} else if (localStorage.getItem('islogged') && router1.pathname === '/') {
-			state.islogged = true;
-			Router.push('/dashboard');
+			state.user = user.data;
+		};
+
+		if (localStorage.getItem('islogged')) {
+			getLoggedUser();
 		}
+
+		// else if (localStorage.getItem('islogged') && router1.pathname === '/') {
+		// 	getLoggedUser();
+		// 	Router.push('/dashboard');
+		// }
 	}, []);
 
 	return (
@@ -56,7 +65,7 @@ export default function MyApp(props) {
 			{/* <Loading isRouteChanging={state.isRouteChanging} key={state.loadingKey} /> */}
 			<IntlProvider locale={locale} messages={messages[locale]}>
 				<Head>
-					<title>Red Apple Content Management System</title>
+					<title># Webb Business Landing pages / Blogs / Banners</title>
 					<meta name='viewport' content='minimum-scale=1, initial-scale=1, width=device-width' />
 				</Head>
 				<ThemeProvider theme={theme}>

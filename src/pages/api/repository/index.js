@@ -3,10 +3,10 @@ import { getList, createRepo, updateRepo, checkDuplicateName } from '../../../se
 import { auth } from '../../../middlewares/auth';
 const handler = nc()
 	.get(auth('getUsers'), async (req, res) => {
-		let company_id = req.user.company_id;
+		let company_id = req.user.companyid;
+		const repos = await getList(company_id);
 
-		const returnValue = await getList(company_id);
-		res.status(200).json(returnValue);
+		res.status(200).json({ company_id, repos: repos || null });
 	})
 	.post(auth('getUsers'), async (req, res) => {
 		let company_id = req.user.companyid;

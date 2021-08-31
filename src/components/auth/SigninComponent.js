@@ -48,11 +48,7 @@ const SigninComponent = () => {
 		email: yup.string().email().required(),
 		password: yup.string().required().min(8).max(16),
 	});
-	//error style
-	let errorStyle = {
-		color: 'red',
-		content: '⚠ ',
-	};
+
 	const {
 		register,
 		handleSubmit,
@@ -84,9 +80,11 @@ const SigninComponent = () => {
 			if (!response.data.done) {
 				setIsInvalidCredentialsError(true);
 			} else {
-				state.islogged = true;
 				localStorage.setItem('islogged', true);
+
 				Router.push(`/dashboard`);
+				state.islogged = true;
+				state.user = response.data.user;
 			}
 		});
 	};

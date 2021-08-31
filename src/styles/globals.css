@@ -11,6 +11,23 @@ body {
 	font-family: 'Open Sans', sans-serif;
 }
 
+a:link {
+	color: #000;
+	text-decoration: none;
+}
+a:visited {
+	color: #000;
+	text-decoration: none;
+}
+a:hover {
+	color: #000;
+	text-decoration: none;
+}
+a:active {
+	color: #000;
+	text-decoration: none;
+}
+
 .global-main {
 	min-height: calc(100% - 53px);
 }
@@ -45,4 +62,14 @@ body {
 	font-size: 12px;
 	color: red;
 	min-height: 18px;
+}
+/** pop up dialog **/
+.dialog_pop {
+	display: flex;
+	justify-content: space-between;
+}
+
+.action_btns {
+	padding: 1rem;
+	text-align: right;
 }

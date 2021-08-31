@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import Router from 'next/router';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/Home.module.scss';
 
 import Image from 'next/image';
@@ -23,7 +23,9 @@ interface FormData {
 	name: string;
 }
 
-const Navbar = () => {
+const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
+	const [currentRepo, setCurrentRepo] = useState(repos[0]);
+
 	let schema = yup.object().shape({
 		name: yup.string().required().max(70),
 	});
@@ -75,7 +77,7 @@ const Navbar = () => {
 
 		setServerErrors([]);
 		setError(false);
-		debugger;
+
 		const response = await axios.post(`/api/repository`, values);
 
 		if (response.data.errors) {
@@ -91,12 +93,13 @@ const Navbar = () => {
 			event.target.reset();
 		}
 	};
-	// React.useEffect(() => {
-	// 	const subscription = watch(('name') => console.log(value,));
-	// 	return () => subscription.unsubscribe();
-	//   }, [watch]);
 
-	const [counter, setCounter] = useState(watch('name'));
+	const handleRepoSelect = (event, item) => {
+		event.preventDefault();
+
+		setCurrentRepo(item);
+		reloadBlogs(item);
+	};
 
 	return (
 		<>
@@ -112,8 +115,19 @@ const Navbar = () => {
 						</div>
 					</div>
 				</div>
-				<div>Workspaces</div>
-				<div>Workspaces</div>
+				{repos &&
+					repos?.map((item, index) => {
+						return (
+							<div
+								key={index}
+								className={`${styles.repo_list} ${currentRepo.id === item.id ? styles.highlightrepo : ''} `}
+								onClick={(e) => handleRepoSelect(e, item)}>
+								<div className={styles.name}>{item.name}</div>
+								<div className={styles.count}>{item.count}</div>
+							</div>
+						);
+					})}
+
 				<div className={styles.last}>
 					<li className={styles.ul}>
 						<a className={styles.a} href='http://startific.com'>
@@ -182,4 +196,4 @@ const Navbar = () => {
 	);
 };
 
-export default Navbar;
+export default RepoSidebar;

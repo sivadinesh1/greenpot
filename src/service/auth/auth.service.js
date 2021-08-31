@@ -103,7 +103,7 @@ export const getUserByEmail = async (email) => {
 	});
 
 	const returnValue = bigIntToString(users);
-	console.log('dinesh ...' + JSON.stringify(returnValue));
+
 	if (returnValue.length === 0) {
 		return null;
 	} else {

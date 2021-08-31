@@ -22,16 +22,17 @@ import { Image } from 'cloudinary-react';
 import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
 const SunEditor = dynamic(() => import('suneditor-react'), { ssr: false });
 
-import { options } from '../../../../../components/utils/sunEditor';
+import { options } from '../../../../components/utils/sunEditor';
 import { useDropzone } from 'react-dropzone';
 
-import styles from '../../../../../styles/Blog.module.scss';
-import stylesd from '../../../../../styles/dropZone.module.css';
+import styles from '../../../../styles/Blog.module.scss';
 
-import BlogPreview from '../../../../../components/crud/Blog/blog-preview';
+import stylesd from '../../../../styles/dropZone.module.css';
 
-import { getTags, getAllTags } from '../../../../../service/tag.service';
-import { getCategories, getAllCategories } from '../../../../../service/category.service';
+import BlogPreview from '../../../../components/crud/Blog/blog-preview';
+
+import { getTags, getAllTags } from '../../../../service/tag.service';
+import { getCategories, getAllCategories } from '../../../../service/category.service';
 
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
@@ -41,42 +42,93 @@ import { format, parseISO, formatDistance, formatRelative, subDays } from 'date-
 // do not delete this import, prevents warnings
 import { alpha } from '@material-ui/core/styles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import { getImages } from '../../../../../service/cloudinary.service';
+import { getImages } from '../../../../service/cloudinary.service';
 import { ErrorMessage } from '@hookform/error-message';
-import { parseCookies } from '../../../../api/auth/user';
-import {getRepo} from '../../../../../service/repository.service';
-import { isEmpty } from '../../../../../components/utils/util';
-import {getUserById} from '../../../../../service/auth/auth.service'
-import ReactHookFormSelect from '../../../../../components/ReactHookFormSelect'
 
+import { getRepo } from '../../../../service/repository.service';
+import { isEmpty } from '../../../../components/utils/util';
+import { getUserById } from '../../../../service/auth/auth.service';
+import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
+
+// export const getServerSideProps = async (context) => {
+// 	const blog_id = context.params.blog_id as string;
+//    let { user_id, company_id,role_id } = await parseCookies(context?.req);
+//    if (user_id === undefined || company_id === undefined ) {
+// 	   return {
+// 		   redirect: { destination: '/', permanent: false },
+// 	   };
+//    }
+//    const user=await getUserById(user_id);
+//    let accessRights=user.access_rights;
+
+//    let path = `C${company_id}/B${blog_id}`;
+//    let {data} = await axios.get(`${process.env.API_URL}/author/company/${company_id}`);
+//    let authors=data
+//    let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`);
+//    const blog = resp.data;
+//    const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
+//    const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
+//    const repo=	await getRepo(resp.data.repo_id);
+//    const repo_nano=repo.repo_id;
+//    const categories = await getAllCategories(company_id);
+//    const tags = await getAllTags(company_id);
+
+//    const selectedImages = await getImages(path);
+
+//    return {
+// 	   props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages,repo_nano,accessRights,authors },
+//    };
+// };
 
 export const getServerSideProps = async (context) => {
-	 const blog_id = context.params.blog_id as string;
-	let { user_id, company_id,role_id } = await parseCookies(context?.req);
-	if (user_id === undefined || company_id === undefined ) {
-		return {
-			redirect: { destination: '/', permanent: false },
-		};
-	}
-	const user=await getUserById(user_id);
-	let accessRights=user.access_rights;
+	let isError = false;
+	const cookie = context?.req?.headers.cookie;
+	const blog_id = context.params.blog_id as string;
 
-	let path = `C${company_id}/B${blog_id}`;
-	let {data} = await axios.get(`${process.env.API_URL}/author/company/${company_id}`);
-	let authors=data
-	let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`);
+	let user = await axios.get(`${process.env.API_URL}/auth/user`, {
+		headers: {
+			cookie: cookie!,
+		},
+	});
+
+	let accessRights = user?.data?.access_rights;
+
+	let path = `C${user?.data?.company_id}/B${blog_id}`;
+	let authors_result = await axios.get(`${process.env.API_URL}/author/company`, {
+		headers: {
+			cookie: cookie!,
+		},
+	});
+	let authors = authors_result.data;
+
+	let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`, {
+		headers: {
+			cookie: cookie!,
+		},
+	});
 	const blog = resp.data;
+
 	const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
 	const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
-	const repo=	await getRepo(resp.data.repo_id);
-	const repo_nano=repo.repo_id;
-	const categories = await getAllCategories(company_id);
+	const repo = await getRepo(resp.data.repo_id);
+	const repo_nano = repo.repo_id;
+
+	let resultx = await axios.get(`${process.env.API_URL}/category`, {
+		headers: {
+			cookie: cookie!,
+		},
+	});
+
+	const categories = resultx.data.categories;
+	let company_id = resultx.data.company_id;
+
+	//const categories = await getAllCategories(company_id);
 	const tags = await getAllTags(company_id);
 
 	const selectedImages = await getImages(path);
 
 	return {
-		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages,repo_nano,accessRights,authors },
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors },
 	};
 };
 
@@ -111,7 +163,7 @@ type ErrorMessageContainerProps = {
 };
 const ErrorMessageContainer = ({ children }: ErrorMessageContainerProps) => <span className='error'>{children}</span>;
 
-export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages ,repo_nano,accessRights,authors}) {
+export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors }) {
 	const preloadedValues = {
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
 		description: blog.description,
@@ -200,7 +252,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		if (submitting) {
 			return false;
 		}
-		console.log("test form data---->",formData);
+		console.log('test form data---->', formData);
 		if (!selectedTags.length || !selectedCategorys.length) {
 			setIsError(true);
 			return;
@@ -224,7 +276,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 			companyId: company_id,
 			body: contentBody || '',
 			status: status,
-			createdDate:blog.published_datetime
+			createdDate: blog.published_datetime,
 		};
 		setSubmitting(true);
 		setServerErrors([]);
@@ -252,7 +304,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 
 	//cloudinary delete image
 	const removeImage = async (file) => {
-		const data={ publicId: file.public_id, folder: file.folder,operation:"DELETE" }
+		const data = { publicId: file.public_id, folder: file.folder, operation: 'DELETE' };
 		const response = await axios.post(`/api/blog`, data);
 		setUploadedFiles([...response.data]);
 	};
@@ -391,21 +443,19 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 							</div>
 							<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 								<div style={{ marginRight: '10px', marginTop: '10px' }}>
-									 <ReactHookFormSelect
-                                        id="author1"
-                                        name="author"
-                                        label="Author"
-                                        className={styles.textField}
-                                        control={control}
-                                        defaultValue={blog.author}
-                                        >
-											{authors.map((author,index) => (
-												<MenuItem key={index} value={author.first_name}>
-													{author.first_name}
-												</MenuItem>
-												))}
-
-                                    </ReactHookFormSelect>
+									<ReactHookFormSelect
+										id='author1'
+										name='author'
+										label='Author'
+										className={styles.textField}
+										control={control}
+										defaultValue={blog.author}>
+										{authors.map((author, index) => (
+											<MenuItem key={index} value={author.first_name}>
+												{author.first_name}
+											</MenuItem>
+										))}
+									</ReactHookFormSelect>
 								</div>
 
 								<div style={{ marginLeft: '10px' }}>
@@ -456,9 +506,11 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 								<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
 									Save
 								</Button>
-								{accessRights != "W" && <Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
-									Publish
-								</Button>}
+								{accessRights != 'W' && (
+									<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
+										Publish
+									</Button>
+								)}
 							</div>
 						</form>
 					</div>
