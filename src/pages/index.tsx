@@ -9,7 +9,7 @@ const IndexPage = () => {
 	return (
 		<>
 			<div>
-				<div className={styles.login_wrap}>
+				<div className={styles['login-wrap']}>
 					<div className={styles.login_left}>
 						<div className={styles.form_block}>
 							<SigninComponent />

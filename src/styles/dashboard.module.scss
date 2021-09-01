@@ -1,36 +1,36 @@
 .wrapper {
 	width: 100%;
-	padding-top: 69px;
 	min-height: 100vh;
-	padding-left: 260px;
+	padding-top: 69px;
 
 	padding-right: 1rem;
 	padding-bottom: 1rem;
+	padding-left: 260px;
 	background-color: #fafafa;
 }
 
 .repo_creator {
 	display: grid;
+	grid-template-columns: 1fr 1fr;
 	width: 370px;
 	height: 210px;
-	grid-template-columns: 1fr 1fr;
-
+	background-color: rgb(255, 255, 255);
 	border-radius: 1rem;
 	border-radius: 8px;
-	box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
-	animation: 0.3s ease-in-out 0s;
+	box-shadow: rgb(0 0 0 / 8%) 0 2px 4px, rgb(0 0 0 / 6%) 0 2px 12px;
 	transition: all 0.2s ease-in 0s;
-	background-color: rgb(255, 255, 255);
+	animation: 0.3s ease-in-out 0s;
 
 	.left {
 		display: grid;
 		grid-template-rows: 1fr 80px;
-		background-color: rgb(4, 135, 175);
 		padding: 24px 16px;
-		border-radius: 8px;
 		color: #fff;
 		font-size: 20px;
+		background-color: rgb(4, 135, 175);
+		border-radius: 8px;
 	}
+
 	.right {
 		padding: 1rem;
 	}
@@ -38,33 +38,33 @@
 
 .list_blogs {
 	display: grid;
+	grid-template-rows: 1fr 60px;
 	width: 180px;
 	height: 210px;
-	grid-template-rows: 1fr 60px;
-	border-radius: 1rem;
-	border-radius: 8px;
-	box-shadow: rgb(0 0 0 / 8%) 0px 2px 4px, rgb(0 0 0 / 6%) 0px 2px 12px;
-	animation: 0.3s ease-in-out 0s;
-	transition: all 0.2s ease-in 0s;
+	color: #774f38;
+	font-weight: 400;
+	font-size: 16px;
 	background-color: rgb(255, 255, 255);
 	background-color: #c5e0dc;
-
+	border-radius: 1rem;
+	border-radius: 8px;
+	box-shadow: rgb(0 0 0 / 8%) 0 2px 4px, rgb(0 0 0 / 6%) 0 2px 12px;
 	cursor: pointer;
-	color: #774f38;
-	font-size: 16px;
-	font-weight: 400;
+	transition: all 0.2s ease-in 0s;
+	animation: 0.3s ease-in-out 0s;
 
 	.blog_title {
 		display: grid;
-		place-items: center;
 		padding: 1rem;
+		place-items: center;
 	}
 
 	.footer {
-		background-color: #fff;
 		display: grid;
 		grid-template-columns: 1fr 30px;
 		padding: 1rem;
+		background-color: #fff;
+
 		.right {
 			text-align: center;
 		}
@@ -73,9 +73,9 @@
 
 .repo_list {
 	display: flex;
-	gap: 1rem;
 
 	flex-wrap: wrap;
+	gap: 1rem;
 }
 
 .page_header {

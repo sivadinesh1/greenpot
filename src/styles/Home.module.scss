@@ -1,21 +1,22 @@
-.login_wrap {
+.login-wrap {
 	display: grid;
 	grid-template-columns: 500px 1fr;
-	min-height: 100vh;
 	min-width: 100vh;
+	min-height: 100vh;
 }
+
 .login_right {
-	background-color: #f8cfbe;
 	position: relative;
 	display: flex;
 	padding: 20px;
+	background-color: #f8cfbe;
 }
 
 .login_left {
-	background-color: #ffffff;
 	display: flex;
-	justify-content: center;
 	align-items: center;
+	justify-content: center;
+	background-color: #fff;
 	border-left: 6px solid #fde14c;
 }
 
@@ -35,10 +36,10 @@
 .login_flex_container {
 	display: flex;
 	flex-direction: column;
-	padding: 0px 20px;
+	justify-content: space-between;
 	width: 100%;
 	min-height: 100vh;
-	justify-content: space-between;
+	padding: 0 20px;
 }
 
 .left_img {
@@ -46,31 +47,31 @@
 	z-index: -1;
 	width: 100%;
 	height: 100%;
-	-o-object-fit: cover;
+	object-fit: cover;
 	object-fit: cover;
 }
 
 .login_caps {
-	text-align: left;
-	font-size: 21px;
 	color: #606060;
+	font-size: 21px;
+	text-align: left;
 }
 
 .fgt_pass {
 	display: flex;
 	justify-content: space-between;
-	font-size: 12px;
 	color: grey;
+	font-size: 12px;
 }
 
 .styl_center {
+	margin: 16px 0;
 	text-align: center;
-	margin: 16px 0 16px 0;
 }
 
 .login_signup {
-	font-size: 14px;
 	color: grey;
+	font-size: 14px;
 	text-align: center;
 }
 
@@ -80,26 +81,23 @@
 }
 
 .academy__name {
-	padding: 0px 50px;
 	width: 400px;
 	height: auto;
+	padding: 0 50px;
 }
 
 .forgot_pass_container {
 	display: grid;
-	-ms-grid-rows: 1fr 70px 70px 70px 60px;
+
 	grid-template-rows: 1fr 70px 70px 70px 60px;
-	border: 1px solid #f2f2f2;
 	padding: 20px;
+	border: 1px solid #f2f2f2;
 
 	box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.25);
 }
 
 .fdbck-msg {
-	display: -webkit-box;
-	display: -ms-flexbox;
 	display: flex;
-
 	align-self: center;
 
 	justify-content: center;
@@ -109,70 +107,69 @@
 	display: grid;
 
 	grid-template-rows: 1fr 70px 70px 70px 70px;
-	border: 1px solid #f2f2f2;
 	padding: 20px;
+	border: 1px solid #f2f2f2;
 
 	box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.25);
 }
 
 .toolbar__wrapper {
+	position: fixed;
+	z-index: 9;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
 	align-items: center;
-	border: 0px solid red;
-	z-index: 9;
+	justify-content: space-between;
 	width: 100%;
-	position: fixed;
-	padding: 0px 16px;
+	padding: 0 16px;
 	background-color: #fff;
+	border: 0 solid red;
 	border-bottom: 1px solid #eee;
 }
+
 .author_signup_flex_container {
 	display: grid;
-	border: 1px solid #f2f2f2;
-	padding: 20px;
-	box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.25);
-	width: 50%;
-	margin: auto 25%;
 	align-items: center;
 	justify-content: center;
+	width: 50%;
+	margin: auto 25%;
+	padding: 20px;
+	border: 1px solid #f2f2f2;
+	box-shadow: 0 0 25px 0 rgba(0, 0, 0, 0.25);
 	// width: 15%;
 }
 
 // menu
 
 .main_menu {
-	background: #fff;
 	position: absolute;
-	display: flex;
-	flex-direction: column;
 	top: 0;
 	bottom: 0;
-	height: 100%;
 	left: 0;
+	display: flex;
+	flex-direction: column;
 	width: 230px;
+	height: 100%;
+	margin: 0;
 	padding-top: 53px;
 	overflow: hidden;
-
-	transition: width 0.2s linear;
+	text-transform: uppercase;
+	background: #fff;
+	outline: 0;
 
 	box-shadow: 1px 0 15px rgba(0, 0, 0, 0.07);
 	opacity: 1;
-	outline: 0;
-	margin: 0;
-
-	text-transform: uppercase;
+	transition: width 0.2s linear;
 }
 
 .nav_text {
 	position: relative;
 	display: inline-block;
-	vertical-align: middle;
 
 	height: 40px;
-	line-height: 32px;
 	padding-left: 1rem;
+	line-height: 32px;
+	vertical-align: middle;
 }
 
 .last {
@@ -194,20 +191,19 @@
 
 .a {
 	position: relative;
-	width: 255px;
 	display: table;
-	border-collapse: collapse;
-	border-spacing: 0;
+	width: 255px;
 	color: #8a8a8a;
 	font-size: 13px;
+	font-family: 'Strait', sans-serif;
 	text-decoration: none;
 
-	-webkit-transition: all 0.14s linear;
-	transition: all 0.14s linear;
-	font-family: 'Strait', sans-serif;
-	border-top: 1px solid #f2f2f2;
-
 	text-shadow: 1px 1px 1px #fff;
+	border-top: 1px solid #f2f2f2;
+	border-collapse: collapse;
+	border-spacing: 0;
+	transition: all 0.14s linear;
+	transition: all 0.14s linear;
 }
 
 .main_menu:hover,
@@ -222,40 +218,39 @@
 .ul .li:hover a,
 .ul .li.active a {
 	color: #fff;
-	background-color: #00bbbb;
-	text-shadow: 0px 0px 0px;
+	text-shadow: 0 0 0;
+	background-color: #0bb;
 }
 
 .main_menu .li > a {
 	position: relative;
-	width: 255px;
 	display: table;
-	border-collapse: collapse;
-	border-spacing: 0;
+	width: 255px;
 	color: #8a8a8a;
 	font-size: 13px;
+	font-family: 'Strait', sans-serif;
 	text-decoration: none;
 
-	transition: all 0.14s linear;
-	font-family: 'Strait', sans-serif;
-	border-top: 1px solid #f2f2f2;
-
 	text-shadow: 1px 1px 1px #fff;
+	border-top: 1px solid #f2f2f2;
+	border-collapse: collapse;
+	border-spacing: 0;
+	transition: all 0.14s linear;
 }
 
 /* ScrolBar  */
 .scrollbar {
-	height: 90%;
 	width: 100%;
-	overflow-y: hidden;
+	height: 90%;
 	overflow-x: hidden;
+	overflow-y: hidden;
 }
 
 .scrollbar:hover {
-	height: 90%;
 	width: 100%;
-	overflow-y: scroll;
+	height: 90%;
 	overflow-x: hidden;
+	overflow-y: scroll;
 }
 
 /* Scrollbar Style */
@@ -270,20 +265,19 @@
 }
 
 #style-1::-webkit-scrollbar-thumb {
-	border-radius: 10px;
-
 	background-color: #bfbfbf;
+	border-radius: 10px;
 }
 /* Scrollbar End */
 
 .logo {
-	text-align: center;
 	padding: 8px 0;
+	text-align: center;
 }
 
 .login_forgotpass {
-	font-size: 16px;
 	margin: 10px 0;
+	font-size: 16px;
 }
 
 .login_rememberme {
@@ -305,16 +299,16 @@
 }
 
 .right_bottom_promo_l1 {
-	font-size: 21px;
 	font-weight: bold;
+	font-size: 21px;
 	text-align: center;
 }
 
 .right_bottom_promo_l2 {
-	font-size: 16px;
+	padding: 8px 8px 16px;
 	font-weight: 400;
+	font-size: 16px;
 	text-align: center;
-	padding: 8px 8px 16px 8px;
 }
 
 .right_bottom_promo_l3 {
@@ -323,16 +317,16 @@
 }
 
 .xplore_templates {
-	border: 2px solid black;
 	padding: 8px 18px;
 	font-weight: bold;
+	border: 2px solid black;
 }
 
 // Navbar
 .workspace {
-	padding: 10px 2rem;
 	display: flex;
 	justify-content: space-between;
+	padding: 10px 2rem;
 
 	.workspace_right {
 		display: flex;
@@ -347,6 +341,7 @@
 		width: 32px;
 		height: 32px;
 	}
+
 	.search {
 		width: 32px;
 		height: 32px;
@@ -364,11 +359,11 @@
 }
 
 .text_wc {
-	padding: 0 6px;
-	border-bottom: 1px solid grey;
 	align-self: flex-end;
 	margin-bottom: 4px;
+	padding: 0 6px;
 	color: grey;
+	border-bottom: 1px solid grey;
 }
 
 .action_btns {
@@ -377,34 +372,34 @@
 }
 
 .cancel_button:focus {
-	outline: rgb(216, 216, 216) solid 2px;
-	outline-offset: 3px;
 	margin: 2px;
 	background-color: rgb(216, 216, 216);
+	outline: rgb(216, 216, 216) solid 2px;
+	outline-offset: 3px;
 	transition: all 0.2s ease 0s;
 }
 
 .submit_button:focus {
+	margin: 2px;
 	outline: rgb(216, 216, 216) solid 2px;
 	outline-offset: 3px;
-	margin: 2px;
-
 	transition: all 0.2s ease 0s;
 }
 
 .login_error_summary {
-	background-color: azure;
-	color: red;
 	padding: 0.9rem 0.2rem;
+	color: red;
+	background-color: azure;
 }
 
 .repo_list {
-	padding: 10px 32px;
-	font-size: 14px;
-	color: #737373;
 	display: grid;
 	grid-template-columns: 136px 30px;
+	padding: 10px 32px;
+	color: #737373;
+	font-size: 14px;
 	cursor: pointer;
+
 	.name {
 		overflow: hidden;
 	}
@@ -419,6 +414,6 @@
 }
 
 .highlightrepo {
-	background-color: #f0f0f0;
 	color: #262627;
+	background-color: #f0f0f0;
 }
