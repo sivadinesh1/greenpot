@@ -129,5 +129,37 @@ model repo{
     updateddate   DateTime? @db.Timestamp(6)
     company    company   @relation(fields: [company_id], references: [id])
     blogs blog[]
+    custom_template custom_template[]
      @@unique([repo_id], name: "repo_unique")
+}
+
+model templates{
+    id            BigInt    @id @default(autoincrement())
+    name          String    @db.VarChar(60)
+    status        String?   @db.VarChar(10)
+    temp_id       String    @db.VarChar(20)
+    is_delete     String?   @db.VarChar(5)
+    content       Json?
+    created_date  DateTime? @db.Timestamp(6)
+    updated_date  DateTime? @db.Timestamp(6)
+    tpl_type      String    @db.VarChar(5)
+    @@unique([name], name: "template_name_unique")
+    @@unique([temp_id], name: "template_id_unique")
+
+}
+
+model custom_template{
+    id            BigInt    @id @default(autoincrement())
+    template_id   BigInt
+    status        String?   @db.VarChar(10)
+    ctemp_id      String    @db.VarChar(20)
+    content       Json?
+    is_delete     String?   @db.VarChar(5)
+    repo_id       BigInt
+    created_date  DateTime? @db.Timestamp(6)
+    updated_date  DateTime? @db.Timestamp(6)
+    tpl_type      String    @db.VarChar(5)
+    repo          repo   @relation(fields: [repo_id], references: [id])
+    @@unique([ctemp_id], name: "custom_template_id_unique")
+
 }

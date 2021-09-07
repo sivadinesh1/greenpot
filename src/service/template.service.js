@@ -1,137 +1,137 @@
 import { getDB } from '../dbconfig/db';
 const { db } = getDB();
 const { nanoid } = require('nanoid');
+import prisma from '../dbconfig/prisma';
+import { bigIntToString } from '../dbconfig/utils';
 
 
-export const create = (body) => {
+export const create = async (body) => {
     console.log("create templte method call----->", body)
     const { name, content } = body;
     let status = `A`;
     let isDelete = `N`;
-    let date=new Date();
-    let query = 'INSERT INTO templates(name,status,temp_id,is_delete,content,created_date) VALUES($1, $2, $3, $4,$5,$6) RETURNING *';
-    return new Promise(function (resolve, reject) {
-      db.one(query, [name, status,nanoid(11), isDelete, JSON.stringify(content),date])
-        .then((data) => {
-          console.log('new inserted id: ' + data.id); // print new user id;
-          resolve(data)
-        })
-        .catch((error) => {
-          console.log('object.. error ' + JSON.stringify(error));
-          reject(error)
+    let date = new Date();
+    let type = 'B'
+
+    const result = await prisma.templates.create(
+        {
+            data: {
+                name: name,
+                status: status,
+                temp_id: nanoid(11),
+                is_delete: isDelete,
+                content: JSON.stringify(content),
+                created_date: date,
+                tpl_type: type,
+            }
         });
-    });
-  }
-  
-  export const updateTemplateById = async (updateBody) => {
-    console.log("update temp call---->", updateBody)
+    result.content=JSON.parse(result.content)
+    return bigIntToString(result);
+}
+
+export const updateTemplateById = async (updateBody) => {
     const { id, name, content, status } = updateBody;
-    let date=new Date();
-      let query = `update templates set name=$1,status=$2,content=$3,updated_date=$4 where id=$5  RETURNING *`;
-    
-    return new Promise(function (resolve, reject) {
-      db.one(query, [name, status, JSON.stringify(content), date,id])
-        .then((data) => {
-          console.log('data updated successfully: ' + data.id); // print new user id;
-          resolve(data)
-        })
-        .catch((error) => {
-          console.log('object.. error ' + JSON.stringify(error));
-          reject(error)
+    let date = new Date();
+    let type='B'
+    const result = await prisma.templates.update(
+        {
+            where:{
+                id:id
+            },
+            data: {
+                name: name,
+                status: status,
+                content: JSON.stringify(content),
+                updated_date: date,
+                tpl_type: type,
+            }
         });
+        result.content=JSON.parse(result.content)
+        return bigIntToString(result);
+ 
+};
+
+export const getById = async (id) => {
+
+    const result = await prisma.templates.findMany({
+        where: {
+            AND: [
+                {
+                    id: {
+                        equals: BigInt(id),
+                    },
+                },
+                {
+                    is_delete: {
+                        equals: "N",
+                    },
+                },
+            ]
+        }
+    })
+
+    return bigIntToString(result.length > 0 ? result[0] : null);
+}
+
+export const getByTemplateName = async (name) => {
+
+    const result = await prisma.templates.findMany({
+        where: {
+            AND: [
+                {
+                    name: {
+                        equals: name,
+                    },
+                },
+                {
+                    is_delete: {
+                        equals: "N",
+                    },
+                },
+            ]
+        }
+    })
+
+    return bigIntToString(result.length > 0 ? result[0] : null);
+}
+export const getByNano = async (name) => {
+
+
+    const result = await prisma.templates.findMany({
+        where: {
+            AND: [
+                {
+                    temp_id: {
+                        equals: name,
+                    },
+                },
+                {
+                    is_delete: {
+                        equals: "N",
+                    },
+                },
+            ]
+        }
+    })
+
+    return bigIntToString(result.length > 0 ? result[0] : null);
+
+}
+
+export const getAllTemplates =async (req) => {
+    const result = await prisma.templates.findMany({
+        where: {
+                is_delete: "N",
+        }
+    })
+
+    return bigIntToString(result);
+}
+
+export const deleteById = async (id) => {
+    const result = await prisma.templates.update({
+        where: { id: BigInt(id) },
+        data: { is_delete: "Y" }
     });
-  };
-  
-  export const getById = (id) => {
-  let query='select * from  templates  where id = $1';
-    return new Promise(function (resolve, reject) {
-      db.any(query, [id])
-        .then((data) => {
-          console.log("Successfully get data", data)
-          resolve(data[0])
-        })
-        .catch((error) => {
-          console.log('error ...' + error);
-          reject(error)
-        });
-    })
-  }
-  
-  export const getByTemplateName = (name) => {
-  let query="select * from templates where name = $1 and is_delete='N'";
-    return new Promise(function (resolve, reject) {
-      db.any(query, [name])
-        .then((data) => {
-          console.log("Successfully get data", data)
-          resolve(data)
-        })
-        .catch((error) => {
-          console.log('error ...' + error);
-          reject(error)
-        });
-    })
-  
-  }
-  export const getByNano = (name) => {
-    let query="select * from templates where temp_id = $1 and is_delete='N'";
-      return new Promise(function (resolve, reject) {
-        db.any(query, [name])
-          .then((data) => {
-            console.log("Successfully get data", data)
-            resolve(data)
-          })
-          .catch((error) => {
-            console.log('error ...' + error);
-            reject(error)
-          });
-      })
-    
-    }
-  
-  export const getByTemplatId = (id) => {
-  
-    return new Promise(function (resolve, reject) {
-      db.any('select * from templates where templateid = $1', [id])
-        .then((data) => {
-          console.log("Successfully get data", data)
-          resolve(data)
-        })
-        .catch((error) => {
-          console.log('error ...' + error);
-          reject(error)
-        });
-    })
-  }
-  
-  export const getAllTemplates = (req) => {
-    let query = "select * from  templates where is_delete='N'";
-    return new Promise(function (resolve, reject) {
-      db.any(query)
-        .then((data) => {
-          console.log("Successfully getAll datas", data.length)
-          resolve(data)
-        })
-        .catch((error) => {
-          console.log('error ...', error);
-          reject(error)
-        });
-    })
-  
-  }
-  
-  export const deleteById = (id) => {
-    let query = 'update templates set is_delete=$2 where id = $1';
-    let status="Y"
-    return new Promise(function (resolve, reject) {
-      db.any(query, [id,status])
-        .then((data) => {
-          console.log("data deleted successfully", data)
-          resolve(data)
-        })
-        .catch((error) => {
-          console.log('error ...' + error);
-          reject(error)
-        });
-    })
-  }
-  
+    return bigIntToString(result);
+}

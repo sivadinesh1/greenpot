@@ -24,7 +24,6 @@ const handler = nc()
 .put(async(req,res)=>{
         const {id,templateId,status,content}=req.body
         //id validation
-        console.log("test test data ",req.body)
         const customTemp=await getCustomTemp(id);
         let request={
             id:id,
