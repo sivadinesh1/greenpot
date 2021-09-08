@@ -91,6 +91,10 @@ export const getList = async (id) => {
 		orderBy: {
 			name: 'asc',
 		},
+		include:{
+			custom_template:true
+		}
+		
 	});
 	return bigIntToString(result);
 };
