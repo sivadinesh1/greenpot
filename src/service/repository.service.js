@@ -47,31 +47,9 @@ export const updateRepo = async (data) => {
 	});
 
 	return bigIntToString(result);
-
-	// let query1=`INSERT INTO repo (repo_id,name,company_id,status,isdelete,createddate) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`
-
-	// return new Promise(function (resolve,reject) {
-	// 	db.any(query1, [nanoid(11),name,companyId,status,isdelete,new Date()]).then((data) => {
-	// 		resolve(data);
-	// 	}).catch((error)=>{
-	//         reject(error)
-	//     })
-
-	// });
 };
 
 export const deleteRepo = async (id) => {
-	// let query1=`update repo set isdelete ='Y' where id = $1 RETURNING *`
-
-	// return new Promise(function (resolve,reject) {
-	// 	db.any(query1, [id]).then((data) => {
-	// 		resolve({status:"success"});
-	// 	}).catch((error)=>{
-	//         reject(error)
-	//     })
-
-	// });
-
 	const query1 = prisma.repo.update({
 		where: {
 			id: Number(id),
@@ -90,39 +68,21 @@ export const deleteRepo = async (id) => {
 			published: 'S',
 		},
 	});
-	const [deleteRepo, upadateBlog] = await prisma.$transaction([query1, query2]);
+	const query3 = prisma.custom_template.updateMany({
+		where: {
+			repo_id: Number(id),
+		},
+		data: {
+			status: 'H',
+		},
+	});
 
-	// const result = await prisma.repo.update({
-	// 	where: {
-	// 		id: Number(id),
-	// 	},
-	// 	data: {
-	//         isdelete: 'Y',
-	//         blogs:{
-	//             update:{
-	//                 where: {
-	//                     repo_id: Number(id),
-	//                   },
-	//                   data:{
-	//                     status:"H",
-	//                     published:"S"
-	//                   }
-	//             }
-	//         }
-	// 	},
-	// });
+	const [deleteRepo, upadateBlog,updateCTemp] = await prisma.$transaction([query1, query2,query3]);
 
 	return bigIntToString(deleteRepo);
 };
 
 export const getList = async (id) => {
-	// let query=`select * from repo r where company_id =${id}`
-
-	// return new Promise(function (resolve) {
-	// 	db.any(query, []).then((data) => {
-	// 		resolve(data);
-	// 	});
-	// });
 
 	const result = await prisma.repo.findMany({
 		where: {

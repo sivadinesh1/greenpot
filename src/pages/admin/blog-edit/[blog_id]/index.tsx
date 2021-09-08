@@ -49,6 +49,10 @@ import { getRepo } from '../../../../service/repository.service';
 import { isEmpty } from '../../../../components/utils/util';
 import { getUserById } from '../../../../service/auth/auth.service';
 import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
+let MyEditor;
+if (typeof window !== "undefined") {
+  MyEditor = dynamic(() => import('../../../../components/Editor'));
+}
 
 // export const getServerSideProps = async (context) => {
 // 	const blog_id = context.params.blog_id as string;
@@ -81,6 +85,16 @@ import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
 // };
 
 export const getServerSideProps = async (context) => {
+
+
+	//editor js 
+// 	const instanceRef = React.useRef(null);
+
+//   async function handleSave() {
+//     const savedData = await instanceRef.current.save();
+
+//     console.log("savedData", savedData);
+//   }
 	let isError = false;
 	const cookie = context?.req?.headers.cookie;
 	const blog_id = context.params.blog_id as string;
@@ -560,6 +574,10 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 						categories={selectedCategorys}
 						body={contentBody}
 						articleDate={formattedDate}></BlogPreview>
+
+						{MyEditor &&
+								<MyEditor   />
+							}
 				</div>
 			</div>
 
