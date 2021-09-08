@@ -20,12 +20,12 @@ export const create = async (body) => {
                 status: status,
                 temp_id: nanoid(11),
                 is_delete: isDelete,
-                content: JSON.stringify(content),
+                content: content,
                 created_date: date,
                 tpl_type: type,
             }
         });
-    result.content=JSON.parse(result.content)
+    // result.content=JSON.parse(result.content)
     return bigIntToString(result);
 }
 
@@ -41,12 +41,12 @@ export const updateTemplateById = async (updateBody) => {
             data: {
                 name: name,
                 status: status,
-                content: JSON.stringify(content),
+                content: content,
                 updated_date: date,
                 tpl_type: type,
             }
         });
-        result.content=JSON.parse(result.content)
+        // result.content=JSON.parse(result.content)
         return bigIntToString(result);
  
 };

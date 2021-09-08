@@ -18,14 +18,14 @@ export const create = async (body) => {
                 template_id:template_id,
                 status: status,
                 ctemp_id: nanoid(11),
-                content: JSON.stringify(content),
+                content: content,
                 is_delete: isDelete,
                 repo_id:repo_id,
                 created_date: date,
                 tpl_type: type,
             }
         });
-    result.content=JSON.parse(result.content)
+    // result.content=JSON.parse(result.content)
     console.log("test custom temp",result)
     return bigIntToString(result);
 
@@ -41,14 +41,14 @@ export const create = async (body) => {
             data: {
                 template_id:template_id,
                 status: status,
-                content: JSON.stringify(content),
+                content: content,
                 updated_date: date
             },
             include: {
                 repo: true, 
             },
         });
-    result.content=JSON.parse(result.content)
+    // result.content=JSON.parse(result.content)
     return bigIntToString(result);
   };
   
