@@ -29,10 +29,11 @@ const useStyles = makeStyles((theme) => ({
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
-	const cookie = context?.req?.headers.cookie;
+	let cookie =null;
 	let templates = null;
 	try {
-		//fetch templates
+        cookie = context?.req?.headers.cookie;
+        //fetch templates
 		let result2 = await axios.get(`${process.env.API_URL}/template`, {
 			headers: {
 				cookie: cookie!,

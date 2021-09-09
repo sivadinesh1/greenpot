@@ -16,17 +16,27 @@ import TextField from '@material-ui/core/TextField';
 import { getRepo, getRepoByNano } from '../../../../service/repository.service';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import ConfirmDialog from '../../../../components/elements/ui/Dialog/ConfirmDialog';
+import { forceLogout } from '../../../../components/auth/auth';
 
 interface FormData {
 	name: string;
 }
 
 export const getServerSideProps = async (context) => {
-	const repo_nano = context.query.id;
-	// const repo = await getRepo(repo_id);
-	const repo = await getRepoByNano(repo_nano);
+	let isError=false;
+	let repo_nano=null;
+	let repo =null;
+	try{
+		 repo_nano = context.query.id;
+		// const repo = await getRepo(repo_id);
+		 repo = await getRepoByNano(repo_nano);
+
+	}catch(error){
+		console.log(`error in repo Edit ${error}`);
+		isError = true;
+	}
 	return {
-		props: { repo },
+		props: { repo ,isError},
 	};
 };
 
@@ -56,7 +66,12 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-export default function Index({ repo }) {
+export default function Index({ repo ,isError}) {
+	useEffect(() => {
+		if (isError) {
+			forceLogout();
+		}
+	}, []);
 	const [openDialog, setOpenDialog] = useState(false);
 	const [currentId, setCurrentId] = useState('');
 	const [snack, setSnack] = useState(false);

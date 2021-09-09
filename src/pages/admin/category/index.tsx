@@ -16,24 +16,31 @@ import { forceLogout } from '../../../components/auth/auth';
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
-	const cookie = context?.req?.headers.cookie;
-
+	let cookie = null;
 	let categorys = null;
 	let company_id = null;
 
-	await axios
-		.get(`${process.env.API_URL}/category`, {
-			headers: {
-				cookie: cookie!,
-			},
-		})
-		.then((response) => {
-			company_id = response.data.company_id;
-			categorys = response.data.categories;
-		})
-		.catch((error) => {
+
+		try{
+			cookie = context?.req?.headers.cookie;
+			await axios
+			.get(`${process.env.API_URL}/category`, {
+				headers: {
+					cookie: cookie!,
+				},
+			})
+			.then((response) => {
+				company_id = response.data.company_id;
+				categorys = response.data.categories;
+			})
+			.catch((error) => {
+				isError = true;
+			});
+		}
+		catch(error){
+			console.log(`error in category ${error}`);
 			isError = true;
-		});
+		}
 
 	return {
 		props: { categorys, company_id, isError },

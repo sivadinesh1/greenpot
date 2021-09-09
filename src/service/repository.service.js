@@ -3,6 +3,7 @@ import { bigIntToString } from '../dbconfig/utils';
 import { getDB } from '../dbconfig/db';
 const { db } = getDB();
 const { nanoid } = require('nanoid');
+import {Response} from '../modal/Response.modal'
 
 export const createRepo = async (data) => {
 	let isdelete = 'N';
@@ -93,7 +94,11 @@ export const getList = async (id) => {
 				name: 'asc',
 			},
 			include: {
-				custom_template: true,
+				custom_template: {
+					where:{
+						status:'H'
+					}
+				},
 			},
 		});
 	} catch (error) {

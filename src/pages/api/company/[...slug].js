@@ -3,8 +3,8 @@ import { getById, getByNano, deleteById } from '../../../service/company.service
 import { auth } from '../../../middlewares/auth';
 
 const handler = nc()
-	.get(auth('getUsers'), async (req, res) => {
-		let company_id = req.user.companyid;
+	.get( async (req, res) => {
+		let company_id = 2;
 		const { slug } = req.query;
 		if (slug[0] === 'getById') {
 			const result = await getById(company_id);
