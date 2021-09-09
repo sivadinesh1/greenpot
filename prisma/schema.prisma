@@ -115,7 +115,8 @@ model users {
   access_rights     String?     @db.VarChar(5)
   user_id           String?     @db.VarChar(20)
   user_role         user_role[]
-  @@unique([email], name: "users_email_key")
+  
+  @@unique([email], name: "users_email_key1")
 }
 
 model repo{
@@ -142,7 +143,7 @@ model templates{
     content       Json?
     created_date  DateTime? @db.Timestamp(6)
     updated_date  DateTime? @db.Timestamp(6)
-    tpl_type      String    @db.VarChar(5)
+    tpl_type      String?    @db.VarChar(5)
     @@unique([name], name: "template_name_unique")
     @@unique([temp_id], name: "template_id_unique")
 

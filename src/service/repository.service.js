@@ -77,25 +77,29 @@ export const deleteRepo = async (id) => {
 		},
 	});
 
-	const [deleteRepo, upadateBlog,updateCTemp] = await prisma.$transaction([query1, query2,query3]);
+	const [deleteRepo, upadateBlog, updateCTemp] = await prisma.$transaction([query1, query2, query3]);
 
 	return bigIntToString(deleteRepo);
 };
 
 export const getList = async (id) => {
+	let result = null;
+	try {
+		result = await prisma.repo.findMany({
+			where: {
+				AND: [{ company_id: { equals: Number(id) || undefined } }, { isdelete: { equals: 'N' || undefined } }],
+			},
+			orderBy: {
+				name: 'asc',
+			},
+			include: {
+				custom_template: true,
+			},
+		});
+	} catch (error) {
+		console.log('prisma error::' + JSON.stringify(error));
+	}
 
-	const result = await prisma.repo.findMany({
-		where: {
-			AND: [{ company_id: { equals: Number(id) || undefined } }, { isdelete: { equals: 'N' || undefined } }],
-		},
-		orderBy: {
-			name: 'asc',
-		},
-		include:{
-			custom_template:true
-		}
-		
-	});
 	return bigIntToString(result);
 };
 
