@@ -1,12 +1,22 @@
 import nc from 'next-connect';
-import { getAllCategories, deleteCategory } from '../../../service/category.service';
+import { getAllCategories, deleteCategory ,getCategoryWithTemplate,filter} from '../../../service/category.service';
 
 import { auth } from '../../../middlewares/auth';
 
 const handler = nc()
-	.get(auth('getUsers'), async (req, res) => {
+// auth('getUsers'),
+	.get(async (req, res) => {
 		const { company_id } = req.query;
-		const returnValue = await getAllCategories(company_id);
+		console.log("test cosole data",company_id)
+		let returnValue =null;
+		if(company_id[0] === "getCatWithTemp")
+		{
+			returnValue=	await getCategoryWithTemplate()
+		}else if(company_id[0] === "search"){
+			returnValue=	await filter(company_id[1])
+		}else{
+			 returnValue = await getAllCategories(company_id[0]);
+		}
 		res.status(200).json(returnValue);
 	})
 	// delete

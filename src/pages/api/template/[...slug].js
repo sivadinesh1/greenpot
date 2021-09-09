@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { getById,getByTemplateName,getByNano,deleteById } from '../../../service/template.service';
+import { getById,getByTemplateName,getByNano,deleteById ,search} from '../../../service/template.service';
 import { auth } from '../../../middlewares/auth';
 const handler = nc()
 	.get(async (req, res) => {
@@ -13,6 +13,10 @@ const handler = nc()
 			res.status(200).json(result);
         }else if (slug[0] === 'getByName') {
 			const result = await getByTemplateName(slug[1]);
+			res.status(200).json(result);
+		}
+		else if (slug[0] === 'search') {
+			const result = await search(slug[1]);
 			res.status(200).json(result);
 		}
         

@@ -49,6 +49,7 @@ model categories {
   name      String? @db.VarChar(50)
   slug      String? @db.VarChar(300)
   companyid BigInt?
+  templates templates[]
 
   @@unique([name, companyid], name: "category_unique")
 }
@@ -94,7 +95,7 @@ model user_role {
 model users {
   id                BigInt      @id @default(autoincrement())
   first_name        String      @db.VarChar(100)
-  email             String      @unique @db.VarChar(320)
+  email             String      @db.VarChar(320)
   last_login_date   DateTime?   @db.Timestamp(6)
   profile_pic       String?     @db.VarChar(100)
   reset_token       String?     @db.VarChar(45)
@@ -116,7 +117,7 @@ model users {
   user_id           String?     @db.VarChar(20)
   user_role         user_role[]
   
-  @@unique([email], name: "users_email_key1")
+  @@unique([email], name: "users_email_key")
 }
 
 model repo{
@@ -144,6 +145,8 @@ model templates{
     created_date  DateTime? @db.Timestamp(6)
     updated_date  DateTime? @db.Timestamp(6)
     tpl_type      String?    @db.VarChar(5)
+    category_id    BigInt
+    categories    categories   @relation(fields: [category_id], references: [id])
     @@unique([name], name: "template_name_unique")
     @@unique([temp_id], name: "template_id_unique")
 

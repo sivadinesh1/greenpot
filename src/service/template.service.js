@@ -169,6 +169,33 @@ export const deleteById = async (id) => {
 	} catch (error) {
 		resp = response(false, 500, "", error)
 	}
+	return resp;
+};
 
+export const search = async (data) => {
+	let resp = null;
+	try {
+		let result = await prisma.templates.findMany({
+			where: {
+				AND: [
+					{
+						name: {
+							contains: data,
+						},
+					},
+					{
+						is_delete: {
+							equals: 'N',
+						},
+					},
+				],
+			},
+		});
+		resp = response(true, 200, bigIntToString(result), "success")
+
+	} catch (error) {
+		console.log('error in Search', JSON.stringify(error));
+		resp = response(false, 500, "", error)
+	}
 	return resp;
 };

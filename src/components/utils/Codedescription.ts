@@ -17,7 +17,7 @@
 
 enum codeDescriptions{
     SUCCESS=200,
-    FAILD=300
+    INTERNAL_SERVER_ERROR=500
     // SUCCESS={code:200,message:"success"},
 }
 export default codeDescriptions;
