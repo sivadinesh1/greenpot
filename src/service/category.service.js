@@ -4,6 +4,8 @@ import { getDB } from '../dbconfig/db';
 const { db } = getDB();
 const slugify = require('slugify');
 const httpStatus = require('http-status');
+import { ApiError } from '../components/utils/ApiError'
+
 
 // import { response } from './response.service'
 // import Codedescription from '../components/utils/Codedescription'
@@ -105,7 +107,7 @@ export const getCategoryWithTemplate = async () => {
 	} catch (error) {
 		console.log('error in getAllCategory', JSON.stringify(error));
 		//return response(false, Codedescription.INTERNAL_SERVER_ERROR, "", error.name)
-		throw new ApiError(httpStatus.INTERNAL_SERVER_ERROR, error.name);
+		return new ApiError(httpStatus.INTERNAL_SERVER_ERROR, error.name);
 	}
 };
 

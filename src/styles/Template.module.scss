@@ -40,7 +40,7 @@
 }
 
 .body {
-    padding: 1rem 4rem;
+    padding: 1rem 1rem;
     display: flex;
 	flex-wrap: wrap;
     gap: 2rem;
@@ -73,5 +73,22 @@
 		padding: 1rem;
         background-color: #fff;
         place-items: center;
+	}
+}
+
+.temp_group_list {
+	display: grid;
+	grid-template-columns: 136px 30px;
+	padding: -10px;
+	color:black;
+	font-size: 18px;
+	cursor: pointer;
+
+	.name {
+		overflow: hidden;
+	}
+
+	.count {
+		text-align: right;
 	}
 }
