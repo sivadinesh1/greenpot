@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import styles from '../styles/Template.module.scss';
+import styles from '../../styles/Template.module.scss';
 import Image from 'next/image';
 import Router from 'next/router';
 import { TextField, FormControl, Input } from '@material-ui/core';
@@ -11,8 +11,8 @@ import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import clsx from 'clsx';
 import Divider from '@material-ui/core/Divider';
-import { forceLogout } from '../components/auth/auth';
-import { getCategoryWithTemplate } from '../service/category.service';
+import { forceLogout } from '../../components/auth/auth';
+import { getCategoryWithTemplate } from '../../service/category.service';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -34,8 +34,10 @@ export const getServerSideProps = async (context) => {
 	let templates = null;
 	let category = null;
 	let templGroup = null;
+	let repoId=null;
 
 	try {
+		repoId=context.params.repo_id;
 		cookie = context?.req?.headers.cookie;
 
 		//fetch all active template group
@@ -62,11 +64,13 @@ export const getServerSideProps = async (context) => {
 	}
 
 	return {
-		props: { isError, templGroup, templates },
+		props: { isError, templGroup, templates,repoId },
 	};
 };
 
-const ListTemplate = ({ isError, templGroup, templates }) => {
+
+const ListTemplate = ({ isError, templGroup, templates,repoId }) => {
+	console.log("test repo id",repoId)
 	const [tempArr, setTempArr] = useState(templates);
 	useEffect(() => {
 		if (isError) {
@@ -77,6 +81,11 @@ const ListTemplate = ({ isError, templGroup, templates }) => {
 	const handleChange = async (searchKey) => {
 		let result = await axios.get(`/api/template/search/${searchKey}`);
 		setTempArr(result.data);
+	};
+	
+	const handleTemplate = async (temp_id) => {
+		console.log("handle template method call --->",temp_id)
+		Router.push(`/template/preview/${repoId}/${temp_id}`)
     };
     
     const reloadTemplate =async (id) =>{
@@ -156,7 +165,7 @@ const ListTemplate = ({ isError, templGroup, templates }) => {
 					<div className={styles.body} style={{ padding: '1rem 4rem' }}>
 						{tempArr.map((temp, index) => {
 							return (
-								<div key={index} className={styles.list_temp}>
+								<div key={index} className={styles.list_temp} onClick={()=> handleTemplate(temp.temp_id)}>
 									<div className={styles.temp_image}></div>
 									<div className={styles.temp_title}>{temp.name}</div>
 								</div>
@@ -170,3 +179,5 @@ const ListTemplate = ({ isError, templGroup, templates }) => {
 };
 
 export default ListTemplate;
+
+

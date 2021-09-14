@@ -17,3 +17,8 @@ CREATE TABLE template_maping (
 
 alter table templates  drop column category_id;
 
+
+---
+alter table custom_template add column name varchar(150);
+
+

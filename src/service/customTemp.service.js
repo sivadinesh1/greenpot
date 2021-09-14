@@ -6,7 +6,7 @@ import { bigIntToString } from '../dbconfig/utils';
 
 export const create = async (body) => {
     console.log("create custom templte method call----->", body)
-    const { template_id, repo_id ,content} = body;
+    const { template_id, repo_id ,content,name} = body;
     let status = `A`;
     let isDelete = `N`;
     let date=new Date();
@@ -23,6 +23,7 @@ export const create = async (body) => {
                 repo_id:repo_id,
                 created_date: date,
                 tpl_type: type,
+                name:name
             }
         });
     // result.content=JSON.parse(result.content)
@@ -32,7 +33,7 @@ export const create = async (body) => {
   }
   
   export const updateTemplateById = async (updateBody) => {
-    const { id, template_id ,content, status } = updateBody;
+    const { id, template_id ,content, status,name } = updateBody;
     let date=new Date();
 
     const result = await prisma.custom_template.update(
@@ -42,7 +43,8 @@ export const create = async (body) => {
                 template_id:template_id,
                 status: status,
                 content: content,
-                updated_date: date
+                updated_date: date,
+                name:name
             },
             include: {
                 repo: true, 

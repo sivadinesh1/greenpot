@@ -4,14 +4,15 @@ import {getById} from '../../../service/template.service'
 
 const handler = nc()
 .post(async(req,res)=>{
-        const {templateId,repoId}=req.body
+        const {templateId,repoId,name}=req.body
         const template=await getById(templateId);
 
         if(template != null){
             let request={
-                template_id:templateId,
-                repo_id:repoId ,
-                content:template.content
+                template_id:BigInt(templateId),
+                repo_id:BigInt(repoId) ,
+                content:template.content,
+                name:name
             }
 
             const result = await create(request);
@@ -22,13 +23,14 @@ const handler = nc()
         }
 })
 .put(async(req,res)=>{
-        const {id,templateId,status,content}=req.body
+        const {id,templateId,status,content,name}=req.body
         //id validation
         const customTemp=await getCustomTemp(id);
         let request={
             id:id,
             template_id:templateId,
-            status:status 
+            status:status ,
+            name:name
         }
         let template=null;
         

@@ -25,7 +25,8 @@ export const create = async (body) => {
                 is_delete: isDelete,
                 created_date: date,
                 template_maping: {
-                    create: tempList
+                    create: tempList === undefined ? [] :  tempList  
+                    // create: tempList
                 }
             },
         });
@@ -65,7 +66,8 @@ export const updateTempGroup = async (body) => {
                 description: description,
                 updated_date: date,
                 template_maping: {
-                    create: tempList
+                    create: tempList === undefined ? [] :  tempList  
+                    // create: tempList === undefined ? [] : (tempList.length > 0 ? tempList : [])  
                 }
             },
         });

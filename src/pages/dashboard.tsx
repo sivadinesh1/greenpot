@@ -64,6 +64,7 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 		}
 	}, []);
 
+	console.log("test repo result --->",repos)
 	const [selectedRepo, setSelectedRepo] = useState(repos ? repos[0] : null);
 
 	const {
@@ -129,7 +130,7 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 	const [templateDialog, setTemplateDialog] = useState(false);
 	const handleOpenTemplate = () => {
 		// setTemplateDialog(true);
-		Router.push('/template');
+		Router.push(`/template/${selectedRepo.repo_id}`);
 	};
 
 	const handleCloseTemplate = () => {
@@ -139,7 +140,7 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 	const reloadBlogs = async (repo) => {
 		setSelectedRepo(repo);
 		mutate();
-	};
+	};    
 
 	return (
 		<>

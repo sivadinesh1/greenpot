@@ -3,7 +3,7 @@ import {create,updateTempGroup,getAllTempGroup} from '../../../service/tempGroup
 const handler = nc()
 .post(async(req,res)=>{
 		const result = await create(req.body);
-		res.status(201).send(result);
+		res.status(result.statusCode === 500 ? 500 :201).send(result);
 }).put(async(req,res)=>{
     const result = await updateTempGroup(req.body);
     res.status(200).send(result);

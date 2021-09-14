@@ -164,6 +164,7 @@ model custom_template{
     created_date  DateTime? @db.Timestamp(6)
     updated_date  DateTime? @db.Timestamp(6)
     tpl_type      String    @db.VarChar(5)
+    name        String?   @db.VarChar(150)
     repo          repo   @relation(fields: [repo_id], references: [id])
     @@unique([ctemp_id], name: "custom_template_id_unique")
 
