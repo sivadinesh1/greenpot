@@ -16,13 +16,13 @@ import React, { useState, useEffect } from 'react';
         `;
 
 const HeaderCom =(props) =>{
-    const [data,setData]=useState(props.data)
-    console.log("contet data--->",data)
+    // const [data,setData]=useState(props.data)
+  const  {company,content} =props;
 
     return(
         <>
-        <Header color={data.content[0].style.color} alignment={data.content[0].style.alignment}>{data.content[0].value}</Header>
-        <Content>{data.content[1].value}</Content>
+        <Header color="red" alignment="center">{company}</Header>
+        <Content>{content}</Content>
         </>
     );
 }

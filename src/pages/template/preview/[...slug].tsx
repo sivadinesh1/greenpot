@@ -87,6 +87,9 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 	});
 
 	 const [data,setData]=useState(temp.content);
+	 const[objKeys,setObjKeys]=useState(Object.keys(data));
+	 console.log("test data",data)
+	console.log("test keyset",objKeys)
 
 	const {
 		register,
@@ -113,6 +116,8 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 			console.log("test Process",id);
 			handleOpenDialog();
 	}
+
+	const handleCustomTemplate= (nanoId) => Router.push(`/custom-template/${nanoId}`);
 	
 	const onSubmit = async (formData, event) => {
 		const values = {
@@ -125,7 +130,7 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 		setError(false);
 
 		const response = await axios.post(`/api/customTemp`, values);
-
+		console.log("check response--->",response)
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
 			setError(true);
@@ -133,26 +138,10 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 
 		if (response.status === 201) {
 			setOpenDialog(false);
+			handleCustomTemplate(response.data.ctemp_id)
 			event.target.reset();
 		}
 	};
-
-	// const components = {
-	// 	Header: Header,
-	// 	Divider: Footer
-	// };
-
-	// const newComponent =(type)=> {
-	// 	return components[type];
-	// }
-
-	// let structure=data.sections.map((d,index)=>{
-	// 	let Comp=newComponent(d.type);
-	// 	return <Comp data={d} />
-	// })
-	// console.log("check the type--->",structure)
-	// let test={a:<Header data={data.sections[0]} />}
-
 
     return (
         <>
@@ -202,29 +191,22 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 					<div className={styles.body}>
 					 {/* {structure} */}
 					
-							{	data.map((e) => {
+							{	objKeys.map((key) => {
 
-							//both work
-							// if(e.section === 'Header')
-							// {
-							// 	return(<Header data={e}/>)
-							// } else if(e.section === 'Footer')
-							// return(<Footer data={e}/>)
-							
-								switch (e.section) {
+								let obj=null;
+								switch (key) {
 								case 'Header':
-									if(e.status === 'Active')
-										return(<Header data={e}/>)
+									obj=data.Header
+									if(obj.status === 'Active')
+										return(<Header company={obj.content[0].value} content={obj.content[1].value}/>)
 								case 'Footer':
-									if(e.status === 'Active')
-										return(<Footer data={e}/>)
+									 obj=data['Footer']
+									if(obj.status === 'Active')
+										return(<Footer data={obj.content}/>)
 								
 								}
 							
-							})}
-
-
-					
+							 })}
 					</div>
 				</div>
 			</div>
