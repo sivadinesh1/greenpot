@@ -1,5 +1,8 @@
 module.exports = {
 	reactStrictMode: false,
+	images: {
+		domains: ['res.cloudinary.com'],
+	  },
 	env: {
 		customKey: 'my-value',
 	},

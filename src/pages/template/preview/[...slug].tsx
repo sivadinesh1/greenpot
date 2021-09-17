@@ -198,11 +198,12 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 								case 'Header':
 									obj=data.Header
 									if(obj.status === 'Active')
-										return(<Header company={obj.content[0].value} content={obj.content[1].value}/>)
+										return(<Header 
+											company={obj.content[0].value} content={obj.content[1].value}  imageUrl={obj.content[2].value} backgroundImage={obj.content[3].value} />)
 								case 'Footer':
 									 obj=data['Footer']
 									if(obj.status === 'Active')
-										return(<Footer data={obj.content}/>)
+										return(<Footer data={obj.content[0].value} />)
 								
 								}
 							
