@@ -22,9 +22,8 @@ alter table templates  drop column category_id;
 alter table custom_template add column name varchar(150);
 
 -----
-UPDATE templates
- set content='[{"status": "Active", "content": [{"type": "Head", "style": {"color": "blue", "alignment": "center"}, "value": "Aalam Info Solution"}, {"type": "Content", "value": "styled-components utilises tagged template literals to style your components.It removes the mapping between components and styles. This means that when you''re defining your styles, you''re actually creating a normal React component, that has your styles attached to it."}], "section": "Header"}, {"status": "Active", "content": "Test footer data", "section": "Footer"}]';
-
+UPDATE custom_template
+ set content='{"Header":{"section":"Header","status":"Active","content":[{"formDetail":{"name":"company","label":"Company","type":"text"},"type":"Head","value":"Aalam Info Solution","style":{"color":"blue","alignment":"center"}},{"formDetail":{"name":"content","label":"Content","type":"text-area"},"type":"Content","value":"styled-components utilises tagged template literals to style your components.It removes the mapping between components and styles. This means that when your defining your styles, your actually creating a normal React component, that has your styles attached to it."},{"formDetail":{"name":"image","label":"Image","type":"image"},"type":"Content","value":"https://res.cloudinary.com/sanjayaalam/image/upload/v1623844291/u1jyrnzzcitxj1jynh33.jpg"},{"formDetail":{"name":"background","label":"BackGround","type":"image"},"type":"Content","value":"https://res.cloudinary.com/sanjayaalam/image/upload/v1623820202/ivlnvdazgtls0nimhxmp.jpg"}]},"Footer":{"status":"Active","content":[{"formDetail":{"name":"footer","label":"Footer","type":"text"},"value":"Copyrights Squapl digital media technologies1"}]}}';
 
 -----
 alter table custom_template add column content_clone jsonb;
