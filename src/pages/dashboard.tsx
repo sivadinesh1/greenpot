@@ -17,16 +17,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Divider from '@material-ui/core/Divider';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
+import TemplateList from '../components/template/ListTemplates';
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
-	const cookie = context?.req?.headers.cookie;
+	let cookie = null;
 	let repos = null;
 	let blogs = null;
 	let company_id = null;
 	let repo_id = null;
 
 	try {
+		cookie = context?.req?.headers.cookie;
+
 		let result = await axios.get(`${process.env.API_URL}/blog/reposummary`, {
 			headers: {
 				cookie: cookie!,
@@ -45,6 +48,7 @@ export const getServerSideProps = async (context) => {
 		blogs = result1.data;
 	} catch (error) {
 		console.log(`error in dashboard ${error}`);
+
 		isError = true;
 	}
 
@@ -60,6 +64,7 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 		}
 	}, []);
 
+	console.log("test repo result --->",repos)
 	const [selectedRepo, setSelectedRepo] = useState(repos ? repos[0] : null);
 
 	const {
@@ -121,10 +126,21 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 		setOpenDialog(false);
 	};
 
+	//template dialog
+	const [templateDialog, setTemplateDialog] = useState(false);
+	const handleOpenTemplate = () => {
+		// setTemplateDialog(true);
+		Router.push(`/template/${selectedRepo.repo_id}`);
+	};
+
+	const handleCloseTemplate = () => {
+		setTemplateDialog(false);
+	};
+
 	const reloadBlogs = async (repo) => {
 		setSelectedRepo(repo);
 		mutate();
-	};
+	};    
 
 	return (
 		<>
@@ -140,7 +156,12 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 								<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
 							</div>
 						</div>
-						<div className={styles.right}>right</div>
+						<div className={styles.right} onClick={(event) => handleOpenTemplate()}>
+							<div>New Template</div>
+							<div style={{ placeSelf: 'center' }}>
+								<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
+							</div>
+						</div>
 					</div>
 
 					{blogarr &&
@@ -206,6 +227,21 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 					</div>
 				</DialogContent>
 			</Dialog>
+			<div>
+				<Dialog fullScreen open={templateDialog} onClose={handleCloseTemplate}>
+					{/* <DialogContent style={{ width: '500px' }}>
+						<div className={styles.dialog_pop}>
+							<div style={{ fontSize: '20px' }}>Create a new workspace</div>
+							<div style={{ cursor: 'pointer' }}>
+								<Image src='/static/images/close.svg' alt='edit' width='16px' height='16px' onClick={handleCloseDialog} />
+							</div>
+						</div>
+						
+						
+					</DialogContent> */}
+					<TemplateList onHandleClose={handleCloseTemplate} />
+				</Dialog>
+			</div>
 		</>
 	);
 };

@@ -14,6 +14,8 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { Button } from '@material-ui/core';
 import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+import { forceLogout } from '../../../components/auth/auth';
+
 
 interface FormData {
 	name: string;
@@ -45,15 +47,35 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export const getServerSideProps = async (context) => {
-	let resp = await axios.get(`${process.env.API_URL}/company/getById`);
-	let companies = resp.data[0];
+	let isError = false;
+	let cookie = null;
+	let resp = null;
+	let companies = null;
+	
+	try{
+		cookie = context?.req?.headers.cookie;
+		resp = await axios.get(`${process.env.API_URL}/company/getById`,{
+			headers: {
+				cookie: cookie!,
+			},
+		});
+		companies = resp.data[0];
+	}catch(error){
+		console.log(`error in company ${error}`);
+		isError = true;
+	}
 
 	return {
-		props: { companies },
+		props: { companies,isError },
 	};
 };
 
-export default function Index({ companies }) {
+export default function Index({ companies ,isError}) {
+	useEffect(() => {
+		if (isError) {
+			forceLogout();
+		}
+	}, []);
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 

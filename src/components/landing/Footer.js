@@ -1,9 +1,10 @@
 import React, { Fragment } from 'react';
 
 const Footer = (props) => {
+    const {data}=props
 	return (
 		<>
-			<div>Copyrights Squapl digital media technologies1</div>
+			<div>{data}</div>
 		</>
 	);
 };

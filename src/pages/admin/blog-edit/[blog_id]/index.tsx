@@ -49,6 +49,8 @@ import { getRepo } from '../../../../service/repository.service';
 import { isEmpty } from '../../../../components/utils/util';
 import { getUserById } from '../../../../service/auth/auth.service';
 import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
+import { forceLogout } from '../../../../components/auth/auth';
+
 let MyEditor;
 if (typeof window !== "undefined") {
   MyEditor = dynamic(() => import('../../../../components/Editor'));
@@ -85,64 +87,74 @@ if (typeof window !== "undefined") {
 // };
 
 export const getServerSideProps = async (context) => {
-
-
-	//editor js 
-// 	const instanceRef = React.useRef(null);
-
-//   async function handleSave() {
-//     const savedData = await instanceRef.current.save();
-
-//     console.log("savedData", savedData);
-//   }
 	let isError = false;
-	const cookie = context?.req?.headers.cookie;
-	const blog_id = context.params.blog_id as string;
+	let cookie = null;
+	let blog_id = null;
+	let user =null;
+	let accessRights =null;
+	let path = null;
+	let authors_result =null;
+	let authors =null;
+	let resp =null;
+	let blog =null;
+	let selectedTag = null;
+	let selectedCat =null;
+	let repo =null;
+	let repo_nano =null;
+	let resultx =null;
+	let categories =null;
+	let company_id =null;
+	let tags =null;
+	let selectedImages =null;
+	
 
-	let user = await axios.get(`${process.env.API_URL}/auth/user`, {
+	try{
+		cookie = context?.req?.headers.cookie;
+		blog_id = context.params.blog_id as string;
+		user = await axios.get(`${process.env.API_URL}/auth/user`, {
+			headers: {
+				cookie: cookie!,
+			},
+		});
+		accessRights = user?.data?.access_rights;
+		path = `C${user?.data?.company_id}/B${blog_id}`;
+	    authors_result = await axios.get(`${process.env.API_URL}/author/company`, {
 		headers: {
-			cookie: cookie!,
-		},
-	});
+						cookie: cookie!,
+					},
+				});
+		authors = authors_result.data;
+		resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`, {
+			headers: {
+				cookie: cookie!,
+			},
+		});
+		blog = resp.data;
 
-	let accessRights = user?.data?.access_rights;
+		selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
+		selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
+		repo = await getRepo(resp.data.repo_id);
+		repo_nano = repo.repo_id;
 
-	let path = `C${user?.data?.company_id}/B${blog_id}`;
-	let authors_result = await axios.get(`${process.env.API_URL}/author/company`, {
-		headers: {
-			cookie: cookie!,
-		},
-	});
-	let authors = authors_result.data;
+		resultx = await axios.get(`${process.env.API_URL}/category`, {
+			headers: {
+				cookie: cookie!,
+			},
+		});
+		categories = resultx.data.categories;
+		company_id = resultx.data.company_id;
+	
+		//const categories = await getAllCategories(company_id);
+		tags = await getAllTags(company_id);
+	
+		selectedImages = await getImages(path);
 
-	let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`, {
-		headers: {
-			cookie: cookie!,
-		},
-	});
-	const blog = resp.data;
-
-	const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
-	const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
-	const repo = await getRepo(resp.data.repo_id);
-	const repo_nano = repo.repo_id;
-
-	let resultx = await axios.get(`${process.env.API_URL}/category`, {
-		headers: {
-			cookie: cookie!,
-		},
-	});
-
-	const categories = resultx.data.categories;
-	let company_id = resultx.data.company_id;
-
-	//const categories = await getAllCategories(company_id);
-	const tags = await getAllTags(company_id);
-
-	const selectedImages = await getImages(path);
-
+	}catch(error){
+		console.log(`error in blog edit ${error}`);
+		isError = true;
+	}
 	return {
-		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors },
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors,isError },
 	};
 };
 
@@ -177,7 +189,12 @@ type ErrorMessageContainerProps = {
 };
 const ErrorMessageContainer = ({ children }: ErrorMessageContainerProps) => <span className='error'>{children}</span>;
 
-export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors }) {
+export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors,isError }) {
+	useEffect(() => {
+		if (isError) {
+			return forceLogout();
+		}
+	}, []);
 	const preloadedValues = {
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
 		description: blog.description,
@@ -217,7 +234,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	const [submitting, setSubmitting] = useState<boolean>(false);
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 
-	const [isError, setIsError] = useState(false);
+	const [isError1, setIsError1] = useState(false);
 	const [copy, setCopy] = useState(false);
 
 	const [selectedDate, setSelectedDate] = React.useState(format(parseISO(blog.article_date), 'yyyy-MM-dd'));
@@ -268,7 +285,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		}
 		console.log('test form data---->', formData);
 		if (!selectedTags.length || !selectedCategorys.length) {
-			setIsError(true);
+			setIsError1(true);
 			return;
 		}
 		let status = event.nativeEvent.submitter.id === 'save' ? 'N' : 'Y';
@@ -438,7 +455,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 										<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
 									)}
 								/>
-								{!selectedCategorys.length && isError && <div style={errorStyle}>Select at least 1 category</div>}
+								{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
 							</div>
 							<div>
 								<Autocomplete
@@ -453,7 +470,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									value={selectedTags}
 									renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
 								/>
-								{!selectedTags.length && isError && <p style={errorStyle}>Select at least 1 Tag</p>}
+								{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
 							</div>
 							<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 								<div style={{ marginRight: '10px', marginTop: '10px' }}>

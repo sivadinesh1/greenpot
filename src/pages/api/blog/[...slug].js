@@ -30,12 +30,11 @@ const handler = nc()
 		} else if (slug[0] === 'reposummary') {
 			let arra1 = await getList(company_id);
 			let arra2 = await getRepoSummary(company_id);
-
 			let result = arra1.map((item) => {
 				let item2 = arra2.find((i2) => i2.repo_id === item.id);
-				return item2 ? { ...item, ...item2 } : item;
+				return item2 ? {  ...item2,...item } : item;
 			});
-
+			console.log("test repo result",result)
 			res.status(200).json(result);
 		}
 	})

@@ -3,6 +3,7 @@ import { bigIntToString } from '../dbconfig/utils';
 import { getDB } from '../dbconfig/db';
 const { db } = getDB();
 const { nanoid } = require('nanoid');
+// import {Response} from '../modal/Response.modal'
 
 export const createRepo = async (data) => {
 	let isdelete = 'N';
@@ -77,21 +78,33 @@ export const deleteRepo = async (id) => {
 		},
 	});
 
-	const [deleteRepo, upadateBlog,updateCTemp] = await prisma.$transaction([query1, query2,query3]);
+	const [deleteRepo, upadateBlog, updateCTemp] = await prisma.$transaction([query1, query2, query3]);
 
 	return bigIntToString(deleteRepo);
 };
 
 export const getList = async (id) => {
+	let result = null;
+	try {
+		result = await prisma.repo.findMany({
+			where: {
+				AND: [{ company_id: { equals: Number(id) || undefined } }, { isdelete: { equals: 'N' || undefined } }],
+			},
+			orderBy: {
+				name: 'asc',
+			},
+			include: {
+				custom_template: {
+					where:{
+						status:'H'
+					}
+				},
+			},
+		});
+	} catch (error) {
+		console.log('prisma error::' + JSON.stringify(error));
+	}
 
-	const result = await prisma.repo.findMany({
-		where: {
-			AND: [{ company_id: { equals: Number(id) || undefined } }, { isdelete: { equals: 'N' || undefined } }],
-		},
-		orderBy: {
-			name: 'asc',
-		},
-	});
 	return bigIntToString(result);
 };
 

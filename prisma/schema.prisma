@@ -49,6 +49,7 @@ model categories {
   name      String? @db.VarChar(50)
   slug      String? @db.VarChar(300)
   companyid BigInt?
+  // templates templates[]
 
   @@unique([name, companyid], name: "category_unique")
 }
@@ -94,7 +95,7 @@ model user_role {
 model users {
   id                BigInt      @id @default(autoincrement())
   first_name        String      @db.VarChar(100)
-  email             String      @unique @db.VarChar(320)
+  email             String      @db.VarChar(320)
   last_login_date   DateTime?   @db.Timestamp(6)
   profile_pic       String?     @db.VarChar(100)
   reset_token       String?     @db.VarChar(45)
@@ -115,6 +116,7 @@ model users {
   access_rights     String?     @db.VarChar(5)
   user_id           String?     @db.VarChar(20)
   user_role         user_role[]
+  
   @@unique([email], name: "users_email_key")
 }
 
@@ -142,7 +144,10 @@ model templates{
     content       Json?
     created_date  DateTime? @db.Timestamp(6)
     updated_date  DateTime? @db.Timestamp(6)
-    tpl_type      String    @db.VarChar(5)
+    tpl_type      String?    @db.VarChar(5)
+    // category_id    BigInt
+    //  categories    categories   @relation(fields: [category_id], references: [id])
+    template_maping template_maping[]
     @@unique([name], name: "template_name_unique")
     @@unique([temp_id], name: "template_id_unique")
 
@@ -159,7 +164,27 @@ model custom_template{
     created_date  DateTime? @db.Timestamp(6)
     updated_date  DateTime? @db.Timestamp(6)
     tpl_type      String    @db.VarChar(5)
+    name        String?   @db.VarChar(150)
     repo          repo   @relation(fields: [repo_id], references: [id])
     @@unique([ctemp_id], name: "custom_template_id_unique")
 
+}
+
+model template_group{
+    id            BigInt    @id @default(autoincrement())
+    name          String    @db.VarChar(100)
+    description   String    @db.VarChar(100)
+    status        String?   @db.VarChar(10)
+    is_delete     String?   @db.VarChar(5)
+    created_date  DateTime? @db.Timestamp(6)
+    updated_date  DateTime? @db.Timestamp(6)
+    template_maping template_maping[]
+}
+
+model template_maping{
+    group_id           BigInt     
+    temp_id            BigInt     
+    template_group     template_group   @relation(fields: [group_id], references: [id])
+    templates          templates        @relation(fields: [temp_id], references: [id])
+     @@id([group_id, temp_id]) 
 }

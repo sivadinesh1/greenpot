@@ -16,27 +16,34 @@ import { errorUtils } from '../../../utils/error-utils';
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
-	const cookie = context?.req?.headers.cookie;
+	let cookie = null;
 
 	let tags = null;
 	let company_id = null;
 
-	await axios
-		.get(`${process.env.API_URL}/tag`, {
-			headers: {
-				cookie: cookie!,
-			},
-		})
-		.then((response) => {
-			company_id = response.data.company_id;
-			tags = response.data.tags;
-		})
-		.catch((error) => {
-			let err = errorUtils.getError(error);
-			console.log('print error ' + err);
-			isError = true;
-		});
 
+		try{
+			cookie = context?.req?.headers.cookie;
+			await axios
+			.get(`${process.env.API_URL}/tag`, {
+				headers: {
+					cookie: cookie!,
+				},
+			})
+			.then((response) => {
+				company_id = response.data.company_id;
+				tags = response.data.tags;
+			})
+			.catch((error) => {
+				let err = errorUtils.getError(error);
+				console.log('print error ' + err);
+				isError = true;
+			});
+
+		}catch(error){
+			console.log(`error in tag ${error}`);
+			isError = true;
+		}
 	return {
 		props: { tags, company_id, isError },
 	};

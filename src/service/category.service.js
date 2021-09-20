@@ -3,6 +3,12 @@ import { bigIntToString } from '../dbconfig/utils';
 import { getDB } from '../dbconfig/db';
 const { db } = getDB();
 const slugify = require('slugify');
+const httpStatus = require('http-status');
+import { ApiError } from '../components/utils/ApiError'
+
+
+// import { response } from './response.service'
+// import Codedescription from '../components/utils/Codedescription'
 
 export const getAllCategories = async (company_id) => {
 	const result = await prisma.categories.findMany({
@@ -80,3 +86,59 @@ export const createCategory = async (name, companyid) => {
 
 	return bigIntToString(result);
 };
+
+export const getCategoryWithTemplate = async () => {
+	try {
+		const result = await prisma.categories.findMany({
+			include: {
+				templates: true,
+			},
+		});
+		// let returnArr = result.map((e) => {
+		// 	if(e.templates.length > 0 )
+		// 		return e;
+		// });
+
+		let returnArr = result.filter((res) => {
+			if (res.templates.length > 0 && res != null) return res;
+		});
+
+		return bigIntToString(returnArr);
+	} catch (error) {
+		console.log('error in getAllCategory', JSON.stringify(error));
+		//return response(false, Codedescription.INTERNAL_SERVER_ERROR, "", error.name)
+		return new ApiError(httpStatus.INTERNAL_SERVER_ERROR, error.name);
+	}
+};
+
+// export const filter = async (searchKey) => {
+// 	try {
+// 		const result = await prisma.categories.findMany({
+// 			include: {
+// 				templates: {
+// 					where: {
+// 						AND: [
+// 							{
+// 								name: {
+// 									contains: searchKey,
+// 								},
+// 							},
+// 							{
+// 								is_delete: {
+// 									equals: 'N',
+// 								},
+// 							},
+// 						],
+// 					},
+// 				},
+// 			},
+// 		});
+// 		let returnArr = result.filter((res) => {
+// 			if (res.templates.length > 0 && res != null) return res;
+// 		});
+// 		return response(true, Codedescription.SUCCESS, bigIntToString(returnArr), 'Success');
+// 	} catch (error) {
+// 		console.log('error in getAllCategory', JSON.stringify(error));
+// 		return response(false, Codedescription.INTERNAL_SERVER_ERROR, '', error.name);
+// 	}
+// };
