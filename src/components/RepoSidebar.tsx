@@ -15,9 +15,11 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
-import { TextField } from '@material-ui/core';
 
-import Button from '@material-ui/core/Button';
+import TextField from '@mui/material/TextField';
+import Autocomplete from '@mui/material/Autocomplete';
+
+import Button from '@mui/material/Button';
 
 interface FormData {
 	name: string;
@@ -101,6 +103,17 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 		reloadBlogs(item);
 	};
 
+	const options = [
+		{ label: 'Blogs', code: 'B' },
+		{ label: 'Templates', code: 'T' },
+		{ label: 'Templates', code: 'T' },
+		{ label: 'Templates', code: 'T' },
+		{ label: 'Templates', code: 'T' },
+	];
+
+	// do not delete
+	// https://github.com/mui-org/material-ui/issues/7431
+
 	return (
 		<>
 			<nav className={styles.main_menu}>
@@ -167,6 +180,14 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 								</div>
 								<div className='global_errors'>{errors && errors?.name?.message}</div>
 							</div>
+
+							<Autocomplete
+								disablePortal
+								id='combo-box-demo'
+								options={options}
+								sx={{ width: 300 }}
+								renderInput={(params) => <TextField margin='dense' {...params} label='Select content type' />}
+							/>
 
 							<div className={styles.action_btns}>
 								<Button

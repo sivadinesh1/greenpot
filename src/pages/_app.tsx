@@ -48,6 +48,7 @@ export default function MyApp(props) {
 			let user = await axios.get(`/api/auth/user`);
 
 			state.islogged = true;
+			console.log('check user data in _app.tsx:: ' + JSON.stringify(user));
 			state.user = user.data;
 		};
 

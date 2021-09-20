@@ -64,7 +64,7 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 		}
 	}, []);
 
-	console.log("test repo result --->",repos)
+	console.log('test repo result --->', repos);
 	const [selectedRepo, setSelectedRepo] = useState(repos ? repos[0] : null);
 
 	const {
@@ -140,7 +140,7 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 	const reloadBlogs = async (repo) => {
 		setSelectedRepo(repo);
 		mutate();
-	};    
+	};
 
 	return (
 		<>
@@ -229,16 +229,6 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 			</Dialog>
 			<div>
 				<Dialog fullScreen open={templateDialog} onClose={handleCloseTemplate}>
-					{/* <DialogContent style={{ width: '500px' }}>
-						<div className={styles.dialog_pop}>
-							<div style={{ fontSize: '20px' }}>Create a new workspace</div>
-							<div style={{ cursor: 'pointer' }}>
-								<Image src='/static/images/close.svg' alt='edit' width='16px' height='16px' onClick={handleCloseDialog} />
-							</div>
-						</div>
-						
-						
-					</DialogContent> */}
 					<TemplateList onHandleClose={handleCloseTemplate} />
 				</Dialog>
 			</div>

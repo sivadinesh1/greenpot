@@ -3,11 +3,11 @@ import axios from 'axios';
 import Router from 'next/router';
 import Divider from '@material-ui/core/Divider';
 import { forceLogout } from '../../../components/auth/auth';
-import { isError } from 'util';
+
 import styles from '../../../styles/Template.module.scss';
 import Button from '@material-ui/core/Button';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
-import {getRepoByNano} from '../../../service/repository.service'
+import { getRepoByNano } from '../../../service/repository.service';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import * as yup from 'yup';
@@ -19,9 +19,8 @@ import Image from 'next/image';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
-import Header from "../../../components/landing/Header";
-import Footer from "../../../components/Footer";
-
+import Header from '../../../components/landing/Header';
+import Footer from '../../../components/Footer';
 
 const ColorButton = withStyles(() => ({
 	root: {
@@ -29,23 +28,23 @@ const ColorButton = withStyles(() => ({
 		backgroundColor: '#0a0a0a',
 		'&:hover': {
 			backgroundColor: '#544d4d',
-        },
-        padding: '5px 40px'
+		},
+		padding: '5px 40px',
 	},
 }))(Button);
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
 	let cookie = null;
-    let template = null;
-	let tempId=null;
-	let repoNano=null
-	let repoId=null
+	let template = null;
+	let tempId = null;
+	let repoNano = null;
+	let repoId = null;
 
 	try {
 		cookie = context?.req?.headers.cookie;
-		tempId=context.params.slug[1]
-		repoNano=context.params.slug[0]
+		tempId = context.params.slug[1];
+		repoNano = context.params.slug[0];
 
 		//fetch templates
 		let result2 = await axios.get(`${process.env.API_URL}/template/getByNano/${tempId}`, {
@@ -53,19 +52,19 @@ export const getServerSideProps = async (context) => {
 				cookie: cookie!,
 			},
 		});
-		console.log("test template response",result2)
+		console.log('test template response', result2);
 		template = result2.data;
-		
+
 		//get repo by nano
-		let repo=await getRepoByNano(repoNano);
-		repoId=repo.id;
+		let repo = await getRepoByNano(repoNano);
+		repoId = repo.id;
 	} catch (error) {
 		console.log(`error in template preview ${error}`);
 		isError = true;
 	}
 
 	return {
-		props: { isError, template,repoId ,repoNano},
+		props: { isError, template, repoId, repoNano },
 	};
 };
 
@@ -73,23 +72,22 @@ interface FormData {
 	name: string;
 }
 
-
-const TemplatePreview = ({isError,template,repoId,repoNano})=>{
-    const [temp, setTemp] = useState(template);
+const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
+	const [temp, setTemp] = useState(template);
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();
 		}
-    }, []);
-	
+	}, []);
+
 	let schema = yup.object().shape({
 		name: yup.string().required().max(70),
 	});
 
-	 const [data,setData]=useState(temp.content);
-	 const[objKeys,setObjKeys]=useState(Object.keys(data));
-	 console.log("test data",data)
-	console.log("test keyset",objKeys)
+	const [data, setData] = useState(temp.content);
+	const [objKeys, setObjKeys] = useState(Object.keys(data));
+	console.log('test data', data);
+	console.log('test keyset', objKeys);
 
 	const {
 		register,
@@ -112,17 +110,17 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 		setOpenDialog(false);
 	};
 
-    const addCustomTemp = (id) =>{
-			console.log("test Process",id);
-			handleOpenDialog();
-	}
+	const addCustomTemp = (id) => {
+		console.log('test Process', id);
+		handleOpenDialog();
+	};
 
-	const handleCustomTemplate= (nanoId) => Router.push(`/custom-template/${nanoId}`);
-	
+	const handleCustomTemplate = (nanoId) => Router.push(`/custom-template/${nanoId}`);
+
 	const onSubmit = async (formData, event) => {
 		const values = {
-			templateId:temp.id,
-			repoId:repoId,
+			templateId: temp.id,
+			repoId: repoId,
 			name: formData.name,
 		};
 
@@ -130,7 +128,7 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 		setError(false);
 
 		const response = await axios.post(`/api/customTemp`, values);
-		console.log("check response--->",response)
+		console.log('check response--->', response);
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
 			setError(true);
@@ -138,39 +136,34 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 
 		if (response.status === 201) {
 			setOpenDialog(false);
-			handleCustomTemplate(response.data.ctemp_id)
+			handleCustomTemplate(response.data.ctemp_id);
 			event.target.reset();
 		}
 	};
 
-    return (
-        <>
-        <div className={styles.temp_wrap}>
+	return (
+		<>
+			<div className={styles.temp_wrap}>
 				<div className={styles.left}>
 					<div className={styles1.breadcrumb}>
-						<Breadcrumbs separator="›" aria-label="breadcrumb">
-							<Link href="/dashboard" >
-								Dashboard
-							</Link>
-							<Link href={`/template/${repoNano}`} >
-								Template
-							</Link>
-							<Typography color="textPrimary">Preview</Typography>
+						<Breadcrumbs separator='›' aria-label='breadcrumb'>
+							<Link href='/dashboard'>Dashboard</Link>
+							<Link href={`/template/${repoNano}`}>Template</Link>
+							<Typography color='textPrimary'>Preview</Typography>
 						</Breadcrumbs>
 					</div>
-                    <div style={{ padding: '20px' }}>Lead Capture - Template gallery </div>
-                    <div style={{ marginTop: '5px' }}>
-							<Divider />
-				    </div>
+					<div style={{ padding: '20px' }}>Lead Capture - Template gallery </div>
+					<div style={{ marginTop: '5px' }}>
+						<Divider />
+					</div>
 					<div style={{ padding: '20px' }}>Use templates to quickly get started. Modern SEO ready templates for better conversion.</div>
-                    <div style={{ marginTop: '5px' }}>
-							<Divider />
+					<div style={{ marginTop: '5px' }}>
+						<Divider />
 					</div>
 
-                    <div style={{ marginTop: '20px',textAlign: "center" }}>
-                    <ColorButton onClick={()=> addCustomTemp(temp.id)} >Use This Template</ColorButton>
-                    </div>
-					
+					<div style={{ marginTop: '20px', textAlign: 'center' }}>
+						<ColorButton onClick={() => addCustomTemp(temp.id)}>Use This Template</ColorButton>
+					</div>
 				</div>
 
 				<div className={styles.right}>
@@ -189,32 +182,33 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 					</div>
 
 					<div className={styles.body}>
-					 {/* {structure} */}
-					
-							{	objKeys.map((key) => {
+						{/* {structure} */}
 
-								let obj=null;
-								switch (key) {
+						{objKeys.map((key) => {
+							let obj = null;
+							switch (key) {
 								case 'Header':
-									obj=data.Header
-									if(obj.status === 'Active')
-										return(<Header 
-											company={obj.content[0].value} content={obj.content[1].value}  imageUrl={obj.content[2].value} backgroundImage={obj.content[3].value} />)
+									obj = data.Header;
+									if (obj.status === 'Active')
+										return (
+											<Header
+												company={obj.content[0].value}
+												content={obj.content[1].value}
+												imageUrl={obj.content[2].value}
+												backgroundImage={obj.content[3].value}
+											/>
+										);
 								case 'Footer':
-									 obj=data['Footer']
-									if(obj.status === 'Active')
-										return(<Footer data={obj.content[0].value} />)
-								
-								}
-							
-							 })}
+									obj = data['Footer'];
+									if (obj.status === 'Active') return <Footer data={obj.content[0].value} />;
+							}
+						})}
 					</div>
 				</div>
 			</div>
 
-
 			<div>
-			<Dialog open={openDialog} onClose={handleCloseDialog}>
+				<Dialog open={openDialog} onClose={handleCloseDialog}>
 					<DialogContent style={{ width: '500px' }}>
 						<div className={styles1.dialog_pop}>
 							<div style={{ fontSize: '20px' }}>&emsp;</div>
@@ -240,26 +234,19 @@ const TemplatePreview = ({isError,template,repoId,repoNano})=>{
 										style={{ borderRadius: '50px' }}
 										error={!!errors.name}
 									/>
-									
 								</div>
 								<div className='global_errors'>{errors && errors?.name?.message}</div>
 							</div>
 
 							<div className={styles1.action_btns}>
-								<ColorButton
-									type='submit'
-								>
-									Continue
-								</ColorButton>
+								<ColorButton type='submit'>Continue</ColorButton>
 							</div>
 						</form>
 					</DialogContent>
 				</Dialog>
 			</div>
-        </>
-
-    );
-
-}
+		</>
+	);
+};
 
 export default TemplatePreview;
