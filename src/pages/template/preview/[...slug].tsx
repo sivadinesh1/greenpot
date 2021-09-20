@@ -86,7 +86,6 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 
 	const [data, setData] = useState(temp.content);
 	const [objKeys, setObjKeys] = useState(Object.keys(data));
-	console.log('test data', data);
 	console.log('test keyset', objKeys);
 
 	const {

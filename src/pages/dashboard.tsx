@@ -26,6 +26,7 @@ export const getServerSideProps = async (context) => {
 	let blogs = null;
 	let company_id = null;
 	let repo_id = null;
+	let cusTemps = null;
 
 	try {
 		cookie = context?.req?.headers.cookie;
@@ -46,6 +47,14 @@ export const getServerSideProps = async (context) => {
 		});
 
 		blogs = result1.data;
+
+		//fetch custom templates
+		let result2 = await axios.get(`${process.env.API_URL}/customTemp/getByRepo/${repo_id}`, {
+			headers: {
+				cookie: cookie!,
+			},
+		});
+		cusTemps = result2.data;
 	} catch (error) {
 		console.log(`error in dashboard ${error}`);
 
@@ -53,19 +62,19 @@ export const getServerSideProps = async (context) => {
 	}
 
 	return {
-		props: { repos, company_id, blogs, repo_id, isError },
+		props: { repos, company_id, blogs, repo_id, isError,cusTemps },
 	};
 };
 
-const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
+const Dashboard = ({ repos, company_id, blogs, repo_id, isError,cusTemps }) => {
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();
 		}
 	}, []);
 
-	console.log('test repo result --->', repos);
 	const [selectedRepo, setSelectedRepo] = useState(repos ? repos[0] : null);
+	console.log('test selectd repo --->', selectedRepo);
 
 	const {
 		data: blogarr,
@@ -73,6 +82,14 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 		error,
 	} = useSWR(`/api/blog/repo/${selectedRepo?.id}`, {
 		initialData: blogs,
+	});
+
+	const {
+		data: cusTemparr,
+		mutate:mutateCTemp,
+		error:errorCTemp,
+	} = useSWR(`/api/customTemp/getByRepo/${selectedRepo?.id}`, {
+		initialData: cusTemps,
 	});
 
 	const [blogItem, setBlogItem] = useState<any>();
@@ -113,7 +130,7 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 
 	const handleNewArticle = async (event) => {
 		event.stopPropagation();
-		const blog = await axios.get(`/api/blog/new/${repos[0].id}`);
+		const blog = await axios.get(`/api/blog/new/${selectedRepo.id}`);
 		Router.push(`/admin/blog-edit/${blog.data.blog_id}`);
 	};
 
@@ -131,6 +148,9 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 	const handleOpenTemplate = () => {
 		// setTemplateDialog(true);
 		Router.push(`/template/${selectedRepo.repo_id}`);
+	};
+	const editCusTemp = (ctempId) => {
+		Router.push(`/custom-template/${ctempId}`);
 	};
 
 	const handleCloseTemplate = () => {
@@ -150,26 +170,47 @@ const Dashboard = ({ repos, company_id, blogs, repo_id, isError }) => {
 				<div className={styles.page_header}>{selectedRepo?.name}</div>
 				<div className={styles.repo_list}>
 					<div className={styles.repo_creator}>
-						<div className={styles.left} onClick={(event) => handleNewArticle(event)}>
+						{selectedRepo?.repo_type === 'B' && <div className={styles.left} onClick={(event) => handleNewArticle(event)}>
 							<div>New Article</div>
 							<div style={{ placeSelf: 'center' }}>
 								<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
 							</div>
-						</div>
-						<div className={styles.right} onClick={(event) => handleOpenTemplate()}>
+						</div> }
+						{selectedRepo?.repo_type === 'T' && 	<div className={styles.left} onClick={(event) => handleOpenTemplate()}>
 							<div>New Template</div>
 							<div style={{ placeSelf: 'center' }}>
 								<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
 							</div>
-						</div>
+						</div>}
+					
 					</div>
 
-					{blogarr &&
+					{selectedRepo?.repo_type === 'B' && blogarr &&
 						blogarr?.map((item, index) => {
 							return (
 								<div key={index} className={styles.list_blogs}>
 									<div className={styles.blog_title} onClick={() => editBlog(item)}>
 										{item.title}
+									</div>
+									<div className={styles.footer}>
+										<div>&nbsp;</div>
+
+										<div onClick={(event) => handleClick(event, item)}>
+											<Image src='/static/images/three-dots.svg' alt='edit' width='24px' height='24px' />
+										</div>
+									</div>
+								</div>
+							);
+						})}
+
+
+					{selectedRepo?.repo_type === 'T' && cusTemparr &&
+						cusTemparr?.map((item, index) => {
+							console.log("check custemp id data---->",item)
+							return (
+								<div key={index} className={styles.list_blogs}>
+									<div className={styles.blog_title} onClick={() => editCusTemp(item.ctemp_id)}>
+										{item.name}
 									</div>
 									<div className={styles.footer}>
 										<div>&nbsp;</div>

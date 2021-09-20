@@ -16,6 +16,7 @@ export const createRepo = async (data) => {
 			status: data.status,
 			isdelete: isdelete,
 			createddate: new Date(),
+			repo_type:data.repo_type
 		},
 	});
 
@@ -94,11 +95,7 @@ export const getList = async (id) => {
 				name: 'asc',
 			},
 			include: {
-				custom_template: {
-					where:{
-						status:'H'
-					}
-				},
+				custom_template: true
 			},
 		});
 	} catch (error) {

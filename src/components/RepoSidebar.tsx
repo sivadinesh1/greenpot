@@ -14,7 +14,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
@@ -33,6 +33,7 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 	});
 
 	const {
+		control,
 		register,
 		watch,
 		reset,
@@ -70,12 +71,20 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 		reset();
 		setOpenDialog(false);
 	};
-
+	
 	const onSubmit = async (formData, event) => {
+		console.log("Test current data --->",formData)
+		if(formData.type ==='Blogs')
+			formData.type='B'
+		else if(formData.type ==='Templates')
+			formData.type='T'
 		const values = {
 			name: formData.name,
+			repo_type:formData.type,
 			status: 'A',
 		};
+
+		console.log("Test current data --->",values)
 
 		setServerErrors([]);
 		setError(false);
@@ -93,6 +102,7 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 			setOpenDialog(false);
 			//	reloadList();
 			event.target.reset();
+			reset();
 		}
 	};
 
@@ -103,11 +113,13 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 		reloadBlogs(item);
 	};
 
+	
+
 	const options = [
 		{ label: 'Blogs', code: 'B' },
 		{ label: 'Templates', code: 'T' },
-		{ label: 'Templates', code: 'T' },
-		{ label: 'Templates', code: 'T' },
+		{ label: 'Test', code: 'T' },
+		{ label: 'Temp', code: 'T' },
 		{ label: 'Templates', code: 'T' },
 	];
 
@@ -161,21 +173,28 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 						<form onSubmit={handleSubmit(onSubmit)}>
 							<div className={styles.formGap}>
 								<div className={styles.text_wc_wrap}>
-									<TextField
-										type='text'
-										label='Name your new Workspace'
-										margin='dense'
-										name='name'
-										variant='standard'
-										size='small'
-										fullWidth
-										{...register('name')}
-										InputLabelProps={{
-											style: { color: '#ccc' },
-										}}
-										style={{ borderRadius: '50px' }}
-										error={!!errors.name}
-									/>
+
+								<Controller
+                                                    name='name'
+                                                    control={control}
+                                                    rules={{ required: true }}
+                                                    render={({ field }) => (
+														<TextField 
+															type='text' 
+															label='Name your new Workspace'
+															margin='dense'
+															variant='standard' 
+															size='small' 
+															fullWidth 
+															{...field}
+															InputLabelProps={{
+																style: { color: '#ccc' },
+															}}
+															style={{ borderRadius: '50px' }}
+															error={!!errors.name} />
+                                                    )}
+                                                />
+								
 									<div className={styles.text_wc}>{watch('name', '0')?.length || '0'}/70</div>
 								</div>
 								<div className='global_errors'>{errors && errors?.name?.message}</div>
@@ -186,8 +205,24 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 								id='combo-box-demo'
 								options={options}
 								sx={{ width: 300 }}
-								renderInput={(params) => <TextField margin='dense' {...params} label='Select content type' />}
+								// onChange={(e)=> handleType(e.target.value)
+								renderInput={(params) => <TextField margin='dense' {...params} label='Select content type' 	{...register('type')}  />}
 							/>
+								{/* <div className={styles.formGap}>
+									<Controller
+											name="type"
+											control={control}
+											render={
+											<Autocomplete
+												options={options}
+												disablePortal
+												sx={{ width: 300 }}
+												id='combo-box-demo'
+												renderInput={params => <TextField margin='dense' {...params} label='Select content type'/>}
+											/>
+											}
+										/>
+										</div> */}
 
 							<div className={styles.action_btns}>
 								<Button

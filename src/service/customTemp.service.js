@@ -126,3 +126,22 @@ export const getCustomTempByNano = async (nanoid) => {
   }
   return response;
 }
+
+
+export const getCustomTempByRepo = async (id) => {
+  var response = null;
+  console.log("check request data",id)
+  try {
+    const result = await prisma.custom_template.findMany({
+      where: {
+        repo_id: BigInt(id),
+        is_delete: "N"
+      }
+    });
+    response = bigIntToString( result);
+  } catch (error) {
+    console.log("Error Occured in Custom Template service", error.name);
+    response = new ApiError(Codedescription.INTERNAL_SERVER_ERROR, 'prisma error');
+  }
+  return response;
+}

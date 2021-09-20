@@ -11,7 +11,7 @@ const handler = nc()
 	.post(auth('getUsers'), async (req, res) => {
 		let company_id = req.user.companyid;
 
-		const { name, status } = req.body;
+		const { name, status ,repo_type} = req.body;
 		const errors = [];
 
 		const isdata = await checkDuplicateName(name, company_id);
@@ -24,7 +24,7 @@ const handler = nc()
 			}
 		}
 
-		const result = await createRepo({ name, status, company_id });
+		const result = await createRepo({ name, status, company_id ,repo_type});
 		res.status(201).send(result);
 	})
 	.put(async (req, res) => {

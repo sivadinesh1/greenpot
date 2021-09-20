@@ -129,6 +129,7 @@ model repo{
     isdelete      String?   @db.VarChar(5)
     createddate   DateTime? @db.Timestamp(6)
     updateddate   DateTime? @db.Timestamp(6)
+    repo_type     String?   @db.VarChar(10)
     company    company   @relation(fields: [company_id], references: [id])
     blogs blog[]
     custom_template custom_template[]
