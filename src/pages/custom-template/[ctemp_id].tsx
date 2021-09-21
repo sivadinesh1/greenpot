@@ -20,6 +20,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Image from 'next/image';
 import styles1 from '../../styles/Home.module.scss';
+import Builder from '../../components/Builder'
 
 
 
@@ -325,27 +326,9 @@ const CustomTemp = ({ isError, customTemp }) => {
             <div className={styles.middle}>
 
                 <div>
+                {mode === "view" &&<Builder keySet={objKeys} data={data} mode={mode}/>}
 
-                    {mode === "view" && objKeys.map((key) => {
-                        let obj = null;
-                        switch (key) {
-                            case 'Header':
-                                obj = data.Header
-                                if (obj.status === 'Active')
-                                    return (<Header
-                                        company={obj.content[0].value}
-                                        content={obj.content[1].value}
-                                        imageUrl={obj.content[2].value}
-                                        backgroundImage={obj.content[3].value} />)
-                            case 'Footer':
-                                obj = data['Footer']
-                                if (obj.status === 'Active')
-                                    return (<Footer data={obj.content[0].value} />)
-
-                        }
-                    })}
-
-                    {mode === "edit" && edit()}
+                {mode === "edit" && edit()}
                 </div>
             </div>
             {/* style Layer */}

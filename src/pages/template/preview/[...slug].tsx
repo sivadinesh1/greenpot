@@ -21,6 +21,7 @@ import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import Header from '../../../components/landing/Header';
 import Footer from '../../../components/Footer';
+import Builder from '../../../components/Builder'
 
 const ColorButton = withStyles(() => ({
 	root: {
@@ -182,8 +183,10 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 
 					<div className={styles.body}>
 						{/* {structure} */}
+						<Builder keySet={objKeys} data={data} mode={"view"}/>
 
-						{objKeys.map((key) => {
+						{/* {objKeys.map((key) => {
+								 <Builder keySet={objKeys} data={data} />
 							let obj = null;
 							switch (key) {
 								case 'Header':
@@ -201,7 +204,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 									obj = data['Footer'];
 									if (obj.status === 'Active') return <Footer data={obj.content[0].value} />;
 							}
-						})}
+						})} */}
 					</div>
 				</div>
 			</div>
