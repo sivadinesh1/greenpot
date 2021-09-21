@@ -20,6 +20,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import Image from 'next/image';
 import styles1 from '../../styles/Home.module.scss';
+import Builder from '../../components/Builder'
 
 
 
@@ -87,6 +88,50 @@ const CustomTemp = ({ isError, customTemp }) => {
     const [currentField, setCurrentField] = useState();
     const [availableImages, setAvailableImages] = useState([]);
 
+    const [schedule, setSchedule] = useState([]);
+    const [loads, setLoads] = useState([]);
+    const [undo, setUndo] = useState([]);
+    const [redo, setRedo] = useState([]);
+    let initialValTest = {};
+
+    
+    const {
+        control,
+        setValue,
+        handleSubmit,
+        watch,
+        formState: { errors },
+    } = useForm({ defaultValues: initialValTest });
+
+    const onSubmit = async (formData) => console.log("form submit data test ---->", formData);
+
+      const handleUpdate = () =>{
+
+        let oldObj=currentSection;
+      console.log("check current section data--->",oldObj)
+      oldObj.content[0].value= watch('company');
+      oldObj.content[1].value= watch('content');
+          setLoads(loads.length > 0 ? [...loads,oldObj] :[oldObj]);
+
+          console.log(" check handle value --->",oldObj)
+          console.log(" check handle value 1--->",loads)
+          console.log(" check handle value 2--->",undo)
+          setUndo([...undo,oldObj]);
+    }
+
+      const undoChanges = () => {      
+        const lastElement = undo[undo.length - 1];
+        console.log("check undo operation--->1",lastElement)
+        // Update redo to be able to rollback
+        setRedo([...undo]);
+        // Remove the last element from undo
+        undo.pop();
+        setCurrentSection(undo[undo.length - 1]);
+        console.log("check undo operation--->2",currentSection)
+        // setUndo([...lastElement]);
+      }
+
+
 
     const [openDialog, setOpenDialog] = useState(false);
     const handleOpenDialog = () => {
@@ -109,7 +154,6 @@ const CustomTemp = ({ isError, customTemp }) => {
     const handleMode = (mode) => {
         setMode(mode)
     }
-    let initialValTest = {};
 
     const getFields = async (content) => {
         fields.length = 0
@@ -137,16 +181,6 @@ const CustomTemp = ({ isError, customTemp }) => {
         await getFields(obj.content);
         handleMode("edit");
     }
-
-    const {
-        control,
-        setValue,
-        handleSubmit,
-        watch,
-        formState: { errors },
-    } = useForm({ defaultValues: initialValTest });
-
-    const onSubmit = async (formData) => console.log("form submit data test ---->", formData);
 
 
     const handleImage = async (name) => {
@@ -213,7 +247,19 @@ const CustomTemp = ({ isError, customTemp }) => {
                 Customize
         </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ColorButton>Publish</ColorButton>
+            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr'}}>
+                    <div>
+                    <div style={{float:'left', cursor: 'pointer' ,paddingRight:'5px'}}>
+                            <Image src='/static/images/undo.svg' alt='edit' width='16px' height='16px' onClick={()=> undoChanges()} />
+                    </div>
+                    <div style={{float:'left',padding:'0 10px' }}> | </div>
+                    <div style={{ float:'left',cursor: 'pointer', paddingLeft:'5px' }}>
+                            <Image src='/static/images/redo.svg' alt='edit' width='16px' height='16px' onClick={()=> undoChanges()} />
+                        </div>
+                    </div>
+                    <div> <ColorButton>Publish</ColorButton></div>
+
+                </div>
             </div>
         </div>
         <div className={styles.wrapper}>
@@ -237,7 +283,7 @@ const CustomTemp = ({ isError, customTemp }) => {
                                 {fields?.map((row, index) => {
                                     if (row.type === 'text') {
                                         return (
-                                            <div className={styles.formGap} key={index}>
+                                            <div className={styles.formGap} key={index} onChange={()=> handleUpdate()}>
                                                 <Controller
                                                     name={row.name}
                                                     key={index}
@@ -252,7 +298,7 @@ const CustomTemp = ({ isError, customTemp }) => {
                                     }
                                     else if (row.type === 'text-area') {
                                         return (
-                                            <div className={styles.formGap} key={index}>
+                                            <div className={styles.formGap} key={index} onChange={()=> handleUpdate()}>
                                                 <Controller
                                                     name={row.name}
                                                     key={index}
@@ -280,27 +326,9 @@ const CustomTemp = ({ isError, customTemp }) => {
             <div className={styles.middle}>
 
                 <div>
+                {mode === "view" &&<Builder keySet={objKeys} data={data} mode={mode}/>}
 
-                    {mode === "view" && objKeys.map((key) => {
-                        let obj = null;
-                        switch (key) {
-                            case 'Header':
-                                obj = data.Header
-                                if (obj.status === 'Active')
-                                    return (<Header
-                                        company={obj.content[0].value}
-                                        content={obj.content[1].value}
-                                        imageUrl={obj.content[2].value}
-                                        backgroundImage={obj.content[3].value} />)
-                            case 'Footer':
-                                obj = data['Footer']
-                                if (obj.status === 'Active')
-                                    return (<Footer data={obj.content[0].value} />)
-
-                        }
-                    })}
-
-                    {mode === "edit" && edit()}
+                {mode === "edit" && edit()}
                 </div>
             </div>
             {/* style Layer */}

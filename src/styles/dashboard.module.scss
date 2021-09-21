@@ -11,8 +11,8 @@
 
 .repo_creator {
 	display: grid;
-	grid-template-columns: 1fr 1fr;
-	width: 370px;
+	grid-template-columns: 1fr ;
+	width: 180px;
 	height: 210px;
 	background-color: rgb(255, 255, 255);
 	border-radius: 1rem;
@@ -31,16 +31,16 @@
 		border-radius: 8px;
 	}
 
-	.right {
-		display: grid;
-		grid-template-rows: 1fr 80px;
-		padding: 24px 16px;
-		color: #fff;
-		font-size: 20px;
-		background-color: rgb(4, 135, 175);
-		border-radius: 8px;
-		margin-left: 10px;
-	}
+	// .right {
+	// 	display: grid;
+	// 	grid-template-rows: 1fr 80px;
+	// 	padding: 24px 16px;
+	// 	color: #fff;
+	// 	font-size: 20px;
+	// 	background-color: rgb(4, 135, 175);
+	// 	border-radius: 8px;
+	// 	margin-left: 10px;
+	// }
 }
 
 .list_blogs {
