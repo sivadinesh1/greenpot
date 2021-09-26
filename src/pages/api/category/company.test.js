@@ -11,7 +11,7 @@ describe('test endpoint', () => {
 
 	test(' post check  request', async () => {
 		const client = testClient(myEndpoint1);
-		const response = await client.post('/api/category').send({ name: 'zcat', companyid: '2' });
+		const response = await client.post('/api/category').send({ name: 'zcat', company_id: '2' });
 		expect(response.status).toBe(201);
 	});
 });

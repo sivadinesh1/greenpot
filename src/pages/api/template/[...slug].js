@@ -1,6 +1,6 @@
 import nc from 'next-connect';
 import { getById, getByTemplateName, getByNano, deleteById, search, searchTplByCat } from '../../../service/template.service';
-import { auth } from '../../../middlewares/auth';
+import { auth } from '../../../middleware/auth';
 const handler = nc()
 	.get(async (req, res) => {
 		const { slug } = req.query;
@@ -17,7 +17,6 @@ const handler = nc()
 			const result = await search(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'byCategory') {
-			console.log('dinesh>>>');
 			const result = await searchTplByCat(slug[1]);
 			res.status(200).json(result);
 		}

@@ -3,13 +3,13 @@ const { stripHtml } = require('string-strip-html');
 const slugify = require('slugify');
 import { smartTrim } from '../../../components/utils/util';
 import { checkDuplicateTitle, createBlog, updateBlog } from '../../../service/blog.service';
-import {deleteImage,getImages } from '../../../service/cloudinary.service';
+import { deleteImage, getImages } from '../../../service/cloudinary.service';
 
-import { bigIntToString } from '../../../dbconfig/utils';
+import { bigIntToString } from '../../../db-config/utils';
 
 const handler = nc()
 	.post(async (req, res) => {
-		if (req.body.operation === "DELETE") {
+		if (req.body.operation === 'DELETE') {
 			const data = await deleteImage(req.body.publicId);
 			if (data.result === 'ok') {
 				const result = await getImages(req.body.folder);
@@ -18,10 +18,10 @@ const handler = nc()
 		}
 	})
 	.put(async (req, res) => {
-		const { id, title, description, author, articleDate, categories, tags, body, companyId, status,createdDate } = req.body;
+		const { id, title, description, author, articleDate, categories, tags, body, company_id, status, createdAt } = req.body;
 
 		const errors = [];
-		const isdata = await checkDuplicateTitle(title, companyId);
+		const isdata = await checkDuplicateTitle(title, company_id);
 
 		if (isdata > 1) {
 			errors.push('Duplicate entry');
@@ -43,11 +43,11 @@ const handler = nc()
 
 		// let excerpt = smartTrim(body, 320, '', ' ...');
 
-		// let companyid = companyId;
-		// if (typeof companyId === 'string') {
-		// 	companyid = Number(companyId);
+		// let company_id = company_id;
+		// if (typeof company_id === 'string') {
+		// 	company_id = Number(company_id);
 		// }
-		// console.log('cmp id ' + companyid);
+		// console.log('cmp id ' + company_id);
 		// let newCatArr = arrayOfCategories.map((e) => {
 		// 	return parseInt(e.id);
 		// });
@@ -60,11 +60,11 @@ const handler = nc()
 		// // both works do not delete
 		// // let status= 'D';
 		// //   let	published= 'N';
-		// //   let isdelete='N';
+		// //   let is_delete='N';
 
 		// // db.one(
-		// // 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, companyid,isdelete, description, author,article_date,status,published) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9,$10,$11,$12,$13,$14,$15) RETURNING id',
-		// // 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, companyid,isdelete, description, author, articleDate,status,published],
+		// // 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, company_id,is_delete, description, author,blog_date,status,published) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9,$10,$11,$12,$13,$14,$15) RETURNING id',
+		// // 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, company_id,is_delete, description, author, articleDate,status,published],
 		// // ).then((data) => {
 
 		// // 	// res.json({ title: title, message: 'success' });
@@ -84,20 +84,20 @@ const handler = nc()
 		// 		mdesc: mdesc,
 		// 		categories: newCatArr,
 		// 		tags: newTagArr,
-		// 		companyid: companyid,
-		// 		isdelete: 'N',
+		// 		company_id: company_id,
+		// 		is_delete: 'N',
 		// 		description: description,
 		// 		author: author,
-		// 		article_date: articleDate,
+		// 		blog_date: articleDate,
 		// 		status: status === 'N' ? 'D' : 'P',
 		// 		published: status,
 		// 		published_datetime: currentDate,
 		// 	},
 		// });
 
-		const result = await updateBlog(id, title, description, author, articleDate, categories, tags, body, companyId, status,createdDate);
+		const result = await updateBlog(id, title, description, author, articleDate, categories, tags, body, company_id, status, createdAt);
 
-		res.status(201).send({ title: title,repo_id:result.repo_id, message: 'success' });
+		res.status(201).send({ title: title, repo_id: result.repo_id, message: 'success' });
 	});
 
 export default handler;

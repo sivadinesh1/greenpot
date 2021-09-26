@@ -34,8 +34,8 @@ a:active {
 
 .error {
 	color: red;
-	font-size: 0.7rem;
-	margin: 5px;
+	font-size: 14px;
+	padding-bottom: 10px;
 }
 .error-summary {
 	margin: 5px;
@@ -80,3 +80,28 @@ Box-model
 Typography
 Manipulation
 Miscellaneous */
+
+.no_data_table {
+	display: grid;
+	top: 53px;
+	width: 80%;
+
+	padding: 1rem;
+	font-size: 1rem;
+	color: #333;
+	background-color: rgb(244, 244, 244);
+	text-align: center;
+	background: #fff;
+	padding: 0.4rem;
+	font-size: 14px;
+	font-weight: 500;
+	color: blue;
+	margin-top: 1rem;
+}
+
+.submit_button:focus {
+	margin: 2px;
+	outline: rgb(216, 216, 216) solid 2px;
+	outline-offset: 3px;
+	transition: all 0.2s ease 0s;
+}

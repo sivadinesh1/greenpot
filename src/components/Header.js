@@ -53,7 +53,7 @@ const Header = ({ username = '' }) => {
 						<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
 							<MenuItem onClick={handleClose}>
 								<Link href={`/admin/category`}>
-									<a>Categories</a>
+									<a>Category</a>
 								</Link>
 							</MenuItem>
 

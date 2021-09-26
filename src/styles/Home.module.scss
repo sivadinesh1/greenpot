@@ -141,103 +141,6 @@
 
 // menu
 
-.main_menu {
-	position: absolute;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	display: flex;
-	flex-direction: column;
-	width: 230px;
-	height: 100%;
-	margin: 0;
-	padding-top: 53px;
-	overflow: hidden;
-	text-transform: uppercase;
-	background: #fff;
-	outline: 0;
-
-	box-shadow: 1px 0 15px rgba(0, 0, 0, 0.07);
-	opacity: 1;
-	transition: width 0.2s linear;
-}
-
-.nav_text {
-	position: relative;
-	display: inline-block;
-
-	height: 40px;
-	padding-left: 1rem;
-	line-height: 32px;
-	vertical-align: middle;
-}
-
-.last {
-	margin-top: auto;
-}
-
-.ul {
-	margin: 7px 0;
-	padding-left: 16px;
-	list-style-type: none;
-}
-
-.li {
-	position: relative;
-	display: block;
-	width: 230px;
-	padding-left: 1rem;
-}
-
-.a {
-	position: relative;
-	display: table;
-	width: 255px;
-	color: #8a8a8a;
-	font-size: 13px;
-	font-family: 'Strait', sans-serif;
-	text-decoration: none;
-
-	text-shadow: 1px 1px 1px #fff;
-	border-top: 1px solid #f2f2f2;
-	border-collapse: collapse;
-	border-spacing: 0;
-	transition: all 0.14s linear;
-	transition: all 0.14s linear;
-}
-
-.main_menu:hover,
-.main_menu.expanded {
-	width: 230px;
-	overflow: hidden;
-	opacity: 1;
-}
-
-.main_menu .li:hover > a,
-.main_menu li.active > a,
-.ul .li:hover a,
-.ul .li.active a {
-	color: #fff;
-	text-shadow: 0 0 0;
-	background-color: #0bb;
-}
-
-.main_menu .li > a {
-	position: relative;
-	display: table;
-	width: 255px;
-	color: #8a8a8a;
-	font-size: 13px;
-	font-family: 'Strait', sans-serif;
-	text-decoration: none;
-
-	text-shadow: 1px 1px 1px #fff;
-	border-top: 1px solid #f2f2f2;
-	border-collapse: collapse;
-	border-spacing: 0;
-	transition: all 0.14s linear;
-}
-
 /* ScrolBar  */
 .scrollbar {
 	width: 100%;
@@ -322,55 +225,6 @@
 	border: 2px solid black;
 }
 
-// Navbar
-.workspace {
-	display: flex;
-	justify-content: space-between;
-	padding: 10px 2rem;
-
-	.workspace_right {
-		display: flex;
-	}
-
-	.label {
-		color: #262627;
-		font-size: 14px;
-	}
-
-	.add {
-		width: 32px;
-		height: 32px;
-	}
-
-	.search {
-		width: 32px;
-		height: 32px;
-	}
-}
-
-.dialog_pop {
-	display: flex;
-	justify-content: space-between;
-}
-
-.text_wc_wrap {
-	display: flex;
-	justify-content: space-between;
-}
-
-.text_wc {
-	align-self: flex-end;
-	margin-bottom: 4px;
-	padding: 0 6px;
-	color: grey;
-	border-bottom: 1px solid grey;
-}
-
-.action_btns {
-	padding: 1rem;
-	text-align: right;
-}
-
 .cancel_button:focus {
 	margin: 2px;
 	background-color: rgb(216, 216, 216);
@@ -392,32 +246,6 @@
 	background-color: azure;
 }
 
-.repo_list {
-	display: grid;
-	grid-template-columns: 136px 30px;
-	padding: 10px 32px;
-	color: #737373;
-	font-size: 14px;
-	cursor: pointer;
-
-	.name {
-		overflow: hidden;
-	}
-
-	.count {
-		text-align: right;
-	}
-}
-
-.repo_list:hover {
-	background-color: #f0f0f0;
-}
-
-.highlightrepo {
-	color: #262627;
-	background-color: #f0f0f0;
-}
-
 .breadcrumb {
 	margin-top: 7px;
 	color: rgb(36, 13, 241);
@@ -425,15 +253,15 @@
 }
 
 .dropzone {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	height: 8rem;
 	margin: 1rem;
 	padding: 1rem;
-	border: 2px dashed salmon;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	font-size: 2rem;
 	font-weight: bold;
+	font-size: 2rem;
+	border: 2px dashed salmon;
 	cursor: pointer;
 }
 
@@ -458,28 +286,28 @@
 }
 
 /*style the arrow inside the select element:*/
-.select-selected:after {
+.select-selected::after {
 	position: absolute;
-	content: '';
 	top: 14px;
 	right: 10px;
 	width: 0;
 	height: 0;
 	border: 6px solid transparent;
-	border-color: #fff transparent transparent transparent;
+	border-color: #fff transparent transparent;
+	content: '';
 }
 
 /*point the arrow upwards when the select box is open (active):*/
-.select-selected.select-arrow-active:after {
-	border-color: transparent transparent #fff transparent;
+.select-selected.select-arrow-active::after {
 	top: 7px;
+	border-color: transparent transparent #fff;
 }
 
 /*style the items (options), including the selected item:*/
 .select-items div,
 .select-selected {
-	color: #ffffff;
 	padding: 8px 16px;
+	color: #fff;
 	border: 1px solid transparent;
 	border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
 	cursor: pointer;
@@ -489,11 +317,11 @@
 /*style items (options):*/
 .select-items {
 	position: absolute;
-	background-color: DodgerBlue;
 	top: 100%;
-	left: 0;
 	right: 0;
+	left: 0;
 	z-index: 99;
+	background-color: DodgerBlue;
 }
 
 /*hide the items when the select box is closed:*/

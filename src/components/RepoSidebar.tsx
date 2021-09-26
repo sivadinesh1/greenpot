@@ -1,68 +1,50 @@
-import Link from 'next/link';
-import Router from 'next/router';
-
-import React, { useState, useEffect } from 'react';
-import styles from '../styles/Home.module.scss';
-
-import Image from 'next/image';
-
-import { state } from '../utils/state';
-import axios from 'axios';
-import Dialog from '@material-ui/core/Dialog';
-
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useForm, Controller } from 'react-hook-form';
-
-import TextField from '@mui/material/TextField';
-import Autocomplete from '@mui/material/Autocomplete';
-
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
 import Button from '@mui/material/Button';
+import axios from 'axios';
+import Image from 'next/image';
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
+import { FormInputDropdown } from '../components/forms/FormInputDropdown';
+import { FormInputText } from '../components/forms/FormInputText';
+import { IRepo } from '../model/Repo';
+import styles from '../styles/RepoSidebar.module.scss';
 
-interface FormData {
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+
+interface IFormData {
 	name: string;
+	repo_type: string;
 }
 
-const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
+const defaultValues = {
+	name: '',
+	repo_type: '',
+};
+
+const RepoSidebar = ({ repos, reloadRepos }) => {
 	const [currentRepo, setCurrentRepo] = useState(repos[0]);
 
 	let schema = yup.object().shape({
 		name: yup.string().required().max(70),
+		repo_type: yup.string().required(),
 	});
 
 	const {
 		control,
 		register,
 		watch,
-		reset,
 		getValues,
 		handleSubmit,
+		reset,
 		formState: { errors, isDirty, isValid },
-	} = useForm<FormData>({ mode: 'onChange', resolver: yupResolver(schema) });
-
-	const [anchorEl, setAnchorEl] = useState(null);
-	const handleClick = (event) => {
-		setAnchorEl(event.currentTarget);
-	};
-
-	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
-	const [error, setError] = useState(false);
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
-	const handleSignout = () => {
-		axios.post(`/api/auth/logout`, {}).then(function (response) {
-			localStorage.removeItem('islogged');
-			state.islogged = false;
-			Router.push(`/`);
-		});
-	};
+	} = useForm<IFormData>({ mode: 'onChange', defaultValues: defaultValues, resolver: yupResolver(schema) });
 
 	const [openDialog, setOpenDialog] = useState(false);
+
 	const handleOpenDialog = () => {
 		setOpenDialog(true);
 	};
@@ -71,60 +53,51 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 		reset();
 		setOpenDialog(false);
 	};
-	
-	const onSubmit = async (formData, event) => {
-		console.log("Test current data --->",formData)
-		if(formData.type ==='Blogs')
-			formData.type='B'
-		else if(formData.type ==='Templates')
-			formData.type='T'
+
+	const onSubmit = async (formData: IFormData) => {
+		console.log('Test current data --->', formData);
+
 		const values = {
 			name: formData.name,
-			repo_type:formData.type,
+			repo_type: formData.repo_type,
 			status: 'A',
 		};
-
-		console.log("Test current data --->",values)
-
-		setServerErrors([]);
-		setError(false);
 
 		const response = await axios.post(`/api/repository`, values);
 
 		if (response.data.errors) {
-			setServerErrors(response.data.errors);
-			setError(true);
+			// log & throw error
+			handleSnackOpen('You already have a workspace with this name.');
 		}
 
 		if (response.status === 201) {
-			// Router.push("/dashboard")
-			// handleSnackOpen('Repository Successfully Added');
-			setOpenDialog(false);
-			//	reloadList();
-			event.target.reset();
-			reset();
+			handleCloseDialog();
+			repos.push(response.data);
+			// setCurrentRepo(response.data);
+			reloadRepos(response.data);
 		}
 	};
 
-	const handleRepoSelect = (event, item) => {
+	const handleRepoSelect = (event: React.MouseEvent<HTMLDivElement, MouseEvent>, item: IRepo) => {
 		event.preventDefault();
 
 		setCurrentRepo(item);
-		reloadBlogs(item);
+		reloadRepos(item);
+		//	reloadBlogs(item);
 	};
 
-	
-
 	const options = [
-		{ label: 'Blogs', code: 'B' },
-		{ label: 'Templates', code: 'T' },
-		{ label: 'Test', code: 'T' },
-		{ label: 'Temp', code: 'T' },
-		{ label: 'Templates', code: 'T' },
+		{ label: 'Blog', value: 'B' },
+		{ label: 'Lead Capture Templates', value: 'T' },
 	];
 
-	// do not delete
-	// https://github.com/mui-org/material-ui/issues/7431
+	const [snack, setSnack] = useState(false);
+	const [message, setMessage] = useState('');
+
+	const handleSnackOpen = (message) => {
+		setSnack(true);
+		setMessage(message);
+	};
 
 	return (
 		<>
@@ -132,26 +105,36 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 				<div className={styles.workspace}>
 					<div className={styles.label}>Workspaces</div>
 					<div className={styles.workspace_right}>
-						<div className={styles.add} onClick={() => handleOpenDialog()}>
+						<div className={styles.plus} onClick={() => handleOpenDialog()}>
 							<Image src='/static/images/plus.svg' alt='edit' width='14px' height='14px' />
-						</div>
-						<div className={styles.search}>
-							<Image src='/static/images/search.svg' alt='edit' width='14px' height='14px' />
 						</div>
 					</div>
 				</div>
-				{repos &&
-					repos?.map((item, index) => {
-						return (
-							<div
-								key={index}
-								className={`${styles.repo_list} ${currentRepo.id === item.id ? styles.highlightrepo : ''} `}
-								onClick={(e) => handleRepoSelect(e, item)}>
-								<div className={styles.name}>{item.name}</div>
-								<div className={styles.count}>{item.count}</div>
-							</div>
-						);
-					})}
+
+				{repos.length === 0 && <div className={styles.no_workspace}>Create your first workspace</div>}
+
+				{repos.length > 0 && (
+					<>
+						{repos &&
+							repos?.map((item: IRepo, index: number) => {
+								return (
+									<div
+										key={index}
+										className={`${styles.repo_list} ${currentRepo.id === item.id ? styles.highlight_repo : ''} `}
+										onClick={(e) => handleRepoSelect(e, item)}>
+										<div className={styles.repo_info}>
+											<div className={styles.repo_type}>{item.repo_type === 'T' ? 'Landing Pages' : 'Blogs'}</div>
+											<div className={styles.repo_stats}>
+												{item.repo_type === 'T' ? item.lead_pages_count : item.blog_pages_count}
+											</div>
+										</div>
+
+										<div className={styles.repo_name}>{item.repo_name}</div>
+									</div>
+								);
+							})}
+					</>
+				)}
 
 				<div className={styles.last}>
 					<li className={styles.ul}>
@@ -165,64 +148,26 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 				<Dialog open={openDialog} onClose={handleCloseDialog}>
 					<DialogContent style={{ width: '500px' }}>
 						<div className={styles.dialog_pop}>
-							<div style={{ fontSize: '20px' }}>Create a new workspace</div>
+							<div style={{ fontSize: '20px' }}>Create new workspace</div>
 							<div style={{ cursor: 'pointer' }}>
 								<Image src='/static/images/close.svg' alt='edit' width='16px' height='16px' onClick={handleCloseDialog} />
 							</div>
 						</div>
-						<form onSubmit={handleSubmit(onSubmit)}>
-							<div className={styles.formGap}>
-								<div className={styles.text_wc_wrap}>
 
-								<Controller
-                                                    name='name'
-                                                    control={control}
-                                                    rules={{ required: true }}
-                                                    render={({ field }) => (
-														<TextField 
-															type='text' 
-															label='Name your new Workspace'
-															margin='dense'
-															variant='standard' 
-															size='small' 
-															fullWidth 
-															{...field}
-															InputLabelProps={{
-																style: { color: '#ccc' },
-															}}
-															style={{ borderRadius: '50px' }}
-															error={!!errors.name} />
-                                                    )}
-                                                />
-								
-									<div className={styles.text_wc}>{watch('name', '0')?.length || '0'}/70</div>
-								</div>
-								<div className='global_errors'>{errors && errors?.name?.message}</div>
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<div className={styles.text_wc_wrap}>
+								<FormInputText name='name' control={control} label='Name your new Workspace' />
+								<div className={styles.text_wc}>{watch('name', '0')?.length || '0'}/70</div>
 							</div>
 
-							<Autocomplete
-								disablePortal
-								id='combo-box-demo'
+							<FormInputDropdown
+								name='repo_type'
+								control={control}
+								width={'50%'}
+								defaultValue={{ label: '', value: '' }}
+								label='Select'
 								options={options}
-								sx={{ width: 300 }}
-								// onChange={(e)=> handleType(e.target.value)
-								renderInput={(params) => <TextField margin='dense' {...params} label='Select content type' 	{...register('type')}  />}
 							/>
-								{/* <div className={styles.formGap}>
-									<Controller
-											name="type"
-											control={control}
-											render={
-											<Autocomplete
-												options={options}
-												disablePortal
-												sx={{ width: 300 }}
-												id='combo-box-demo'
-												renderInput={params => <TextField margin='dense' {...params} label='Select content type'/>}
-											/>
-											}
-										/>
-										</div> */}
 
 							<div className={styles.action_btns}>
 								<Button
@@ -248,6 +193,12 @@ const RepoSidebar = ({ repos, company_id, isError, reloadBlogs }) => {
 					</DialogContent>
 				</Dialog>
 			</nav>
+
+			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
+				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
+					{message}
+				</MuiAlert>
+			</Snackbar>
 		</>
 	);
 };

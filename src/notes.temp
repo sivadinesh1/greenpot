@@ -1,0 +1,5 @@
+if there is no repo at all, send [] and then in front end mark both blog & template as zero
+1) if no repo has no nlogs, then blog count has to be '0' and repo name has to come
+2) also check if any templates are present for the repo, if there is no templates, then 
+return '0' with repo name..
+3) merge the result set to show, for a given repo how many blog & templates

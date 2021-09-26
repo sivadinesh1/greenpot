@@ -8,7 +8,7 @@ import TextField from '@material-ui/core/TextField';
 import styles from '../../../styles/Category.module.scss';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useState } from 'react';
+import React, { useState } from 'react';
 
 import axios from 'axios';
 import { mutate, trigger } from 'swr';
@@ -17,31 +17,15 @@ interface FormData {
 	name: string;
 }
 
-const ColorButton = withStyles(() => ({
-	root: {
-		color: '#000',
-		backgroundColor: '#fff',
-		'&:hover': {
-			backgroundColor: '#f0f0ff',
-		},
-	},
-}))(Button);
-
-const useStyles = makeStyles((theme) => ({
-	margin: {
-		margin: theme.spacing(1),
-	},
-	TextFieldProps: {
-		color: '#fff',
-		borderBottom: '1px solid #fff',
-	},
-	buttonProps: {
-		fontSize: '1rem',
-		borderRadius: '5em',
-		padding: '8px 50px',
-		textTransform: 'capitalize',
-	},
-}));
+// const ColorButton = withStyles(() => ({
+// 	root: {
+// 		color: '#000',
+// 		backgroundColor: '#fff',
+// 		'&:hover': {
+// 			backgroundColor: '#f0f0ff',
+// 		},
+// 	},
+// }))(Button);
 
 export default function AddCategory({ categories, onReloadCategoryList, handleSnackOpen, company_id }) {
 	let schema = yup.object().shape({
@@ -64,7 +48,7 @@ export default function AddCategory({ categories, onReloadCategoryList, handleSn
 		}
 		const values = {
 			name: formData.name,
-			companyid: company_id,
+			company_id: company_id,
 		};
 		setSubmitting(true);
 		setServerErrors([]);
@@ -86,8 +70,6 @@ export default function AddCategory({ categories, onReloadCategoryList, handleSn
 		}
 	};
 
-	const classes = useStyles();
-
 	return (
 		<div>
 			<div className={styles.title}>ADD CATEGORY</div>
@@ -101,31 +83,25 @@ export default function AddCategory({ categories, onReloadCategoryList, handleSn
 						variant='standard'
 						size='small'
 						fullWidth
-						InputProps={{
-							className: classes.TextFieldProps,
-						}}
-						InputLabelProps={{
-							style: { color: '#fff' },
-						}}
 						style={{ borderRadius: '50px' }}
 						{...register('name')}
 					/>
-					{errors.name && <span className='white-error'>{errors.name.message}</span>}
+					{errors.name && <span className='errors'>{errors.name.message}</span>}
 				</div>
 				<div className={styles.textCenter}>
-					<ColorButton variant='contained' color='primary' disabled={submitting} className={classes.buttonProps} type='submit'>
+					<Button variant='contained' color='primary' disabled={submitting} type='submit'>
 						Add Category
-					</ColorButton>
+					</Button>
 				</div>
 			</form>
 			{serverErrors && (
 				<div className='error-table'>
-					{error && <div className='white-error tbl-header-font'>Please correct below errors. </div>}
+					{error && <div className='error tbl-header-font'>Please correct below errors. </div>}
 
 					<ul>
 						{serverErrors.map((error) => (
-							<li key={error} className='white-error'>
-								<span className='white-error'>{error}</span>
+							<li key={error} className='error-summary'>
+								<span className='error'>{error}</span>
 							</li>
 						))}
 					</ul>

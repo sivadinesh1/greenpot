@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import { Category } from '../../../modal/Category';
+import { ICategory } from '../../../model/Category';
 
 import styles from '../../../styles/Category.module.scss';
 import CategoryList from '../../../components/crud/Category/list-category';
@@ -20,10 +20,9 @@ export const getServerSideProps = async (context) => {
 	let categorys = null;
 	let company_id = null;
 
-
-		try{
-			cookie = context?.req?.headers.cookie;
-			await axios
+	try {
+		cookie = context?.req?.headers.cookie;
+		await axios
 			.get(`${process.env.API_URL}/category`, {
 				headers: {
 					cookie: cookie!,
@@ -36,11 +35,10 @@ export const getServerSideProps = async (context) => {
 			.catch((error) => {
 				isError = true;
 			});
-		}
-		catch(error){
-			console.log(`error in category ${error}`);
-			isError = true;
-		}
+	} catch (error) {
+		console.log(`error in category ${error}`);
+		isError = true;
+	}
 
 	return {
 		props: { categorys, company_id, isError },
@@ -57,7 +55,7 @@ export default function Index({ categorys, company_id, isError }) {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('add');
-	const [editRowItem, setEditRowItem] = useState<Category>();
+	const [editRowItem, setEditRowItem] = useState<ICategory>();
 
 	const { data, mutate, error } = useSWR(`/api/category/${company_id}`, {
 		initialData: categorys,
@@ -76,7 +74,7 @@ export default function Index({ categorys, company_id, isError }) {
 		setMode(mode);
 	};
 
-	const editRow = (item: Category) => {
+	const editRow = (item: ICategory) => {
 		setEditRowItem(item);
 	};
 

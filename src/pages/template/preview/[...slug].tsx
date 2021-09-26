@@ -21,7 +21,7 @@ import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
 import Header from '../../../components/landing/Header';
 import Footer from '../../../components/Footer';
-import Builder from '../../../components/Builder'
+import Builder from '../../../components/Builder';
 
 const ColorButton = withStyles(() => ({
 	root: {
@@ -53,7 +53,7 @@ export const getServerSideProps = async (context) => {
 				cookie: cookie!,
 			},
 		});
-		console.log('test template response', result2);
+
 		template = result2.data;
 
 		//get repo by nano
@@ -85,7 +85,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 		name: yup.string().required().max(70),
 	});
 
-	const [data, setData] = useState(temp.content);
+	const [data, setData] = useState(temp.blocks);
 	const [objKeys, setObjKeys] = useState(Object.keys(data));
 	console.log('test keyset', objKeys);
 
@@ -127,7 +127,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 		setServerErrors([]);
 		setError(false);
 
-		const response = await axios.post(`/api/customTemp`, values);
+		const response = await axios.post(`/api/collection`, values);
 		console.log('check response--->', response);
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
@@ -136,7 +136,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 
 		if (response.status === 201) {
 			setOpenDialog(false);
-			handleCustomTemplate(response.data.ctemp_id);
+			handleCustomTemplate(response.data.lead_page_id);
 			event.target.reset();
 		}
 	};
@@ -183,7 +183,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 
 					<div className={styles.body}>
 						{/* {structure} */}
-						<Builder keySet={objKeys} data={data} mode={"view"}/>
+						<Builder keySet={objKeys} data={data} mode={'view'} />
 
 						{/* {objKeys.map((key) => {
 								 <Builder keySet={objKeys} data={data} />
@@ -194,15 +194,15 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 									if (obj.status === 'Active')
 										return (
 											<Header
-												company={obj.content[0].value}
-												content={obj.content[1].value}
-												imageUrl={obj.content[2].value}
-												backgroundImage={obj.content[3].value}
+												company={obj.blocks[0].value}
+												blocks={obj.blocks[1].value}
+												imageUrl={obj.blocks[2].value}
+												backgroundImage={obj.blocks[3].value}
 											/>
 										);
 								case 'Footer':
 									obj = data['Footer'];
-									if (obj.status === 'Active') return <Footer data={obj.content[0].value} />;
+									if (obj.status === 'Active') return <Footer data={obj.blocks[0].value} />;
 							}
 						})} */}
 					</div>

@@ -8,7 +8,7 @@ const handler = nc().post(auth('getUsers'), async (req, res) => {
 	let user = req.user;
 	const { name, email, accessRights } = req.body;
 
-	const result = await insertSubUser({ name, email, companyId: user.company_id, accessRights });
+	const result = await insertSubUser({ name, email, company_id: user.company_id, accessRights });
 	if (result.message === 'success') {
 		req.body['userId'] = result.userId;
 		req.body['id'] = result.id;

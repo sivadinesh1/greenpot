@@ -48,7 +48,7 @@ export default function MyApp(props) {
 			let user = await axios.get(`/api/auth/user`);
 
 			state.islogged = true;
-			console.log('check user data in _app.tsx:: ' + JSON.stringify(user));
+			//	console.log('check user data in _app.tsx:: ' + JSON.stringify(user));
 			state.user = user.data;
 		};
 
@@ -85,6 +85,7 @@ export default function MyApp(props) {
 							compare: (a, b) => a === b,
 							fetcher: (url: string) =>
 								axios(url).then((r) => {
+									//	console.log('axios response: ' + JSON.stringify(r.data));
 									return r.data;
 								}),
 						}}>

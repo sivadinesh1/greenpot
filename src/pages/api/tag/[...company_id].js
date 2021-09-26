@@ -1,6 +1,6 @@
 import nc from 'next-connect';
 import { getAllTags, deleteTag } from '../../../service/tag.service';
-import { auth } from '../../../middlewares/auth';
+import { auth } from '../../../middleware/auth';
 const handler = nc()
 	.get(auth('getUsers'), async (req, res) => {
 		const { company_id } = req.query;

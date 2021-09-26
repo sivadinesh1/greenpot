@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Router from 'next/router';
 import styles from '../../styles/Home.module.scss';
 import Link from 'next/link';
@@ -38,6 +38,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const SigninComponent = () => {
+
+
+	useEffect(() => {
+		localStorage.removeItem('islogged');
+	state.islogged = false;
+	state.user = null;
+	}, []);
+
 	const classes = useStyles();
 	//	const { formatMessage: f } = useIntl();
 

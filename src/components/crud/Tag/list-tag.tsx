@@ -2,22 +2,17 @@ import React, { useState } from 'react';
 import styles from '../../../styles/Tag.module.scss';
 import axios from 'axios';
 
-import ConfirmDialog from '../../elements/ui/Dialog/ConfirmDialog';
-import { mutate } from 'swr';
 import Image from 'next/image';
+import DeleteDialog from '../../elements/ui/Dialog/DeleteDialog';
+import { ITag } from '../../../model/Tag';
 
-export default function TagList({ tags, onMode, onEditRow, onReloadTagList, handleSnackOpen, company_id }) {
+export default function TagList({ tags, onMode, chooseMode, onEditRow, onReloadTagList, handleSnackOpen, company_id }) {
 	const [openDialog, setOpenDialog] = useState(false);
-	const [currentId, setCurrentId] = useState('');
+	const [currentId, setCurrentId] = useState<number>();
+	const [currentTag, setCurrentTag] = useState('');
 
 	const handleConfirm = async () => {
 		setOpenDialog(false);
-
-		mutate(
-			`/api/tag/${company_id}`,
-			tags.filter((c) => c.id !== currentId),
-			false,
-		);
 
 		let response = await axios.delete(`/api/tag/${currentId}`);
 
@@ -28,15 +23,20 @@ export default function TagList({ tags, onMode, onEditRow, onReloadTagList, hand
 	};
 
 	const handleEdit = (item) => {
-		onMode('edit');
 		onEditRow(item);
+		chooseMode('edit');
 	};
 
-	const deleteRow = (id: string, event: any) => {
+	const deleteRow = (item: ITag, event: any) => {
 		event.stopPropagation();
 
-		setCurrentId(id);
+		setCurrentId(item.id);
+		setCurrentTag(item.name);
 		setOpenDialog(true);
+	};
+
+	const handleClose = () => {
+		setOpenDialog(false);
 	};
 
 	return (
@@ -44,6 +44,12 @@ export default function TagList({ tags, onMode, onEditRow, onReloadTagList, hand
 			<div className={styles.tagListTitle}>
 				Tags (<span>{tags?.length}</span>)
 			</div>
+
+			{tags && tags.length === 0 && (
+				<>
+					<div className='no_data_table'>No tags found. Create tag which best suits your brand / business.</div>
+				</>
+			)}
 			{tags &&
 				tags?.map((item, index) => {
 					return (
@@ -53,7 +59,7 @@ export default function TagList({ tags, onMode, onEditRow, onReloadTagList, hand
 									<div>
 										<div className={styles.tagName}>{item.name}</div>
 									</div>
-									<div className={styles.tagDel} onClick={(event) => deleteRow(item.id, event)}>
+									<div className={styles.tagDel} onClick={(event) => deleteRow(item, event)}>
 										<Image src='/static/images/close.svg' alt='close' width='12px' height='12px' />
 									</div>
 								</div>
@@ -62,17 +68,14 @@ export default function TagList({ tags, onMode, onEditRow, onReloadTagList, hand
 					);
 				})}
 
-			<ConfirmDialog
+			<DeleteDialog
 				open={openDialog}
-				handleClose={() => {
-					setOpenDialog(false);
-				}}
-				handleConfirm={() => {
-					handleConfirm();
-				}}
-				title='Warning Tag Deletion !'>
-				You are about to delete tag. Are you sure?
-			</ConfirmDialog>
+				handleClose={handleClose}
+				windowTitle='Delete this tag?'
+				deleteMessage='It will be deleted and wont be able to recover it.'
+				title={currentTag}
+				confirmDelete={handleConfirm}
+			/>
 		</div>
 	);
 }

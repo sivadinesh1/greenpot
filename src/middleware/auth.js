@@ -5,7 +5,7 @@ import cookie from 'cookie';
 import { isEmpty } from '../components/utils/util';
 
 export async function setLoginSession(res, user) {
-	const token = await signAccessToken(user.id, user.companyid, user.role);
+	const token = await signAccessToken(user.id, user.company_id, user.role);
 	setTokenCookie(res, token);
 }
 
@@ -23,9 +23,9 @@ export async function getLoginSession(req) {
 	return session;
 }
 
-const signAccessToken = (id, companyid, role) => {
+const signAccessToken = (id, company_id, role) => {
 	return new Promise((resolve, reject) => {
-		const payload = { id: id, companyid: companyid, role };
+		const payload = { id: id, company_id: company_id, role };
 		const secret = process.env.ACCESS_TOKEN_SECRET;
 		const options = { expiresIn: '1d' };
 
@@ -36,9 +36,9 @@ const signAccessToken = (id, companyid, role) => {
 	});
 };
 
-const signRefreshToken = (id, companyid, role) => {
+const signRefreshToken = (id, company_id, role) => {
 	return new Promise((resolve, reject) => {
-		const payload = { id: id, companyid: companyid, role };
+		const payload = { id: id, company_id: company_id, role };
 		const secret = process.env.REFRESH_TOKEN_SECRET;
 		const options = { expiresIn: '1y' };
 
@@ -80,7 +80,7 @@ export const parseCookies = async (req) => {
 	// if (!isEmpty(cCookie)) {
 	// let user = JWT.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
 	// let user_id = est.id;
-	// let company_id = est.companyid;
+	// let company_id = est.company_id;
 	// let role_id = est.role;
 	// console.log('dinesh....**..company_id.' + company_id);
 	// if (est.exp < new Date().getTime() / 1000) {

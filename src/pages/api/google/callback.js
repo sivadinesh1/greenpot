@@ -4,8 +4,8 @@ import axios from 'axios';
 const { nanoid } = require('nanoid');
 
 import passportGoogle from 'passport-google-oauth';
-import { insertGUser, checkEmailExists, checkIdExists } from "../../../service/auth/auth.service";
-import { getDB } from '../../../dbconfig/db';
+import { insertGUser, checkEmailExists, checkIdExists } from '../../../service/auth/auth.service';
+import { getDB } from '../../../db-config/db';
 const { db } = getDB();
 const GoogleStrategy = passportGoogle.OAuth2Strategy;
 

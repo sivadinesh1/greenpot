@@ -18,3 +18,7 @@ Box-model
 Typography
 Manipulation
 Miscellaneous
+
+npm run lint -- --fix
+
+./node_modules/.bin/stylelint "\*_/_.scss" --fix
