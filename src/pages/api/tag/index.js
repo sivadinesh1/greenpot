@@ -1,12 +1,11 @@
 import nc from 'next-connect';
 
 import { getAllTags, checkDuplicateNames, createTag, updateTag } from '../../../service/tag.service';
-import { auth } from '../../../middlewares/auth';
+import { auth } from '../../../middleware/auth';
 
 const handler = nc()
 	.get(auth('getUsers'), async (req, res) => {
-		console.log('ffdfffff');
-		let company_id = req.user.companyid;
+		let company_id = req.user.company_id;
 
 		const tags = await getAllTags(company_id);
 
@@ -14,9 +13,9 @@ const handler = nc()
 	})
 	// create method
 	.post(async (req, res) => {
-		const { name, companyid } = req.body;
+		const { name, company_id } = req.body;
 		const errors = [];
-		const isdata = await checkDuplicateNames(name, companyid);
+		const isdata = await checkDuplicateNames(name, company_id);
 		if (isdata > 0) {
 			errors.push('Duplicate entry');
 			if (errors.length > 0) {
@@ -24,19 +23,19 @@ const handler = nc()
 				return;
 			}
 		}
-		const result = await createTag(name, companyid);
+		const result = await createTag(name, company_id);
 		res.status(201).send(result);
 	})
 
 	// update
 	.put(async (req, res) => {
-		const { name, tagid, companyid } = req.body;
+		const { name, tag_id, company_id } = req.body;
 
 		const errors = [];
 
-		const isdata = await checkDuplicateNames(name, companyid);
+		const is_data = await checkDuplicateNames(name, company_id);
 
-		if (isdata > 1) {
+		if (is_data > 1) {
 			errors.push('Duplicate entry');
 			if (errors.length > 0) {
 				res.status(200).json({ errors });
@@ -44,7 +43,7 @@ const handler = nc()
 			}
 		}
 
-		const result = await updateTag(name, tagid, companyid);
+		const result = await updateTag(name, tag_id, company_id);
 
 		res.status(200).send({ result: 'success' });
 	});

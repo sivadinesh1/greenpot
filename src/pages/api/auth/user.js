@@ -1,11 +1,11 @@
-import { getLoginSession } from '../../../middlewares/auth';
+import { getLoginSession } from '../../../middleware/auth';
 import { getUser } from '../../../service/auth/auth.service';
 const jwt = require('jsonwebtoken');
 import cookie from 'cookie';
 import { isEmpty } from '../../../components/utils/util';
 
 import nc from 'next-connect';
-import { auth } from '../../../middlewares/auth';
+import { auth } from '../../../middleware/auth';
 import { getUserById } from '../../../service/auth/auth.service';
 
 const handler = nc().get(auth('getUsers'), async (req, res) => {
@@ -20,7 +20,7 @@ export default handler;
 // 	if (!isEmpty(cCookie)) {
 // 		let est = jwt.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
 // 		let user_id = est.id;
-// 		let company_id = est.companyid;
+// 		let company_id = est.company_id;
 // 		let role_id = est.role;
 
 // 		if (est.exp < new Date().getTime() / 1000) {

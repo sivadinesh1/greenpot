@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 import SnackBar from '../../../components/elements/ui/Dialog/SnackBar';
 
-import { Blog } from '../../../modal/Blog';
+import { Blog } from '../../../model/Blog';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import styles from '../../../styles/Category.module.scss';
 import BlogList from '../../../components/crud/Blog/blog-list';
@@ -18,22 +18,21 @@ export const getServerSideProps = async (context) => {
 	const blog_id = context.params.blog_id as string;
 	let isError = false;
 	let cookie = null;
-	let blog=null;
-	try{
+	let blog = null;
+	try {
 		cookie = context?.req?.headers.cookie;
 		let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`);
-	 	blog = resp.data;
-
-	}catch(error){
+		blog = resp.data;
+	} catch (error) {
 		console.log(`error in blog view ${error}`);
 		isError = true;
 	}
 	return {
-		props: { isError,blog },
+		props: { isError, blog },
 	};
 };
 
-export default function Index({isError, blog }) {
+export default function Index({ isError, blog }) {
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();

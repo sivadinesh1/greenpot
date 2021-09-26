@@ -19,10 +19,6 @@ import MuiAlert from '@material-ui/lab/Alert';
 
 import { Image } from 'cloudinary-react';
 
-import 'suneditor/dist/css/suneditor.min.css'; // Import Sun Editor's CSS File
-const SunEditor = dynamic(() => import('suneditor-react'), { ssr: false });
-
-import { options } from '../../../../components/utils/sunEditor';
 import { useDropzone } from 'react-dropzone';
 
 import styles from '../../../../styles/Blog.module.scss';
@@ -52,63 +48,32 @@ import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
 import { forceLogout } from '../../../../components/auth/auth';
 
 let MyEditor;
-if (typeof window !== "undefined") {
-  MyEditor = dynamic(() => import('../../../../components/Editor'));
+if (typeof window !== 'undefined') {
+	MyEditor = dynamic(() => import('../../../../components/Editor'));
 }
-
-// export const getServerSideProps = async (context) => {
-// 	const blog_id = context.params.blog_id as string;
-//    let { user_id, company_id,role_id } = await parseCookies(context?.req);
-//    if (user_id === undefined || company_id === undefined ) {
-// 	   return {
-// 		   redirect: { destination: '/', permanent: false },
-// 	   };
-//    }
-//    const user=await getUserById(user_id);
-//    let accessRights=user.access_rights;
-
-//    let path = `C${company_id}/B${blog_id}`;
-//    let {data} = await axios.get(`${process.env.API_URL}/author/company/${company_id}`);
-//    let authors=data
-//    let resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`);
-//    const blog = resp.data;
-//    const selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
-//    const selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
-//    const repo=	await getRepo(resp.data.repo_id);
-//    const repo_nano=repo.repo_id;
-//    const categories = await getAllCategories(company_id);
-//    const tags = await getAllTags(company_id);
-
-//    const selectedImages = await getImages(path);
-
-//    return {
-// 	   props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages,repo_nano,accessRights,authors },
-//    };
-// };
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
 	let cookie = null;
 	let blog_id = null;
-	let user =null;
-	let accessRights =null;
+	let user = null;
+	let accessRights = null;
 	let path = null;
-	let authors_result =null;
-	let authors =null;
-	let resp =null;
-	let blog =null;
+	let authors_result = null;
+	let authors = null;
+	let resp = null;
+	let blog = null;
 	let selectedTag = null;
-	let selectedCat =null;
-	let repo =null;
-	let repo_nano =null;
-	let resultx =null;
-	let categories =null;
-	let company_id =null;
-	let tags =null;
-	let selectedImages =null;
-	
+	let selectedCat = null;
+	let repo = null;
+	let repo_nano = null;
+	let resultx = null;
+	let categories = null;
+	let company_id = null;
+	let tags = null;
+	let selectedImages = null;
 
-	try{
+	try {
 		cookie = context?.req?.headers.cookie;
 		blog_id = context.params.blog_id as string;
 		user = await axios.get(`${process.env.API_URL}/auth/user`, {
@@ -118,11 +83,11 @@ export const getServerSideProps = async (context) => {
 		});
 		accessRights = user?.data?.access_rights;
 		path = `C${user?.data?.company_id}/B${blog_id}`;
-	    authors_result = await axios.get(`${process.env.API_URL}/author/company`, {
-		headers: {
-						cookie: cookie!,
-					},
-				});
+		authors_result = await axios.get(`${process.env.API_URL}/author/company`, {
+			headers: {
+				cookie: cookie!,
+			},
+		});
 		authors = authors_result.data;
 		resp = await axios.get(`${process.env.API_URL}/blog/blogByNano/${blog_id}`, {
 			headers: {
@@ -131,8 +96,8 @@ export const getServerSideProps = async (context) => {
 		});
 		blog = resp.data;
 
-		selectedTag = blog.tags.length > 0 ? await getTags(blog.tags) : [];
-		selectedCat = blog.categories.length > 0 ? await getCategories(blog.categories) : [];
+		selectedTag = blog?.tags?.length > 0 ? await getTags(blog.tags) : [];
+		selectedCat = blog?.categories?.length > 0 ? await getCategories(blog.categories) : [];
 		repo = await getRepo(resp.data.repo_id);
 		repo_nano = repo.repo_id;
 
@@ -143,18 +108,17 @@ export const getServerSideProps = async (context) => {
 		});
 		categories = resultx.data.categories;
 		company_id = resultx.data.company_id;
-	
+
 		//const categories = await getAllCategories(company_id);
 		tags = await getAllTags(company_id);
-	
-		selectedImages = await getImages(path);
 
-	}catch(error){
+		selectedImages = await getImages(path);
+	} catch (error) {
 		console.log(`error in blog edit ${error}`);
 		isError = true;
 	}
 	return {
-		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors,isError },
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors, isError },
 	};
 };
 
@@ -162,8 +126,8 @@ interface FormData {
 	title: string;
 	description: string;
 	author: string;
-	articleDate: Date;
-	content: string;
+	blogDate: Date;
+	blocks: string;
 	categories: any[];
 	tags: any[];
 }
@@ -189,7 +153,19 @@ type ErrorMessageContainerProps = {
 };
 const ErrorMessageContainer = ({ children }: ErrorMessageContainerProps) => <span className='error'>{children}</span>;
 
-export default function Index({ blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors,isError }) {
+export default function Index({
+	blog,
+	categories,
+	tags,
+	company_id,
+	selectedTag,
+	selectedCat,
+	selectedImages,
+	repo_nano,
+	accessRights,
+	authors,
+	isError,
+}) {
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();
@@ -204,7 +180,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	const [message, setMessage] = useState('');
 	const uploadLimit = 2;
 
-	const [uploadedFiles, setUploadedFiles] = useState(selectedImages.length > 0 ? selectedImages : []);
+	const [uploadedFiles, setUploadedFiles] = useState(selectedImages?.length > 0 ? selectedImages : []);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
 
@@ -217,7 +193,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 		categories: yup.string().nullable().notRequired(),
 		tags: yup.string().nullable().notRequired(),
 		// tags: yup.array().min(1,"select at least 1").required(),
-		companyId: yup.string().nullable().notRequired(),
+		company_id: yup.string().nullable().notRequired(),
 		body: yup.string().nullable().notRequired(),
 	});
 	const {
@@ -237,8 +213,8 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	const [isError1, setIsError1] = useState(false);
 	const [copy, setCopy] = useState(false);
 
-	const [selectedDate, setSelectedDate] = React.useState(format(parseISO(blog.article_date), 'yyyy-MM-dd'));
-	const [formattedDate, setFormattedDate] = React.useState(format(parseISO(blog.article_date), 'MMM dd, yyyy'));
+	const [selectedDate, setSelectedDate] = React.useState(format(parseISO(blog.blog_date), 'yyyy-MM-dd'));
+	const [formattedDate, setFormattedDate] = React.useState(format(parseISO(blog.blog_date), 'MMM dd, yyyy'));
 
 	const handleDateChange = (date) => {
 		setSelectedDate(date);
@@ -254,17 +230,6 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 	const [openDialog, setOpenDialog] = React.useState(false);
 	const handleOpenDialog = () => {
 		setOpenDialog(true);
-	};
-
-	/**
-	 * @type {React.MutableRefObject<SunEditor>} get type definitions for editor
-	 */
-	const editor = useRef();
-
-	// The sunEditor parameter will be set to the core suneditor instance when this function is called
-
-	const getSunEditorInstance = (sunEditor) => {
-		editor.current = sunEditor;
 	};
 
 	//sunEditor
@@ -301,13 +266,13 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 			title: formData.title,
 			description: formData.description,
 			author: formData.author,
-			articleDate: parseISO(selectedDate),
+			blogDate: parseISO(selectedDate),
 			categories: uniqCategorys,
 			tags: uniqTags,
-			companyId: company_id,
+			company_id: company_id,
 			body: contentBody || '',
 			status: status,
-			createdDate: blog.published_datetime,
+			createdAt: blog.published_on,
 		};
 		setSubmitting(true);
 		setServerErrors([]);
@@ -422,24 +387,7 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									)}
 								/>
 							</div>
-							<div style={{ paddingTop: '10px' }}>
-								<label style={{ color: '#eee', fontSize: '12px' }}>Article</label>
-								<SunEditor
-									disable={false}
-									disableToolbar={false}
-									lang='en'
-									name='content'
-									setContents={contentInitBody}
-									setOptions={options}
-									width='100%'
-									height='400px'
-									onChange={handleCMSChange}
-									//  onChange={(content) => handleCMSChange(content)}
 
-									// onImageUploadBefore={handleImageUploadBefore}
-									// imageUploadHandler={imageUploadHandler}
-								/>
-							</div>
 							<div>
 								<Autocomplete
 									multiple
@@ -452,7 +400,13 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									getOptionLabel={(option) => option.name}
 									value={selectedCategorys}
 									renderInput={(params) => (
-										<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+										<TextField
+											{...params}
+											variant='standard'
+											placeholder='Select Relevant Categories'
+											margin='normal'
+											fullWidth
+										/>
 									)}
 								/>
 								{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
@@ -468,7 +422,9 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 									onChange={(e, newValue) => setSelectedTags(newValue)}
 									getOptionLabel={(option) => option.name}
 									value={selectedTags}
-									renderInput={(params) => <TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />}
+									renderInput={(params) => (
+										<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
+									)}
 								/>
 								{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
 							</div>
@@ -515,7 +471,10 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 								{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
 								<span>
 									{uploadedFiles.length > 0 && (
-										<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+										<Button
+											onClick={handleOpenDialog}
+											variant='outlined'
+											style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
 											Show Gallery
 										</Button>
 									)}
@@ -525,7 +484,9 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 							{!isEmpty(errors) ? (
 								<div>
 									<div className='error-header'>
-										<span style={{ borderBottom: '1px solid red', fontWeight: 'bold', paddingBottom: '2px' }}>Please fix below errors</span>
+										<span style={{ borderBottom: '1px solid red', fontWeight: 'bold', paddingBottom: '2px' }}>
+											Please fix below errors
+										</span>
 									</div>
 									<ErrorSummary errors={errors} />
 								</div>
@@ -562,7 +523,12 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 											<div onClick={() => removeImage(file)}>
 												<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
 											</div>
-											<Image cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME} publicId={file.public_id} width='100' crop='scale' />
+											<Image
+												cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+												publicId={file.public_id}
+												width='100'
+												crop='scale'
+											/>
 
 											<div className={styles.textCenter}>
 												<CopyToClipboard text={file.url} onCopy={() => setCopy(true)}>
@@ -588,13 +554,10 @@ export default function Index({ blog, categories, tags, company_id, selectedTag,
 						title={watch('title', blog.title.startsWith('Untitled') ? '' : blog.title)}
 						description={watch('description', blog.description)}
 						author={watch('author', blog.author)}
-						categories={selectedCategorys}
 						body={contentBody}
 						articleDate={formattedDate}></BlogPreview>
 
-						{MyEditor &&
-								<MyEditor   />
-							}
+					{MyEditor && <MyEditor />}
 				</div>
 			</div>
 
@@ -615,5 +578,5 @@ async function getSignature(folderPath) {
 }
 
 // https://cloudinary.com/documentation/admin_api
-// bs","categories":[117],"tags":[7],"created_by":null,"created_date":"2021-08-12T02:24:19.829Z","modified_by":null,"modified_date":null,"companyid":"1","isdelete":"N","description":"Digital Interviewing – the path to a smooth interview process","author":"Mehul Butt","article_date":"2021-08-12T15:35:00.000Z","status":"D","published":"N","published_datetime":"2021-08-12T15:35:48.590Z"}
+// bs","categories":[117],"tags":[7],"created_by":null,"created_date":"2021-08-12T02:24:19.829Z","modified_by":null,"modified_date":null,"company_id":"1","is_delete":"N","description":"Digital Interviewing – the path to a smooth interview process","author":"Mehul Butt","blog_date":"2021-08-12T15:35:00.000Z","status":"D","published":"N","published_datetime":"2021-08-12T15:35:48.590Z"}
 // https://stackoverflow.com/questions/65805358/react-hook-form-validation-with-material-ui

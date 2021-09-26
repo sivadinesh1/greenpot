@@ -1,9 +1,9 @@
 import nc from 'next-connect';
 import { getById, getByNano, deleteById } from '../../../service/company.service';
-import { auth } from '../../../middlewares/auth';
+import { auth } from '../../../middleware/auth';
 
 const handler = nc()
-	.get( async (req, res) => {
+	.get(async (req, res) => {
 		let company_id = 2;
 		const { slug } = req.query;
 		if (slug[0] === 'getById') {

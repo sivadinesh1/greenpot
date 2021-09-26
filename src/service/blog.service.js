@@ -1,6 +1,6 @@
-import prisma from '../dbconfig/prisma';
-import { bigIntToString } from '../dbconfig/utils';
-import { getDB } from '../dbconfig/db';
+import prisma from '../db-config/prisma';
+import { bigIntToString } from '../db-config/utils';
+import { getDB } from '../db-config/db';
 const { db } = getDB();
 const slugify = require('slugify');
 const { nanoid } = require('nanoid');
@@ -9,48 +9,75 @@ const { stripHtml } = require('string-strip-html');
 import { getUserById } from '../service/auth/auth.service';
 
 export const getAllBlogs = async () => {
-	const result = await prisma.blog.findMany({});
+	let result = null;
+	try {
+		result = await prisma.blog.findMany({});
+	} catch (error) {
+		console.log('getAllBlogs error::' + error.message);
+	}
 	return bigIntToString(result);
 };
 
-export const getBlogsByCompany = async (companyId) => {
-	const result = await prisma.blog.findMany({
-		where: {
-			AND: [{ companyid: { equals: Number(companyId) || undefined } }, { isdelete: { equals: 'N' || undefined } }],
-		},
-	});
+export const getBlogsByCompany = async (company_id) => {
+	let result = null;
+	try {
+		result = await prisma.blog.findMany({
+			where: {
+				AND: [{ company_id: { equals: Number(company_id) || undefined } }, { is_delete: { equals: 'N' || undefined } }],
+			},
+		});
+	} catch (error) {
+		console.log('getBlogsByCompany error::' + error.message);
+	}
 	return bigIntToString(result);
 };
 
-export const getBlogsByRepo = async (repoId) => {
-	const result = await prisma.blog.findMany({
-		where: {
-			AND: [{ repo_id: { equals: Number(repoId) || undefined } }, { isdelete: { equals: 'N' || undefined } }],
-		},
-	});
+export const getBlogsByRepo = async (repo_id) => {
+	let result = [];
+	try {
+		result = await prisma.blog.findMany({
+			where: {
+				AND: [{ repo_id: { equals: Number(repo_id) || undefined } }, { is_delete: { equals: 'N' || undefined } }],
+			},
+		});
+	} catch (error) {
+		console.log('getBlogsByRepo error::' + error.message);
+	}
 	return bigIntToString(result);
 };
 
 export const getBlogById = async (blogId) => {
-	const result = await prisma.blog.findUnique({
-		where: {
-			id: Number(blogId),
-		},
-	});
+	let result = null;
+	try {
+		result = await prisma.blog.findUnique({
+			where: {
+				id: Number(blogId),
+			},
+		});
+	} catch (error) {
+		console.log('getBlogById error::' + error.message);
+	}
 	return bigIntToString(result);
 };
 
 export const getBlogByNanoId = async (blogId) => {
-	const result = await prisma.blog.findUnique({
-		where: {
-			blog_id: blogId,
-		},
-	});
+	let result = null;
+	try {
+		result = await prisma.blog.findUnique({
+			where: {
+				blog_id: blogId,
+			},
+		});
+	} catch (error) {
+		console.log('getBlogByNanoId error::' + error.message);
+	}
 	return bigIntToString(result);
 };
 
-export const getRepoSummary = async (companyId) => {
+export const getRepoBlogSummary = async (company_id) => {
 	let result = null;
+	let returnArr = null;
+
 	try {
 		result = await prisma.blog.groupBy({
 			by: ['repo_id'],
@@ -59,86 +86,74 @@ export const getRepoSummary = async (companyId) => {
 			},
 
 			where: {
-				companyid: Number(companyId),
+				company_id: Number(company_id),
 			},
 		});
-	} catch (error) {
-		console.log('dine' + error);
-	}
-	let tempArr = bigIntToString(result);
 
-	let returnArr = tempArr.map((e) => {
-		return { repo_id: e.repo_id, count: e._count.id };
-	});
+		let tempArr = bigIntToString(result);
+
+		if (tempArr.length > 0) {
+			returnArr = [];
+		} else {
+			returnArr = tempArr.map((e) => {
+				return { repo_id: e.repo_id, count: e._count.id };
+			});
+		}
+	} catch (error) {
+		console.log('getRepoSummary error::' + error.message);
+	}
 
 	return returnArr;
 };
 
-//   select repo_id, count(*) as blog_cnt from blog
-// where
-// companyid = 1
-// group by repo_id
-
-// export const getBlog = async (blogId) => {
-// 	let query = `SELECT b.id, b.title, b.slug, b.body,
-// 		b.description,b.author,CAST(b.article_date AS char) as article_date,b.status,
-// 		array_agg(distinct(c )) as categories,
-// 		array_agg(distinct(t.name )) as tags
-
-// 		FROM blog b
-// 			 LEFT outer JOIN categories as c ON c.id = SOME(b.categories)
-// 			 LEFT  JOIN tags as t ON t.id = SOME(b.tags)
-// 		WHERE
-// 			b.id = ${blogId}
-// 		 GROUP BY title, b.id ORDER BY id`;
-
-// 	return new Promise(function (resolve) {
-// 		db.oneOrNone(query, []).then((data) => {
-// 			resolve(data);
-// 		});
-// 	});
-// };
-
-export const checkDuplicateTitle = async (title, companyid) => {
-	const result = await prisma.blog.count({
-		where: {
-			title: title,
-			companyid: Number(companyid),
-		},
-	});
-
+export const checkDuplicateTitle = async (title, company_id) => {
+	let result = null;
+	try {
+		result = await prisma.blog.count({
+			where: {
+				title: title,
+				company_id: Number(company_id),
+			},
+		});
+	} catch (error) {
+		console.log('checkDuplicateTitle error::' + error.message);
+	}
 	return result;
 };
 
 export const createBlogEntry = async (company_id, repo_id, user_id) => {
-	const user = await getUserById(user_id);
-	let currentDate = new Date();
-	const result = await prisma.blog.create({
-		data: {
-			title: `Untitled - ${nanoid(11)}`,
-			slug: '',
-			body: '',
-			excerpt: '',
-			mtitle: '',
-			mdesc: '',
-			author: user.first_name,
-			companyid: Number(company_id),
-			isdelete: 'N',
-			article_date: new Date(),
-			status: 'D',
-			published: 'N',
-			description: '',
-			created_by: Number(company_id),
-			created_date: currentDate,
-			blog_id: nanoid(11),
-			repo_id: Number(repo_id),
-		},
-	});
+	let user = null;
+	let result = null;
+	try {
+		user = await getUserById(user_id);
+		let currentDate = new Date();
+		result = await prisma.blog.create({
+			data: {
+				title: `Untitled - ${nanoid(11)}`,
+				slug: '',
+				body: '',
+				excerpt: '',
 
+				author: user.first_name,
+				company_id: Number(company_id),
+				is_delete: 'N',
+				blog_date: new Date(),
+				status: 'D',
+				published: 'N',
+				description: '',
+				created_by: Number(company_id),
+				createdAt: currentDate,
+				blog_id: nanoid(11),
+				repo_id: Number(repo_id),
+			},
+		});
+	} catch (error) {
+		console.log('createBlogEntry error::' + error.message);
+	}
 	return bigIntToString(result);
 };
 
-export const updateBlog = async (id, title, description, author, articleDate, categories, tags, body, companyId, status, createdDate) => {
+export const updateBlog = async (id, title, description, author, articleDate, categories, tag, body, company_id, status, createdAt) => {
 	let arrayOfCategories = categories;
 	//&& categories.split(',');
 	let arrayOfTags = tags;
@@ -151,9 +166,8 @@ export const updateBlog = async (id, title, description, author, articleDate, ca
 
 	let excerpt = smartTrim(body, 320, '', ' ...');
 
-	let companyid = companyId;
-	if (typeof companyId === 'string') {
-		companyid = Number(companyId);
+	if (typeof company_id === 'string') {
+		company_id = Number(company_id);
 	}
 
 	let newCatArr = arrayOfCategories.map((e) => {
@@ -168,42 +182,71 @@ export const updateBlog = async (id, title, description, author, articleDate, ca
 	// both works do not delete
 	// let status= 'D';
 	//   let	published= 'N';
-	//   let isdelete='N';
+	//   let is_delete='N';
 
 	// db.one(
-	// 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, companyid,isdelete, description, author,article_date,status,published) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9,$10,$11,$12,$13,$14,$15) RETURNING id',
-	// 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, companyid,isdelete, description, author, articleDate,status,published],
+	// 	'INSERT INTO blog(title, slug, body, excerpt, mtitle, mdesc, categories, tags, company_id,is_delete, description, author,blog_date,status,published) VALUES($1, $2, $3, $4, $5, $6, $7::integer[], $8::integer[], $9,$10,$11,$12,$13,$14,$15) RETURNING id',
+	// 	[title, slug, body, excerpt, mtitle, mdesc, newCatArr, newTagArr, company_id,is_delete, description, author, articleDate,status,published],
 	// ).then((data) => {
 
 	// 	// res.json({ title: title, message: 'success' });
 	// 	res.status(201).send({ title: title, message: 'success' });
 	// });
 
-	const result = await prisma.blog.update({
-		where: {
-			id: Number(id),
-		},
-		data: {
-			title: title,
-			slug: slug,
-			body: body,
-			excerpt: excerpt,
-			mtitle: mtitle,
-			mdesc: mdesc,
-			categories: newCatArr,
-			tags: newTagArr,
-			companyid: companyid,
-			isdelete: 'N',
-			description: description,
-			author: author,
-			article_date: articleDate,
-			status: status === 'N' ? 'D' : 'P',
-			published: status,
-			modified_by: companyid,
-			modified_date: currentDate,
-			published_datetime: status === 'N' ? createdDate : currentDate,
-		},
+	let result = null;
+	try {
+		result = await prisma.blog.update({
+			where: {
+				id: Number(id),
+			},
+			data: {
+				title: title,
+				slug: slug,
+				body: body,
+				excerpt: excerpt,
+				category: newCatArr,
+				tag: newTagArr,
+				company_id: company_id,
+				is_delete: 'N',
+				description: description,
+				author: author,
+				blog_date: blogDate,
+				status: status === 'N' ? 'D' : 'P',
+				published: status,
+				modified_by: company_id,
+				modified_date: currentDate,
+				published_on: status === 'N' ? createdAt : currentDate,
+			},
+		});
+	} catch (error) {
+		console.log('updateBlog error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+//return count of templates/repo for given company_id
+export const getCountBlogPageByRepo = async (company_id) => {
+	let result = null;
+	try {
+		result = await prisma.blog.groupBy({
+			by: ['repo_id'],
+			_count: {
+				id: true,
+			},
+
+			where: {
+				company_id: Number(company_id),
+				is_delete: 'N',
+			},
+		});
+	} catch (error) {
+		console.log('getCountBlogPageByRepo error::' + error.message);
+	}
+	let tempArr = bigIntToString(result);
+
+	let returnArr = tempArr.map((e) => {
+		return { repo_id: e.repo_id, count: e._count.id };
 	});
 
-	return bigIntToString(result);
+	return returnArr;
 };

@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import { Tag } from '../../../modal/Tag';
+import { ITag } from '../../../model/Tag';
 
 import styles from '../../../styles/Tag.module.scss';
 import TagList from '../../../components/crud/Tag/list-tag';
-import AddTag from '../../../components/crud/Tag/add-tag';
+
 import EditTag from '../../../components/crud/Tag/edit-tag';
 
 import axios from 'axios';
@@ -21,10 +21,9 @@ export const getServerSideProps = async (context) => {
 	let tags = null;
 	let company_id = null;
 
-
-		try{
-			cookie = context?.req?.headers.cookie;
-			await axios
+	try {
+		cookie = context?.req?.headers.cookie;
+		await axios
 			.get(`${process.env.API_URL}/tag`, {
 				headers: {
 					cookie: cookie!,
@@ -39,11 +38,10 @@ export const getServerSideProps = async (context) => {
 				console.log('print error ' + err);
 				isError = true;
 			});
-
-		}catch(error){
-			console.log(`error in tag ${error}`);
-			isError = true;
-		}
+	} catch (error) {
+		console.log(`error in tag ${error}`);
+		isError = true;
+	}
 	return {
 		props: { tags, company_id, isError },
 	};
@@ -60,7 +58,7 @@ export default function Index({ tags, company_id, isError }) {
 	const [message, setMessage] = useState('');
 	const [mode, setMode] = useState('add');
 
-	const [editRowItem, setEditRowItem] = useState<Tag>();
+	const [editRowItem, setEditRowItem] = useState<ITag>();
 
 	const { data, mutate } = useSWR(`/api/tag/${company_id}`, {
 		initialData: tags,
@@ -79,8 +77,9 @@ export default function Index({ tags, company_id, isError }) {
 		setMode(mode);
 	};
 
-	const editRow = (item: Tag) => {
+	const editRow = (item: ITag) => {
 		setEditRowItem(item);
+		setMode('edit');
 	};
 	const ref = React.createRef();
 
@@ -88,17 +87,20 @@ export default function Index({ tags, company_id, isError }) {
 		<>
 			<div className={styles.tag_wrap}>
 				<div className={styles.left}>
-					{mode === 'add' ? (
-						<AddTag tags={data} onReloadTagList={reloadTagList} handleSnackOpen={handleSnackOpen} company_id={company_id}></AddTag>
-					) : (
-						<EditTag onMode={chooseMode} editItem={editRowItem} onReloadTagList={reloadTagList} handleSnackOpen={handleSnackOpen}></EditTag>
-					)}
+					<EditTag
+						onMode={mode}
+						chooseMode={chooseMode}
+						editItem={editRowItem}
+						onReloadTagList={reloadTagList}
+						handleSnackOpen={handleSnackOpen}
+						company_id={company_id}></EditTag>
 				</div>
 
 				<div className={styles.right}>
 					<TagList
 						tags={data}
-						onMode={chooseMode}
+						onMode={mode}
+						chooseMode={chooseMode}
 						onEditRow={editRow}
 						onReloadTagList={reloadTagList}
 						handleSnackOpen={handleSnackOpen}

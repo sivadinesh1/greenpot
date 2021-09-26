@@ -1,11 +1,11 @@
 import nc from 'next-connect';
 import { getVerifiedAuthor, passwordReset, getAllAuthor } from '../../../service/auth/subUser.service';
-import { setLoginSession } from '../../../middlewares/auth';
-import { auth } from '../../../middlewares/auth';
+import { setLoginSession } from '../../../middleware/auth';
+import { auth } from '../../../middleware/auth';
 
 const handler = nc()
 	.get(auth('getUsers'), async (req, res) => {
-		let company_id = req.user.companyid;
+		let company_id = req.user.company_id;
 		const { slug } = req.query;
 
 		if (slug[0] === 'company') {
@@ -22,7 +22,7 @@ const handler = nc()
 			const result = await passwordReset(req.body);
 			let obj = {
 				id: result.id,
-				companyid: result.companyId,
+				company_id: result.company_id,
 				role: 1,
 			};
 			await setLoginSession(res, obj);

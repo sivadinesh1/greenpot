@@ -7,65 +7,74 @@ datasource db {
   url      = env("DEV_DATABASE_URL")
 }
 
-model tags {
-  id        BigInt  @id @default(autoincrement())
-  name      String? @db.VarChar(50)
-  slug      String? @db.VarChar(300)
-  companyid BigInt?
+model tag {
+  id            BigInt  @id @default(autoincrement())
+  name          String? @db.VarChar(50)
+  slug          String? @db.VarChar(300)
+  company_id    BigInt?
+  created_by    BigInt?
+  createdAt     DateTime?  @default(now()) @db.Timestamp(6)
+  updated_by    BigInt?
+  updatedAt     DateTime? @updatedAt
 
-  @@unique([name, companyid], name: "tag_unique")
+  @@unique([name, company_id], name: "tag_unique")
 }
 
 model blog {
   id            BigInt    @id @default(autoincrement())
+  blog_id       String    @db.VarChar(20)
   title         String?   @db.VarChar(80)
-  slug          String?   @db.VarChar(300)
-  body          String
-  excerpt       String?   @db.VarChar(350)
-  mtitle        String?   @db.VarChar(80)
-  mdesc         String?   @db.VarChar(200)
-  categories    Int[]
-  tags          Int[]
-  created_by    Int?
-  created_date  DateTime  @default(now()) @db.Timestamp(6)
-  modified_by   Int?
-  modified_date DateTime? @db.Timestamp(6)
-  companyid     BigInt ?
-  isdelete      String?   @db.VarChar(5)
   description   String?   @db.VarChar(200)
+  slug          String?   @db.VarChar(300)
+  excerpt       String?   @db.VarChar(350)
+  body          String
+  category      Int[]
+  tag           Int[]
+  company_id    BigInt?
+  repo_id       BigInt 
   author        String?   @db.VarChar(50)
-  article_date  DateTime? @db.Timestamp(6)
+  is_delete     String?   @db.VarChar(5)
+  blog_date     DateTime? @db.Timestamp(6)
   status        String?   @db.VarChar(1)
   published     String?   @db.VarChar(1)
-  published_datetime  DateTime? @db.Timestamp(6)
-  blog_id       String    @db.VarChar(20)
+  published_on  DateTime? @db.Timestamp(6)
+  created_by    BigInt?
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updated_by    BigInt?
+  updatedAt     DateTime? @updatedAt
   repo          repo   @relation(fields: [repo_id], references: [id])
-  repo_id       BigInt 
+  
   @@unique([blog_id], name: "blog_unique")
 }
 
-model categories {
-  id        BigInt  @id @default(autoincrement())
-  name      String? @db.VarChar(50)
-  slug      String? @db.VarChar(300)
-  companyid BigInt?
-  // templates templates[]
+model category {
+  id            BigInt  @id @default(autoincrement())
+  name          String? @db.VarChar(50)
+  slug          String? @db.VarChar(300)
+  company_id    BigInt?
+  created_by    BigInt?
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updated_by    BigInt?
+  updatedAt     DateTime? @updatedAt
 
-  @@unique([name, companyid], name: "category_unique")
+  @@unique([name, company_id], name: "category_unique")
 }
 
 model company {
-  id          BigInt       @id @default(autoincrement())
-  name        String?   @db.VarChar(60)
-  status      String?   @db.VarChar(10)
-  is_delete   String?   @db.VarChar(5)
-  createddate DateTime? @db.Timestamp(6)
-  updateddate DateTime? @db.Timestamp(6)
-  logo        String?   @db.VarChar(500)
-  about       String?   @db.VarChar(500)
-  website_url String?   @db.VarChar(100)
-  company_id  String?   @db.VarChar(20)
-  repos repo[]
+  id            BigInt       @id @default(autoincrement())
+  company_id    String?   @db.VarChar(20)
+  name          String?   @db.VarChar(60)
+  status        String?   @db.VarChar(10)
+  logo          String?   @db.VarChar(500)
+  about         String?   @db.VarChar(500)
+  website_url   String?   @db.VarChar(100)
+  is_delete     String?   @db.VarChar(5)
+  created_by    BigInt?
+  updated_by    BigInt?
+  createddate   DateTime? @db.Timestamp(6)
+  updateddate   DateTime? @db.Timestamp(6)
+  
+  repo         repo[]
   @@unique([company_id], name: "company_unique")
 
 }
@@ -77,10 +86,6 @@ model role {
   user_role   user_role[]
 }
 
-model test {
-  id   BigInt  @id @default(autoincrement())
-  name String? @db.VarChar(50)
-}
 
 model user_role {
   id      BigInt @default(autoincrement())
@@ -110,7 +115,7 @@ model users {
   phone             String?     @db.VarChar(20)
   status            String?     @db.VarChar(10)
   profile_url       String?     @db.VarChar(300)
-  companyid         BigInt?
+  company_id        BigInt?
   source            String?     @db.VarChar(10)
   socialmedia_id    String?     @db.VarChar(100)
   access_rights     String?     @db.VarChar(5)
@@ -123,69 +128,81 @@ model users {
 model repo{
     id            BigInt    @id @default(autoincrement())
     repo_id       String    @db.VarChar(20)
-    name          String    @db.VarChar(150)
+    repo_name     String    @db.VarChar(150)
     company_id    BigInt
     status        String?   @db.VarChar(10)
-    isdelete      String?   @db.VarChar(5)
-    createddate   DateTime? @db.Timestamp(6)
-    updateddate   DateTime? @db.Timestamp(6)
+    is_delete     String?   @db.VarChar(5)
     repo_type     String?   @db.VarChar(10)
+    created_by    BigInt?
+    updated_by    BigInt?
+    createdAt     DateTime? @db.Timestamp(6)
+    updatedAt     DateTime? @db.Timestamp(6)
+    
     company    company   @relation(fields: [company_id], references: [id])
-    blogs blog[]
-    custom_template custom_template[]
+    blog blog[]
+    lead_page lead_page[]
      @@unique([repo_id], name: "repo_unique")
 }
 
-model templates{
-    id            BigInt    @id @default(autoincrement())
-    name          String    @db.VarChar(60)
-    status        String?   @db.VarChar(10)
-    temp_id       String    @db.VarChar(20)
-    is_delete     String?   @db.VarChar(5)
-    content       Json?
-    created_date  DateTime? @db.Timestamp(6)
-    updated_date  DateTime? @db.Timestamp(6)
-    tpl_type      String?    @db.VarChar(5)
-    // category_id    BigInt
-    //  categories    categories   @relation(fields: [category_id], references: [id])
-    template_maping template_maping[]
-    @@unique([name], name: "template_name_unique")
-    @@unique([temp_id], name: "template_id_unique")
+model template{
+    id                BigInt    @id @default(autoincrement())
+    template_name     String    @db.VarChar(60)
+    status            String?   @db.VarChar(10)
+    template_id       String    @db.VarChar(20)
+    is_delete         String?   @db.VarChar(5)
+    blocks            Json?
+    template_type     String?    @db.VarChar(5)
+    created_by        BigInt?
+    updated_by        BigInt?
+    createdAt         DateTime? @db.Timestamp(6)
+    updatedAt         DateTime? @db.Timestamp(6)
+    
+    
+    template_collection template_collection[]
+    @@unique([template_name], name: "template_name_unique")
+    @@unique([template_id], name: "template_id_unique")
 
 }
 
-model custom_template{
-    id            BigInt    @id @default(autoincrement())
-    template_id   BigInt
-    status        String?   @db.VarChar(10)
-    ctemp_id      String    @db.VarChar(20)
-    content       Json?
-    is_delete     String?   @db.VarChar(5)
-    repo_id       BigInt
-    created_date  DateTime? @db.Timestamp(6)
-    updated_date  DateTime? @db.Timestamp(6)
-    tpl_type      String    @db.VarChar(5)
-    name        String?   @db.VarChar(150)
-    repo          repo   @relation(fields: [repo_id], references: [id])
-    @@unique([ctemp_id], name: "custom_template_id_unique")
+model lead_page{
+    id              BigInt    @id @default(autoincrement())
+    lead_page_id    String    @db.VarChar(20)
+    lead_page_name  String?   @db.VarChar(150)
+    template_id     BigInt
+    status          String?   @db.VarChar(10)
+    blocks          Json?
+    is_delete       String?   @db.VarChar(5)
+    repo_id         BigInt
+    template_type   String    @db.VarChar(5)
+    blocks_clone    Json?
+    company_id      BigInt
+    created_by      BigInt
+    updated_by      BigInt
+    createdAt       DateTime? @db.Timestamp(6)
+    updatedAt       DateTime? @db.Timestamp(6)
+    
+    repo            repo   @relation(fields: [repo_id], references: [id])
+    @@unique([lead_page_id], name: "lead_page_id_unique")
 
 }
 
-model template_group{
+model collection {
     id            BigInt    @id @default(autoincrement())
     name          String    @db.VarChar(100)
     description   String    @db.VarChar(100)
     status        String?   @db.VarChar(10)
     is_delete     String?   @db.VarChar(5)
-    created_date  DateTime? @db.Timestamp(6)
-    updated_date  DateTime? @db.Timestamp(6)
-    template_maping template_maping[]
+    created_by    BigInt?
+    updated_by    BigInt?
+    createdAt     DateTime? @db.Timestamp(6)
+    updatedAt     DateTime? @db.Timestamp(6)
+    template_collection template_collection[]
 }
 
-model template_maping{
-    group_id           BigInt     
-    temp_id            BigInt     
-    template_group     template_group   @relation(fields: [group_id], references: [id])
-    templates          templates        @relation(fields: [temp_id], references: [id])
-     @@id([group_id, temp_id]) 
+model template_collection{
+    collection_id   BigInt     
+    template_id     BigInt     
+    collection      collection  @relation(fields: [collection_id], references: [id])
+    template        template  @relation(fields: [template_id], references: [id])
+    @@id([collection_id, template_id]) 
 }

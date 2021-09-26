@@ -1,30 +1,30 @@
-import { getDB } from '../../dbconfig/db';
+import { getDB } from '../../db-config/db';
 const { db } = getDB();
-import crypto from "crypto";
-import prisma from '../../dbconfig/prisma';
-import { bigIntToString } from '../../dbconfig/utils';
+import crypto from 'crypto';
+import prisma from '../../db-config/prisma';
+import { bigIntToString } from '../../db-config/utils';
 
-export const passwordReset = async (password,id) =>{
-    const salt1 = crypto.randomBytes(16).toString("hex");
-    const hash = crypto
-      .pbkdf2Sync(password, salt1, 1000, 64, "sha512")
-      .toString("hex");
-        
-      const user = await prisma.users.update({
-        where: {
-            id: Number(id),
-          },
-        data: {
-          salt:salt1,
-          hashed_password:hash
-        },
-        select:{
-            id: true,
-            companyid: true
-           
-        }
-      });
-      const returnValue=bigIntToString(user);
-      return { message: 'success',id:returnValue.id,companyId:returnValue.companyid };
-}
-
+export const passwordReset = async (password, id) => {
+	const salt1 = crypto.randomBytes(16).toString('hex');
+	const hash = crypto.pbkdf2Sync(password, salt1, 1000, 64, 'sha512').toString('hex');
+	let user = null;
+	try {
+		user = await prisma.users.update({
+			where: {
+				id: Number(id),
+			},
+			data: {
+				salt: salt1,
+				hashed_password: hash,
+			},
+			select: {
+				id: true,
+				company_id: true,
+			},
+		});
+	} catch (error) {
+		console.log('prisma error::' + error.message);
+	}
+	const returnValue = bigIntToString(user);
+	return { message: 'success', id: returnValue.id, company_id: returnValue.company_id };
+};

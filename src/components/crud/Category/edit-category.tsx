@@ -79,7 +79,7 @@ const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen 
 		const category = {
 			name: formData.name,
 			categoryid: editItem.id,
-			companyid: editItem.companyid,
+			company_id: editItem.company_id,
 		};
 
 		setSubmitting(true);

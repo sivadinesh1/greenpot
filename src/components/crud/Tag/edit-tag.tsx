@@ -3,58 +3,28 @@ import React, { useState, useEffect } from 'react';
 import { useForm, Controller, FieldErrors } from 'react-hook-form';
 import Button from '@material-ui/core/Button';
 import axios from 'axios';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
-import TextField from '@material-ui/core/TextField';
+
 import styles from '../../../styles/Tag.module.scss';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Image from 'next/image';
-import { mutate } from 'swr';
 
-interface FormData {
+import { FormInputText } from '../../forms/FormInputText';
+
+interface IFormData {
 	name: string;
 }
 
-const ColorButton = withStyles(() => ({
-	root: {
-		color: '#000',
-		backgroundColor: '#fff',
-		'&:hover': {
-			backgroundColor: '#f0f0ff',
-		},
-	},
-}))(Button);
-
-const useStyles = makeStyles((theme) => ({
-	margin: {
-		margin: theme.spacing(1),
-	},
-	TextFieldProps: {
-		color: '#fff',
-		borderBottom: '1px solid #fff',
-	},
-	buttonProps: {
-		fontSize: '1rem',
-		borderRadius: '5em',
-		padding: '8px 50px',
-		textTransform: 'capitalize',
-	},
-}));
-
-const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
-	const preloadedValues = {
-		name: editItem.name,
+const EditTag = ({ editItem, onMode, chooseMode, onReloadTagList, handleSnackOpen, company_id }) => {
+	let preloadedValues = {
+		name: '',
 	};
+
 	let schema = yup.object().shape({
 		name: yup.string().required().min(3).max(60),
 	});
 
-	const form = useForm<FormData>({ defaultValues: preloadedValues, mode: 'onTouched', resolver: yupResolver(schema) });
-
-	const [submitting, setSubmitting] = useState<boolean>(false);
-	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
-	const [error, setError] = useState(false);
-
+	const form = useForm<IFormData>({ defaultValues: preloadedValues, mode: 'onTouched', resolver: yupResolver(schema) });
 	const {
 		setValue,
 		control,
@@ -63,19 +33,33 @@ const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
 		formState: { errors },
 	} = form;
 
-	useEffect(() => {
-		setValue('name', editItem.name);
-	}, [editItem.name]);
+	const [submitting, setSubmitting] = useState<boolean>(false);
+	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
+	const [error, setError] = useState(false);
 
-	const onSubmit = (formData, event) => {
+	useEffect(() => {
+		if (onMode === 'edit') {
+			setValue('name', editItem.name);
+		}
+	}, [onMode, editItem]);
+
+	const onSubmit = async (formData: IFormData) => {
+		if (onMode === 'edit') {
+			editTagSubmit(formData);
+		} else {
+			addTagSubmit(formData);
+		}
+	};
+
+	const editTagSubmit = (formData: IFormData) => {
 		if (submitting) {
 			return false;
 		}
 
 		const tag = {
 			name: formData.name,
-			tagid: editItem.id,
-			companyid: editItem.companyid,
+			tag_id: editItem.id,
+			company_id: editItem.company_id,
 		};
 
 		setSubmitting(true);
@@ -91,68 +75,67 @@ const EditTag = ({ editItem, onMode, onReloadTagList, handleSnackOpen }) => {
 			setSubmitting(false);
 			if (response.status === 200 && response.data.result === 'success') {
 				onReloadTagList();
-				handleMode();
+
 				handleSnackOpen('Tag Successfully Updated');
 
 				reset({ name: '' });
+				chooseMode('add');
 			}
 		});
 	};
 
-	const classes = useStyles();
+	const addTagSubmit = async (formData: IFormData) => {
+		if (submitting) {
+			return false;
+		}
+		const values = {
+			name: formData.name,
+			company_id: company_id,
+		};
+		setSubmitting(true);
+		setServerErrors([]);
+		setError(false);
 
-	const handleMode = () => {
-		onMode('add');
+		const response = await axios.post(`/api/tag`, values);
+
+		if (response.data.errors) {
+			setServerErrors(response.data.errors);
+			setError(true);
+		}
+
+		setSubmitting(false);
+
+		if (response.status === 201) {
+			onReloadTagList();
+			handleSnackOpen('Tag Successfully Added');
+
+			reset({ name: '' });
+			chooseMode('add');
+		}
 	};
 
 	return (
 		<div>
-			<div className={styles.title}>EDIT TAG</div>
+			<div className={styles.title}>{onMode === 'edit' ? 'Edit Tag' : 'Add Tag'}</div>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className={styles.formGap}>
-					<Controller
-						name='name'
-						control={control}
-						rules={{ required: true }}
-						render={({ field }) => (
-							<TextField
-								type='text'
-								label='Title'
-								margin='dense'
-								variant='standard'
-								size='small'
-								fullWidth
-								error={!!errors.name}
-								helperText={errors?.name?.message}
-								{...field}
-							/>
-						)}
-					/>
+					<FormInputText name='name' control={control} label='Enter Tag Name' />
 				</div>
+				{serverErrors && (
+					<>
+						{serverErrors.map((error) => (
+							<div key={error} className='error'>
+								<span className='error'>{error}</span>
+							</div>
+						))}
+					</>
+				)}
 				<div className={styles.textCenter}>
-					<ColorButton variant='contained' color='primary' className={classes.buttonProps} type='submit'>
-						Edit Tag
-					</ColorButton>
-				</div>
-				<div className={styles.backToAdd} onClick={() => handleMode()}>
-					<Image src='/static/images/back.svg' alt='back' width='20px' height='20px' />
-
-					<span>Back to Add Tag</span>
+					<Button variant='contained' color='primary' type='submit'>
+						{onMode === 'edit' ? 'Update' : 'Create'}
+					</Button>
 				</div>
 			</form>
-			{serverErrors && (
-				<div className='error-table'>
-					{error && <div className='white-error tbl-header-font'>Please correct below errors. </div>}
-
-					<ul>
-						{serverErrors.map((error) => (
-							<li key={error} className='white-error'>
-								<span className='white-error'>{error}</span>
-							</li>
-						))}
-					</ul>
-				</div>
-			)}
 		</div>
 	);
 };

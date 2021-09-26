@@ -1,7 +1,7 @@
 import passport from 'passport';
 import nextConnect from 'next-connect';
 
-import { setLoginSession } from '../../../middlewares/auth';
+import { setLoginSession } from '../../../middleware/auth';
 
 import { getUserByEmail } from '../../../service/auth/auth.service';
 import crypto from 'crypto';

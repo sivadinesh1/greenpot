@@ -1,7 +1,7 @@
 import { checkEmailExists, insertUser } from '../../../service/auth/auth.service';
 import nextConnect from 'next-connect';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { setLoginSession } from '../../../middlewares/auth';
+import { setLoginSession } from '../../../middleware/auth';
 import { createCompnay } from '../../../service/company.service';
 import { createRepo } from '../../../service/repository.service';
 

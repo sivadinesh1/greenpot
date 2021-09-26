@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import { Button } from '@material-ui/core';
 
-import { useRouter } from 'next/router';
-
-export default function BlogPreview({ title, categories, body, description, author, articleDate }) {
-	const router = useRouter();
-
-	const listCategory = categories?.map((categorylist, idx) => <li key={idx}>{categorylist.name}</li>);
-
+export default function BlogPreview({ title, body, description, author, articleDate }) {
 	return (
 		<div>
 			<div style={{ display: 'grid', gridTemplateColumns: '1fr' }}>
@@ -29,7 +22,7 @@ export default function BlogPreview({ title, categories, body, description, auth
 			<div>{description}</div>
 
 			<br />
-			{listCategory}
+
 			<div dangerouslySetInnerHTML={{ __html: body }}></div>
 		</div>
 	);

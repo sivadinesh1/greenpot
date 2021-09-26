@@ -1,22 +1,26 @@
 import nc from 'next-connect';
-import { getList, createRepo, updateRepo, checkDuplicateName } from '../../../service/repository.service';
-import { auth } from '../../../middlewares/auth';
+import { getRepos, createRepo, updateRepo, checkDuplicateRepoName } from '../../../service/repository.service';
+import { auth } from '../../../middleware/auth';
+
 const handler = nc()
 	.get(auth('getUsers'), async (req, res) => {
-		let company_id = req.user.companyid;
-		const repos = await getList(company_id);
+		let company_id = req.user.company_id;
 
-		res.status(200).json({ company_id, repos: repos || null });
+		const repos = await getRepos(company_id);
+
+		res.status(200).json(repos);
 	})
+	// add a new repo against a company
 	.post(auth('getUsers'), async (req, res) => {
-		let company_id = req.user.companyid;
+		let company_id = req.user.company_id;
 
-		const { name, status ,repo_type} = req.body;
+		const { name: repo_name, status, repo_type } = req.body;
+
 		const errors = [];
 
-		const isdata = await checkDuplicateName(name, company_id);
+		const is_duplicate = await checkDuplicateRepoName(repo_name, company_id);
 
-		if (isdata > 1) {
+		if (+is_duplicate > 0) {
 			errors.push('Duplicate entry');
 			if (errors.length > 0) {
 				res.status(200).json({ errors });
@@ -24,7 +28,7 @@ const handler = nc()
 			}
 		}
 
-		const result = await createRepo({ name, status, company_id ,repo_type});
+		const result = await createRepo({ repo_name, status, company_id, repo_type, user_id: req.user.id });
 		res.status(201).send(result);
 	})
 	.put(async (req, res) => {

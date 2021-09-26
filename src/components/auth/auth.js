@@ -27,8 +27,8 @@ import { state } from '../../utils/state';
 import Router, { useRouter } from 'next/router';
 
 export const forceLogout = () => {
-	localStorage.removeItem('islogged');
-	state.islogged = false;
-	state.user = null;
+	// localStorage.removeItem('islogged');
+	// state.islogged = false;
+	// state.user = null;
 	Router.push('/');
 };
