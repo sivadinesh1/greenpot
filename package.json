@@ -78,8 +78,6 @@
 		"slugify": "^1.6.0",
 		"string-strip-html": "^8.3.0",
 		"styled-components": "^5.3.0",
-		"suneditor": "^2.41.3",
-		"suneditor-react": "^3.3.0",
 		"swr": "^0.5.6",
 		"valtio": "^1.2.1",
 		"yup": "^0.32.9"
