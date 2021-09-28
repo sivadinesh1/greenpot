@@ -46,9 +46,8 @@ import { isEmpty } from '../../../../components/utils/util';
 import { getUserById } from '../../../../service/auth/auth.service';
 import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
 import { forceLogout } from '../../../../components/auth/auth';
-import { content } from '../../../../utils/content'
+import { content } from '../../../../utils/content';
 import { useSnapshot } from 'valtio';
-
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -189,6 +188,7 @@ export default function Index({
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
 
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
+	const [showAssets, setShowAssets] = useState(false);
 
 	let schema = yup.object().shape({
 		title: yup.string().required('Title is required').min(3).max(72),
@@ -240,6 +240,10 @@ export default function Index({
 	const [contentBody, setContentBody] = useState(blog.body);
 	const [contentInitBody, setContentInitBody] = useState(blog.body);
 
+	const handleShowAssets = () => {
+		setShowAssets(!showAssets);
+	};
+
 	const handleCMSChange = (content) => {
 		setContentBody(content);
 	};
@@ -250,7 +254,6 @@ export default function Index({
 	const snap = useSnapshot(content);
 
 	const onSubmit = async (formData, event) => {
-
 		if (submitting) {
 			return false;
 		}
@@ -278,10 +281,9 @@ export default function Index({
 			// content: contentBody || '',
 			status: status,
 			createdAt: blog.published_on,
-			thumbnail: formData.thumbnail
+			thumbnail: formData.thumbnail,
 		};
-		if (snap.obj != null)
-			values["content"] = snap.obj;
+		if (snap.obj != null) values['content'] = snap.obj;
 
 		setSubmitting(true);
 		setServerErrors([]);
@@ -349,244 +351,251 @@ export default function Index({
 
 	return (
 		<>
-			<div className={styles.blog_wrap}>
-				<div className={styles.left}>
+			<div className={styles.main_menu}>
+				<div onClick={handleShowAssets}>Menu</div>
+			</div>
+			<div style={{ display: 'flex' }}>
+				<div className={showAssets ? `${styles.normal}` : `${styles.hidden}`}>dummy......................</div>
+				<div className={styles.blog_wrap}>
 					<div>
-						<form onSubmit={handleSubmit(onSubmit)}>
-							<div>
-								<Controller
-									name='title'
-									control={control}
-									rules={{ required: true }}
-									render={({ field }) => (
-										<TextField
-											type='text'
-											label='Title'
-											margin='dense'
-											variant='standard'
-											size='small'
-											fullWidth
-											error={!!errors.title}
-											helperText={errors?.title?.message}
-											{...field}
-										/>
-									)}
-								/>
-							</div>
-							<div>
-								<Controller
-									name='description'
-									control={control}
-									rules={{ required: true }}
-									render={({ field }) => (
-										<TextField
-											type='text'
-											label='Subtitle'
-											margin='dense'
-											variant='standard'
-											size='small'
-											multiline
-											minRows={1}
-											maxRows={2}
-											fullWidth
-											error={!!errors.description}
-											helperText={errors?.description?.message}
-											{...field}
-										/>
-									)}
-								/>
-							</div>
-
-							<div>
-								<Autocomplete
-									multiple
-									id='tags-standard'
-									freeSolo
-									filterSelectedOptions
-									fullWidth
-									options={categories}
-									onChange={(e, newValue) => setSelectedCategorys(newValue)}
-									getOptionLabel={(option) => option.name}
-									value={selectedCategorys}
-									renderInput={(params) => (
-										<TextField
-											{...params}
-											variant='standard'
-											placeholder='Select Relevant Categories'
-											margin='normal'
-											fullWidth
-										/>
-									)}
-								/>
-								{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
-							</div>
-							<div>
-								<Autocomplete
-									multiple
-									id='tags-standard'
-									freeSolo
-									filterSelectedOptions
-									fullWidth
-									options={tags}
-									onChange={(e, newValue) => setSelectedTags(newValue)}
-									getOptionLabel={(option) => option.name}
-									value={selectedTags}
-									renderInput={(params) => (
-										<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
-									)}
-								/>
-								{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
-							</div>
-							<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-								<div style={{ marginRight: '10px', marginTop: '10px' }}>
-									<ReactHookFormSelect
-										id='author1'
-										name='author'
-										label='Author'
-										className={styles.textField}
-										control={control}
-										defaultValue={blog.author}>
-										{authors.map((author, index) => (
-											<MenuItem key={index} value={author.first_name}>
-												{author.first_name}
-											</MenuItem>
-										))}
-									</ReactHookFormSelect>
-								</div>
-
-								<div style={{ marginLeft: '10px' }}>
-									<MuiPickersUtilsProvider utils={DateFnsUtils}>
-										<KeyboardDatePicker
-											margin='normal'
-											id='date-picker-dialog'
-											label='Article Date'
-											views={['year', 'month', 'date']}
-											value={selectedDate}
-											format='yyyy-MM-dd'
-											onChange={handleDateChange}
-											KeyboardButtonProps={{
-												'aria-label': 'change date',
-											}}
-											fullWidth
-										/>
-									</MuiPickersUtilsProvider>
-								</div>
-							</div>
-							<div>
-								<Controller
-									name='thumbnail'
-									control={control}
-									render={({ field }) => (
-										<TextField
-											type='text'
-											label='Thumbnail'
-											margin='dense'
-											variant='standard'
-											size='small'
-											fullWidth
-											{...field}
-										/>
-									)}
-								/>
-							</div>
-							<div>
-								<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
-									<input {...getInputProps()} />
-									Drop Zone
-								</div>
-								{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
-								<span>
-									{uploadedFiles.length > 0 && (
-										<Button
-											onClick={handleOpenDialog}
-											variant='outlined'
-											style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
-											Show Gallery
-										</Button>
-									)}
-								</span>
-							</div>
-
-							{!isEmpty(errors) ? (
+						<div>
+							<form onSubmit={handleSubmit(onSubmit)}>
 								<div>
-									<div className='error-header'>
-										<span style={{ borderBottom: '1px solid red', fontWeight: 'bold', paddingBottom: '2px' }}>
-											Please fix below errors
-										</span>
-									</div>
-									<ErrorSummary errors={errors} />
+									<Controller
+										name='title'
+										control={control}
+										rules={{ required: true }}
+										render={({ field }) => (
+											<TextField
+												type='text'
+												label='Title'
+												margin='dense'
+												variant='standard'
+												size='small'
+												fullWidth
+												error={!!errors.title}
+												helperText={errors?.title?.message}
+												{...field}
+											/>
+										)}
+									/>
 								</div>
-							) : (
+								<div>
+									<Controller
+										name='description'
+										control={control}
+										rules={{ required: true }}
+										render={({ field }) => (
+											<TextField
+												type='text'
+												label='Subtitle'
+												margin='dense'
+												variant='standard'
+												size='small'
+												multiline
+												minRows={1}
+												maxRows={2}
+												fullWidth
+												error={!!errors.description}
+												helperText={errors?.description?.message}
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+
+								<div>
+									<Autocomplete
+										multiple
+										id='tags-standard'
+										freeSolo
+										filterSelectedOptions
+										fullWidth
+										options={categories}
+										onChange={(e, newValue) => setSelectedCategorys(newValue)}
+										getOptionLabel={(option) => option.name}
+										value={selectedCategorys}
+										renderInput={(params) => (
+											<TextField
+												{...params}
+												variant='standard'
+												placeholder='Select Relevant Categories'
+												margin='normal'
+												fullWidth
+											/>
+										)}
+									/>
+									{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
+								</div>
+								<div>
+									<Autocomplete
+										multiple
+										id='tags-standard'
+										freeSolo
+										filterSelectedOptions
+										fullWidth
+										options={tags}
+										onChange={(e, newValue) => setSelectedTags(newValue)}
+										getOptionLabel={(option) => option.name}
+										value={selectedTags}
+										renderInput={(params) => (
+											<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
+										)}
+									/>
+									{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
+								</div>
+								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+									<div style={{ marginRight: '10px', marginTop: '10px' }}>
+										<ReactHookFormSelect
+											id='author1'
+											name='author'
+											label='Author'
+											className={styles.textField}
+											control={control}
+											defaultValue={blog.author}>
+											{authors.map((author, index) => (
+												<MenuItem key={index} value={author.first_name}>
+													{author.first_name}
+												</MenuItem>
+											))}
+										</ReactHookFormSelect>
+									</div>
+
+									<div style={{ marginLeft: '10px' }}>
+										<MuiPickersUtilsProvider utils={DateFnsUtils}>
+											<KeyboardDatePicker
+												margin='normal'
+												id='date-picker-dialog'
+												label='Article Date'
+												views={['year', 'month', 'date']}
+												value={selectedDate}
+												format='yyyy-MM-dd'
+												onChange={handleDateChange}
+												KeyboardButtonProps={{
+													'aria-label': 'change date',
+												}}
+												fullWidth
+											/>
+										</MuiPickersUtilsProvider>
+									</div>
+								</div>
+								<div>
+									<Controller
+										name='thumbnail'
+										control={control}
+										render={({ field }) => (
+											<TextField
+												type='text'
+												label='Thumbnail'
+												margin='dense'
+												variant='standard'
+												size='small'
+												fullWidth
+												{...field}
+											/>
+										)}
+									/>
+								</div>
+								<div>
+									<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
+										<input {...getInputProps()} />
+										Drop Zone
+									</div>
+									{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
+									<span>
+										{uploadedFiles.length > 0 && (
+											<Button
+												onClick={handleOpenDialog}
+												variant='outlined'
+												style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+												Show Gallery
+											</Button>
+										)}
+									</span>
+								</div>
+
+								{!isEmpty(errors) ? (
+									<div>
+										<div className='error-header'>
+											<span style={{ borderBottom: '1px solid red', fontWeight: 'bold', paddingBottom: '2px' }}>
+												Please fix below errors
+											</span>
+										</div>
+										<ErrorSummary errors={errors} />
+									</div>
+								) : (
 									''
 								)}
-							<div className={styles.textCenter}>
-								{/* disabled={!formState.isValid} */}
-								<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
-									Save
-								</Button>
-								{accessRights != 'W' && (
-									<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
-										Publish
+
+								{MyEditor && <MyEditor />}
+
+								<div className={styles.textCenter}>
+									{/* disabled={!formState.isValid} */}
+									<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
+										Save
 									</Button>
-								)}
-							</div>
-						</form>
-					</div>
-
-					<div>
-						<Dialog
-							// classes={{ paper: classes.dialogPaper }}
-							fullWidth={true}
-							maxWidth='lg'
-							open={openDialog}
-							onClose={handleCloseDialog}
-							aria-labelledby='max-width-dialog-title'>
-							<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
-							<DialogContent dividers>
-								<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
-									{uploadedFiles.map((file) => (
-										<div key={file.public_id} style={{ margin: '10px auto' }}>
-											<div onClick={() => removeImage(file)}>
-												<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
-											</div>
-											<Image
-												cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
-												publicId={file.public_id}
-												width='100'
-												crop='scale'
-											/>
-
-											<div className={styles.textCenter}>
-												<CopyToClipboard text={file.url} onCopy={() => setCopy(true)}>
-													<Button>Copy</Button>
-												</CopyToClipboard>
-											</div>
-										</div>
-									))}
+									{accessRights != 'W' && (
+										<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
+											Publish
+										</Button>
+									)}
 								</div>
-							</DialogContent>
-							<DialogActions>
-								<Button onClick={handleCloseDialog} color='primary'>
-									Back
-								</Button>
-							</DialogActions>
-						</Dialog>
-					</div>
-				</div>
-				<div className={styles.right}>
-					<div style={{ color: 'red' }}>PREVIEW</div>
+							</form>
+						</div>
 
-					<BlogPreview
+						<div>
+							<Dialog
+								// classes={{ paper: classes.dialogPaper }}
+								fullWidth={true}
+								maxWidth='lg'
+								open={openDialog}
+								onClose={handleCloseDialog}
+								aria-labelledby='max-width-dialog-title'>
+								<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
+								<DialogContent dividers>
+									<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
+										{uploadedFiles.map((file) => (
+											<div key={file.public_id} style={{ margin: '10px auto' }}>
+												<div onClick={() => removeImage(file)}>
+													<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
+												</div>
+												<Image
+													cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+													publicId={file.public_id}
+													width='100'
+													crop='scale'
+												/>
+
+												<div className={styles.textCenter}>
+													<CopyToClipboard text={file.url} onCopy={() => setCopy(true)}>
+														<Button>Copy</Button>
+													</CopyToClipboard>
+												</div>
+											</div>
+										))}
+									</div>
+								</DialogContent>
+								<DialogActions>
+									<Button onClick={handleCloseDialog} color='primary'>
+										Back
+									</Button>
+								</DialogActions>
+							</Dialog>
+						</div>
+					</div>
+					{/* <div className={styles.right}> */}
+
+					{/* <BlogPreview
 						title={watch('title', blog.title.startsWith('Untitled') ? '' : blog.title)}
 						description={watch('description', blog.description)}
 						author={watch('author', blog.author)}
 						body={contentBody}
-						articleDate={formattedDate}></BlogPreview>
+						articleDate={formattedDate}></BlogPreview> */}
 
-					{MyEditor && <MyEditor />}
+					{/* {MyEditor && <MyEditor />} */}
+					{/* </div> */}
 				</div>
 			</div>
-
 			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
 				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
 					{message}
