@@ -2,7 +2,7 @@
 import React from "react";
 
 // import EditorJs from "react-editor-js";
-import { jsonToHtml} from '../service/editor.service'
+import { jsonToHtml} from '../components/utils/EditorJs/conversion'
 
 import dynamic from 'next/dynamic';
 

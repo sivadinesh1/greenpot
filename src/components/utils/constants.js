@@ -13,6 +13,7 @@ import CheckList from "@editorjs/checklist";
 import Delimiter from "@editorjs/delimiter";
 import InlineCode from "@editorjs/inline-code";
 import SimpleImage from "@editorjs/simple-image";
+import AnyButton from '../utils/EditorJs/componenet/button'
 
 
 const EDITOR_JS_TOOLS = {
@@ -23,6 +24,15 @@ const EDITOR_JS_TOOLS = {
   warning: Warning,
   code: Code,
   linkTool: LinkTool,
+  AnyButton: {
+    class: AnyButton,
+    inlineToolbar: false,
+    config: {
+      css: {
+        "btnColor": "btn--gray",
+      }
+    }
+  },
   image: {
     class: Image,
     config: {

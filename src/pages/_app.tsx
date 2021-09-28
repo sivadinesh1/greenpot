@@ -23,6 +23,7 @@ import Layout from '../components/Layout';
 import { state } from '../utils/state';
 
 import { useSnapshot } from 'valtio';
+import '../styles/globals.css'
 
 config.autoAddCss = false;
 
