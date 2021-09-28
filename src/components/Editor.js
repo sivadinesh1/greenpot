@@ -120,6 +120,13 @@ function MyEditor() {
 								withBackground: false,
 							},
 						},
+						{
+							type: "AnyButton",
+							data: {
+								link: "https://editorjs.io/",
+								text: "editorjs official"
+							}
+						}
 					],
 					version: '2.12.4',
 				}}

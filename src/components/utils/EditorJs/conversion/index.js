@@ -35,6 +35,9 @@ async function convertDataToHtml(blocks, layout) {
             case "code":
                 convertedHtml += `<pre><code>${block.data.code}</pre></code>`;
                 break;
+            case "AnyButton":
+                convertedHtml += `<a class="${layout}_btn btn--gray" target="_blank" type="button" rel="nofollow noindex noreferrer" href="${block.data.link}">${block.data.text}</a>`;
+                break;
             default:
                 console.log("Unknown block type", block.type);
                 break;
