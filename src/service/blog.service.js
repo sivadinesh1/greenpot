@@ -127,6 +127,7 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 	try {
 		user = await getUserById(user_id);
 		let currentDate = new Date();
+		let thumbnail = 'https://res.cloudinary.com/sanjayaalam/image/upload/v1632287841/thumbnail1_m5vija.png'
 		result = await prisma.blog.create({
 			data: {
 				title: `Untitled - ${nanoid(11)}`,
@@ -145,6 +146,8 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 				createdAt: currentDate,
 				blog_id: nanoid(11),
 				repo_id: Number(repo_id),
+				thumbnail: thumbnail
+
 			},
 		});
 	} catch (error) {
@@ -153,18 +156,18 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 	return bigIntToString(result);
 };
 
-export const updateBlog = async (id, title, description, author, articleDate, categories, tag, body, company_id, status, createdAt) => {
+export const updateBlog = async (id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content) => {
 	let arrayOfCategories = categories;
 	//&& categories.split(',');
-	let arrayOfTags = tags;
+	let arrayOfTags = tag;
 	// && tags.split(',');
 
 	let slug = slugify(title).toLowerCase();
-	let mtitle = `${title} | ${process.env.APP_NAME}`;
+	// let mtitle = `${title} | ${process.env.APP_NAME}`;
 
-	let mdesc = stripHtml(body).result.substring(0, 160);
+	// let mdesc = stripHtml(body).result.substring(0, 160);
 
-	let excerpt = smartTrim(body, 320, '', ' ...');
+	// let excerpt = smartTrim(body, 320, '', ' ...');
 
 	if (typeof company_id === 'string') {
 		company_id = Number(company_id);
@@ -195,28 +198,36 @@ export const updateBlog = async (id, title, description, author, articleDate, ca
 
 	let result = null;
 	try {
+		let request = {
+			title: title,
+			slug: slug,
+			category: newCatArr,
+			tag: newTagArr,
+			company_id: company_id,
+			is_delete: 'N',
+			description: description,
+			author: author,
+			blog_date: blogDate,
+			status: status === 'N' ? 'D' : 'P',
+			published: status,
+			updated_by: company_id,
+			updatedAt: currentDate,
+			published_on: status === 'N' ? createdAt : currentDate,
+			thumbnail: thumbnail
+		};
+
+		//dynamically set the valtio content
+		if (content != undefined) {
+			request["content"] = content
+			if (status === 'Y')
+				request["publish_content"] = content
+		}
+
 		result = await prisma.blog.update({
 			where: {
 				id: Number(id),
 			},
-			data: {
-				title: title,
-				slug: slug,
-				body: body,
-				excerpt: excerpt,
-				category: newCatArr,
-				tag: newTagArr,
-				company_id: company_id,
-				is_delete: 'N',
-				description: description,
-				author: author,
-				blog_date: blogDate,
-				status: status === 'N' ? 'D' : 'P',
-				published: status,
-				modified_by: company_id,
-				modified_date: currentDate,
-				published_on: status === 'N' ? createdAt : currentDate,
-			},
+			data: request
 		});
 	} catch (error) {
 		console.log('updateBlog error::' + error.message);

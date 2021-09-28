@@ -64,6 +64,11 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 		Router.push(`/admin/blog-edit/${item.blog_id}`);
 	};
 
+	const handleBlogView = () => {
+		setAnchorEl(null);
+		Router.push(`/admin/blog/${blogItem.blog_id}`)
+	}
+
 	return (
 		<>
 			<div className={styles.page_header}>{selectedRepo?.repo_name}</div>
@@ -84,8 +89,12 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 					blogs?.map((item, index) => {
 						return (
 							<div key={index} className={styles.list_blogs}>
-								<div className={styles.blog_title} onClick={() => editBlog(item)}>
+								{/* <div className={styles.blog_title} onClick={() => editBlog(item)}>
 									{item.title}
+								</div> */}
+								<div className={styles.thumbnail} onClick={() => editBlog(item)}>
+									<Image src={item.thumbnail} height='155px' width='180px' />
+									<div>{item.title}</div>
 								</div>
 								<div className={styles.footer}>
 									<div>&nbsp;</div>
@@ -112,6 +121,7 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
 				<MenuItem onClick={handleClose}>Profile</MenuItem>
 				<MenuItem onClick={handleClose}>My account</MenuItem>
+				<MenuItem onClick={handleBlogView}>View</MenuItem>
 				<Divider />
 				<MenuItem onClick={handleBlogDelete}>
 					<span style={{ color: 'red', fontSize: '12px' }}>Delete</span>

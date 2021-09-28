@@ -43,6 +43,10 @@ model blog {
   updated_by    BigInt?
   updatedAt     DateTime? @updatedAt
   repo          repo   @relation(fields: [repo_id], references: [id])
+  thumbnail     String?    @db.VarChar(350)
+  publish_content    Json?
+  content            Json?
+
   
   @@unique([blog_id], name: "blog_unique")
 }

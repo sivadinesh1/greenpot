@@ -79,7 +79,7 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 						console.log('check lead_pages id data---->', item);
 						return (
 							<div key={index} className={styles.list_blogs}>
-								<div className={styles.blog_title} onClick={() => editCusTemp(item.lead_page_id)}>
+								<div className={styles.blog_title} style={{ background: "#c5e0dc" }} onClick={() => editCusTemp(item.lead_page_id)}>
 									{item.name}
 								</div>
 								<div className={styles.footer}>

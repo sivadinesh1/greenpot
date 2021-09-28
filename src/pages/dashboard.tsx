@@ -82,7 +82,7 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 	const { data: blogs, mutate: mutateBlogs } = useSWR(`/api/blog/repo/${selectedRepo?.id}`, {
 		initialData: blogs_data,
 	});
-
+	console.log("test blog data---->", blogs)
 	const {
 		data: lead_pages,
 		mutate: mutateLeadPages,
@@ -111,8 +111,8 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 				{repoArr && repoArr.length > 0 && selectedRepo.repo_type === 'T' ? (
 					<LeadPageWorkspace selectedRepo={selectedRepo} lead_pages={lead_pages} />
 				) : (
-					<BlogWorkspace selectedRepo={selectedRepo} blogs={blogs} reload={reloadBlogs} />
-				)}
+						<BlogWorkspace selectedRepo={selectedRepo} blogs={blogs} reload={reloadBlogs} />
+					)}
 			</div>
 		</>
 	);

@@ -6,7 +6,6 @@ import { ICategory } from '../../../model/Category';
 
 import styles from '../../../styles/Category.module.scss';
 import CategoryList from '../../../components/crud/Category/list-category';
-import AddCategory from '../../../components/crud/Category/add-category';
 import EditCategory from '../../../components/crud/Category/edit-category';
 
 import axios from 'axios';
@@ -82,19 +81,13 @@ export default function Index({ categorys, company_id, isError }) {
 		<>
 			<div className={styles.cat_wrap}>
 				<div className={styles.left}>
-					{mode === 'add' ? (
-						<AddCategory
-							categories={data}
-							onReloadCategoryList={reloadCategoryList}
-							handleSnackOpen={handleSnackOpen}
-							company_id={company_id}></AddCategory>
-					) : (
-						<EditCategory
-							onMode={chooseMode}
-							editItem={editRowItem}
-							onReloadCategoryList={reloadCategoryList}
-							handleSnackOpen={handleSnackOpen}></EditCategory>
-					)}
+					<EditCategory
+						onMode={mode}
+						chooseMode={chooseMode}
+						editItem={editRowItem}
+						onReloadCategoryList={reloadCategoryList}
+						handleSnackOpen={handleSnackOpen}
+						company_id={company_id}></EditCategory>
 				</div>
 
 				<div className={styles.right}>

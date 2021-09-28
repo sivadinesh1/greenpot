@@ -2,27 +2,20 @@ import EDITOR_JS_TOOLS from '../components/utils/constants';
 import EditorJs from 'react-editor-js';
 import React, { useCallback, useState, useRef } from 'react';
 import axios from 'axios';
+import { content } from '../utils/content';
+import { useSnapshot } from 'valtio';
 
 function MyEditor() {
 	const instanceRef = useRef(null);
 	async function handleSave() {
 		const savedData = await instanceRef.current.save();
-
 		console.log('savedData', savedData);
-		let reqObj = { name: 'test Editor 2', faqs: savedData };
-		const response = await axios.post(`http://localhost:3002/v1/faq`, reqObj);
-		console.log('test response ---->', response);
-		if (response.data.errors) {
-			console.log('error occured', response.data.errors);
-		}
-		if (response.status === 200) {
-			console.log('data saved successfully', response.data);
-		}
+		content.obj = savedData;
 	}
 	return (
 		<>
 			<EditorJs
-				// onChange={handleSave}
+				onChange={handleSave}
 				instanceRef={(instance) => (instanceRef.current = instance)}
 				tools={EDITOR_JS_TOOLS}
 				//  readOnly= {true}
@@ -119,7 +112,7 @@ function MyEditor() {
 							type: 'image',
 							data: {
 								file: {
-									url: 'https://codex.so/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
+									url: 'https://res.cloudinary.com/sanjayaalam/image/upload/w_1000,ar_16:9,c_fill,g_auto,e_sharpen/v1623842374/xlxgijnrwzqg1tg0q1we.jpg',
 								},
 								caption: '',
 								withBorder: true,

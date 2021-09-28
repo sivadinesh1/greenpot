@@ -46,6 +46,9 @@ import { isEmpty } from '../../../../components/utils/util';
 import { getUserById } from '../../../../service/auth/auth.service';
 import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
 import { forceLogout } from '../../../../components/auth/auth';
+import { content } from '../../../../utils/content'
+import { useSnapshot } from 'valtio';
+
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -130,6 +133,7 @@ interface FormData {
 	blocks: string;
 	categories: any[];
 	tags: any[];
+	thumbnail: string;
 }
 
 type ErrorSummaryProps<T> = {
@@ -192,9 +196,9 @@ export default function Index({
 		author: yup.string().required('Author is required').max(50),
 		categories: yup.string().nullable().notRequired(),
 		tags: yup.string().nullable().notRequired(),
-		// tags: yup.array().min(1,"select at least 1").required(),
 		company_id: yup.string().nullable().notRequired(),
 		body: yup.string().nullable().notRequired(),
+		thumbnail: yup.string().nullable().notRequired(),
 	});
 	const {
 		register,
@@ -243,16 +247,18 @@ export default function Index({
 	const handleCloseDialog = () => {
 		setOpenDialog(false);
 	};
+	const snap = useSnapshot(content);
 
 	const onSubmit = async (formData, event) => {
+
 		if (submitting) {
 			return false;
 		}
-		console.log('test form data---->', formData);
 		if (!selectedTags.length || !selectedCategorys.length) {
 			setIsError1(true);
 			return;
 		}
+
 		let status = event.nativeEvent.submitter.id === 'save' ? 'N' : 'Y';
 
 		let tempCatIds = selectedCategorys.map((o) => o.id);
@@ -260,7 +266,6 @@ export default function Index({
 
 		let tempTagIds = selectedTags.map((o) => o.id);
 		let uniqTags = selectedTags.filter(({ id }, index) => !tempTagIds.includes(id, index + 1));
-
 		const values = {
 			id: blog.id,
 			title: formData.title,
@@ -268,12 +273,16 @@ export default function Index({
 			author: formData.author,
 			blogDate: parseISO(selectedDate),
 			categories: uniqCategorys,
-			tags: uniqTags,
+			tag: uniqTags,
 			company_id: company_id,
-			body: contentBody || '',
+			// content: contentBody || '',
 			status: status,
 			createdAt: blog.published_on,
+			thumbnail: formData.thumbnail
 		};
+		if (snap.obj != null)
+			values["content"] = snap.obj;
+
 		setSubmitting(true);
 		setServerErrors([]);
 
@@ -294,7 +303,7 @@ export default function Index({
 
 			event.target.reset();
 			reset();
-			Router.push(`/admin/blogs/${repo_nano}`);
+			Router.push(`/dashboard`);
 		}
 	};
 
@@ -464,6 +473,23 @@ export default function Index({
 								</div>
 							</div>
 							<div>
+								<Controller
+									name='thumbnail'
+									control={control}
+									render={({ field }) => (
+										<TextField
+											type='text'
+											label='Thumbnail'
+											margin='dense'
+											variant='standard'
+											size='small'
+											fullWidth
+											{...field}
+										/>
+									)}
+								/>
+							</div>
+							<div>
 								<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
 									<input {...getInputProps()} />
 									Drop Zone
@@ -491,8 +517,8 @@ export default function Index({
 									<ErrorSummary errors={errors} />
 								</div>
 							) : (
-								''
-							)}
+									''
+								)}
 							<div className={styles.textCenter}>
 								{/* disabled={!formState.isValid} */}
 								<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
