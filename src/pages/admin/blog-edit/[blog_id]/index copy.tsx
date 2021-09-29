@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { makeStyles } from '@material-ui/core/styles';
 
 import TextField from '@material-ui/core/TextField';
-import { Button, Divider, Menu, MenuItem } from '@material-ui/core';
+import { Button, MenuItem } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -23,7 +23,7 @@ import { useDropzone } from 'react-dropzone';
 
 import styles from '../../../../styles/Blog.module.scss';
 
-import styles_drop_zone from '../../../../styles/dropZone.module.css';
+import stylesd from '../../../../styles/dropZone.module.css';
 
 import BlogPreview from '../../../../components/crud/Blog/blog-preview';
 
@@ -50,8 +50,7 @@ import { content } from '../../../../utils/content';
 import { useSnapshot } from 'valtio';
 import { FormInputText } from '../../../../components/forms/FormInputText';
 import { FormInputDropdown } from '../../../../components/forms/FormInputDropdown';
-import { FormInputDate } from '../../../../components/forms/FormInputDate';
-import image from 'next/image';
+import { FormInputDate } from "../../../../components/forms/FormInputDate";
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -101,7 +100,7 @@ export const getServerSideProps = async (context) => {
 			},
 		});
 		blog = resp.data;
-		console.log('check data in serverside props--->', blog);
+		console.log("check data in serverside props--->", blog)
 		selectedTag = blog?.tag?.length > 0 ? await getTags(blog.tag) : [];
 		selectedCat = blog?.category?.length > 0 ? await getCategories(blog.category) : [];
 		repo = await getRepo(resp.data.repo_id);
@@ -178,20 +177,12 @@ export default function Index({
 			return forceLogout();
 		}
 	}, []);
-
-	const [anchorEl, setAnchorEl] = React.useState(null);
-	const [imageFile, setImageFile] = useState<any>();
-
-	const handleClose = () => {
-		setAnchorEl(null);
-	};
-
 	const preloadedValues = {
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
 		description: blog.description,
 		author: blog.author,
 		thumbnail: blog.thumbnail,
-		layout: blog.layout,
+		layout: blog.layout
 	};
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
@@ -200,7 +191,7 @@ export default function Index({
 	const [uploadedFiles, setUploadedFiles] = useState(selectedImages?.length > 0 ? selectedImages : []);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
-	console.log('test pre selected values--->', selectedTag);
+	console.log("test pre selected values--->", selectedTag)
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 	const [showAssets, setShowAssets] = useState(false);
 	const [showMetaSection, setShowMetaSection] = useState(false);
@@ -269,11 +260,6 @@ export default function Index({
 	// 	setContentBody(content);
 	// };
 
-	const handleClick = (event, item) => {
-		setAnchorEl(event.currentTarget);
-		setImageFile(item);
-	};
-
 	const handleCloseDialog = () => {
 		setOpenDialog(false);
 	};
@@ -287,7 +273,7 @@ export default function Index({
 			setIsError1(true);
 			return;
 		}
-		console.log('check form data ---->', formData);
+		console.log("check form data ---->", formData)
 		let status = event.nativeEvent.submitter.id === 'save' ? 'N' : 'Y';
 
 		let tempCatIds = selectedCategorys.map((o) => o.id);
@@ -310,7 +296,7 @@ export default function Index({
 			thumbnail: formData.thumbnail,
 		};
 		if (snap.obj != null) values['content'] = snap.obj;
-		console.log('test values data---->', values);
+		console.log("test values data---->", values);
 
 		setSubmitting(true);
 		setServerErrors([]);
@@ -384,78 +370,40 @@ export default function Index({
 	return (
 		<>
 			<div className={styles.main_menu}>
-				<div onClick={handleShowAssets} className={styles.menu_item}>
-					<Image src='/static/images/gallery.svg' alt='close' width='32px' height='32px' />
-				</div>
+				<div onClick={handleShowAssets}>Menu</div>
 			</div>
-			<div className={styles.main_bg}>
+			<div style={{ display: 'flex' }}>
 				<div className={showAssets ? `${styles.normal}` : `${styles.hidden}`}>
-					<div className={styles.drop_zone}>
-						<div {...getRootProps()} className={`${styles_drop_zone.drop_zone} ${isDragActive ? styles_drop_zone.active : null}`}>
+					<div>
+						<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
 							<input {...getInputProps()} />
-							Drag'n'drop files, or click to select files
+							Drop Zone
 						</div>
-						{/* {uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
-						 */}
-					</div>
-
-					<div className={styles.no_image}>
-						{uploadedFiles.length === 0 && (
-							<>
-								<div>No Images</div>
-							</>
-						)}
-
-						{uploadedFiles.length > 0 && (
-							<>
-								<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: '1fr 1fr', margin: 'auto auto' }}>
-									{uploadedFiles.map((file) => (
-										<div key={file.public_id} className={styles.image_item}>
-											<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
-												<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
-											</div>
-
-											<Image
-												cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
-												publicId={file.public_id}
-												width='100'
-												crop='scale'
-											/>
-										</div>
-									))}
-								</div>
-							</>
-						)}
+						{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
+						<span>
+							{uploadedFiles.length > 0 && (
+								<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+									Show Gallery
+								</Button>
+							)}
+						</span>
 					</div>
 				</div>
 				<div className={styles.blog_wrap}>
-					<div className={styles.action_bar}>
-						<div className={styles.filler}>&nbsp;</div>
-						<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
-							Save
-						</Button>
-						{accessRights != 'W' && (
-							<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
-								Publish
-							</Button>
-						)}
-					</div>
 					<div>
 						<div>
 							<form onSubmit={handleSubmit(onSubmit)}>
-								<div className={styles.article_head_info}>
-									<div className={styles.article_thumbnail}>Thumbnail Not Set</div>
-									<div>
-										<div className={styles.rowGap}>
-											<FormInputText name='title' control={control} label='Title' variant='standard' />
-										</div>
-										<div className={styles.rowGap}>
-											<FormInputText name='description' control={control} label='Subtitle' variant='standard' />
-										</div>
-									</div>
+								<div className={styles.rowGap}>
+									<FormInputText name='title' control={control} label='Title' variant='standard' />
+								</div>
+								<div className={styles.rowGap}>
+									<FormInputText name='description' control={control} label='Subtitle' variant='standard' />
+								</div>
+								<div className={styles.rowGap}>
+									<FormInputText name='thumbnail' control={control} label='Thumbnail' variant='standard' />
 								</div>
 
-								{/* {!isEmpty(errors) ? (
+								{!isEmpty(errors) ? (
 									<div>
 										<div className='error-header'>
 											<span style={{ borderBottom: '1px solid red', fontWeight: 'bold', paddingBottom: '2px' }}>
@@ -465,10 +413,22 @@ export default function Index({
 										<ErrorSummary errors={errors} />
 									</div>
 								) : (
-									''
-								)} */}
+										''
+									)}
 
 								{MyEditor && <MyEditor data={blog.content} />}
+
+								<div className={styles.textCenter}>
+									{/* disabled={!formState.isValid} */}
+									<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
+										Save
+									</Button>
+									{accessRights != 'W' && (
+										<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
+											Publish
+										</Button>
+									)}
+								</div>
 							</form>
 						</div>
 
@@ -579,7 +539,7 @@ export default function Index({
 							control={control}
 							width={'100%'}
 							defaultValue={{ label: '', value: '' }}
-							label='Select Author'>
+							label='Select Author'						>
 							{authors.map((author, index) => (
 								<MenuItem key={index} value={author.first_name}>
 									{author.first_name}
@@ -593,7 +553,8 @@ export default function Index({
 							control={control}
 							width={'100%'}
 							defaultValue={{ label: '', value: '' }}
-							label='Select Layout'>
+							label='Select Layout'
+						>
 							{options.map((option: any) => (
 								<MenuItem key={option.value} value={option.value}>
 									{option.label}
@@ -612,20 +573,6 @@ export default function Index({
 					{message}
 				</MuiAlert>
 			</Snackbar>
-
-			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
-				<MenuItem onClick={handleClose}>Set as thumbnail</MenuItem>
-				<MenuItem onClick={handleClose}>
-					<CopyToClipboard text={imageFile?.url} onCopy={() => setCopy(true)}>
-						<Button>Copy url</Button>
-					</CopyToClipboard>
-				</MenuItem>
-
-				<Divider />
-				<MenuItem onClick={() => removeImage(imageFile)}>
-					<span style={{ color: 'red', fontSize: '12px' }}>Delete</span>
-				</MenuItem>
-			</Menu>
 		</>
 	);
 }
@@ -636,3 +583,7 @@ async function getSignature(folderPath) {
 	const { signature, timestamp } = data;
 	return { signature, timestamp };
 }
+
+// https://cloudinary.com/documentation/admin_api
+// bs","categories":[117],"tags":[7],"created_by":null,"created_date":"2021-08-12T02:24:19.829Z","modified_by":null,"modified_date":null,"company_id":"1","is_delete":"N","description":"Digital Interviewing – the path to a smooth interview process","author":"Mehul Butt","blog_date":"2021-08-12T15:35:00.000Z","status":"D","published":"N","published_datetime":"2021-08-12T15:35:48.590Z"}
+// https://stackoverflow.com/questions/65805358/react-hook-form-validation-with-material-ui
