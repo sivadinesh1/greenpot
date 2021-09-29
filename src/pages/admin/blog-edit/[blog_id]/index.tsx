@@ -189,6 +189,7 @@ export default function Index({
 
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 	const [showAssets, setShowAssets] = useState(false);
+	const [showMetaSection, setShowMetaSection] = useState(false);
 
 	let schema = yup.object().shape({
 		title: yup.string().required('Title is required').min(3).max(72),
@@ -242,6 +243,12 @@ export default function Index({
 
 	const handleShowAssets = () => {
 		setShowAssets(!showAssets);
+		setShowMetaSection(false);
+	};
+
+	const handleShowMetaSection = () => {
+		setShowMetaSection(!showMetaSection);
+		setShowAssets(false);
 	};
 
 	const handleCMSChange = (content) => {
@@ -355,7 +362,22 @@ export default function Index({
 				<div onClick={handleShowAssets}>Menu</div>
 			</div>
 			<div style={{ display: 'flex' }}>
-				<div className={showAssets ? `${styles.normal}` : `${styles.hidden}`}>dummy......................</div>
+				<div className={showAssets ? `${styles.normal}` : `${styles.hidden}`}>
+					<div>
+						<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
+							<input {...getInputProps()} />
+							Drop Zone
+						</div>
+						{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
+						<span>
+							{uploadedFiles.length > 0 && (
+								<Button onClick={handleOpenDialog} variant='outlined' style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
+									Show Gallery
+								</Button>
+							)}
+						</span>
+					</div>
+				</div>
 				<div className={styles.blog_wrap}>
 					<div>
 						<div>
@@ -405,81 +427,6 @@ export default function Index({
 								</div>
 
 								<div>
-									<Autocomplete
-										multiple
-										id='tags-standard'
-										freeSolo
-										filterSelectedOptions
-										fullWidth
-										options={categories}
-										onChange={(e, newValue) => setSelectedCategorys(newValue)}
-										getOptionLabel={(option) => option.name}
-										value={selectedCategorys}
-										renderInput={(params) => (
-											<TextField
-												{...params}
-												variant='standard'
-												placeholder='Select Relevant Categories'
-												margin='normal'
-												fullWidth
-											/>
-										)}
-									/>
-									{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
-								</div>
-								<div>
-									<Autocomplete
-										multiple
-										id='tags-standard'
-										freeSolo
-										filterSelectedOptions
-										fullWidth
-										options={tags}
-										onChange={(e, newValue) => setSelectedTags(newValue)}
-										getOptionLabel={(option) => option.name}
-										value={selectedTags}
-										renderInput={(params) => (
-											<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
-										)}
-									/>
-									{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
-								</div>
-								<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-									<div style={{ marginRight: '10px', marginTop: '10px' }}>
-										<ReactHookFormSelect
-											id='author1'
-											name='author'
-											label='Author'
-											className={styles.textField}
-											control={control}
-											defaultValue={blog.author}>
-											{authors.map((author, index) => (
-												<MenuItem key={index} value={author.first_name}>
-													{author.first_name}
-												</MenuItem>
-											))}
-										</ReactHookFormSelect>
-									</div>
-
-									<div style={{ marginLeft: '10px' }}>
-										<MuiPickersUtilsProvider utils={DateFnsUtils}>
-											<KeyboardDatePicker
-												margin='normal'
-												id='date-picker-dialog'
-												label='Article Date'
-												views={['year', 'month', 'date']}
-												value={selectedDate}
-												format='yyyy-MM-dd'
-												onChange={handleDateChange}
-												KeyboardButtonProps={{
-													'aria-label': 'change date',
-												}}
-												fullWidth
-											/>
-										</MuiPickersUtilsProvider>
-									</div>
-								</div>
-								<div>
 									<Controller
 										name='thumbnail'
 										control={control}
@@ -495,23 +442,6 @@ export default function Index({
 											/>
 										)}
 									/>
-								</div>
-								<div>
-									<div {...getRootProps()} className={`${stylesd.dropzone} ${isDragActive ? stylesd.active : null}`}>
-										<input {...getInputProps()} />
-										Drop Zone
-									</div>
-									{uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
-									<span>
-										{uploadedFiles.length > 0 && (
-											<Button
-												onClick={handleOpenDialog}
-												variant='outlined'
-												style={{ backgroundColor: '#FFFFFF', color: '#12824C' }}>
-												Show Gallery
-											</Button>
-										)}
-									</span>
 								</div>
 
 								{!isEmpty(errors) ? (
@@ -583,19 +513,83 @@ export default function Index({
 							</Dialog>
 						</div>
 					</div>
-					{/* <div className={styles.right}> */}
-
-					{/* <BlogPreview
-						title={watch('title', blog.title.startsWith('Untitled') ? '' : blog.title)}
-						description={watch('description', blog.description)}
-						author={watch('author', blog.author)}
-						body={contentBody}
-						articleDate={formattedDate}></BlogPreview> */}
-
-					{/* {MyEditor && <MyEditor />} */}
-					{/* </div> */}
+				</div>
+				<div className={showMetaSection ? `${styles.r_normal}` : `${styles.r_hidden}`}>
+					<div>META DATA</div>
+					<div>
+						<Autocomplete
+							multiple
+							id='tags-standard'
+							freeSolo
+							filterSelectedOptions
+							fullWidth
+							options={categories}
+							onChange={(e, newValue) => setSelectedCategorys(newValue)}
+							getOptionLabel={(option) => option.name}
+							value={selectedCategorys}
+							renderInput={(params) => (
+								<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+							)}
+						/>
+						{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
+					</div>
+					<div>
+						<Autocomplete
+							multiple
+							id='tags-standard'
+							freeSolo
+							filterSelectedOptions
+							fullWidth
+							options={tags}
+							onChange={(e, newValue) => setSelectedTags(newValue)}
+							getOptionLabel={(option) => option.name}
+							value={selectedTags}
+							renderInput={(params) => (
+								<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
+							)}
+						/>
+						{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
+					</div>
+					<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+						<div style={{ marginLeft: '10px' }}>
+							<MuiPickersUtilsProvider utils={DateFnsUtils}>
+								<KeyboardDatePicker
+									margin='normal'
+									id='date-picker-dialog'
+									label='Article Date'
+									views={['year', 'month', 'date']}
+									value={selectedDate}
+									format='yyyy-MM-dd'
+									onChange={handleDateChange}
+									KeyboardButtonProps={{
+										'aria-label': 'change date',
+									}}
+									fullWidth
+								/>
+							</MuiPickersUtilsProvider>
+						</div>
+					</div>
+					<div style={{ marginRight: '10px', marginTop: '10px' }}>
+						<ReactHookFormSelect
+							id='author1'
+							name='author'
+							label='Author'
+							className={styles.textField}
+							control={control}
+							defaultValue={blog.author}>
+							{authors.map((author, index) => (
+								<MenuItem key={index} value={author.first_name}>
+									{author.first_name}
+								</MenuItem>
+							))}
+						</ReactHookFormSelect>
+					</div>
 				</div>
 			</div>
+			<div className={showMetaSection ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
+				<div onClick={handleShowMetaSection}>RMenu</div>
+			</div>
+
 			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
 				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
 					{message}
