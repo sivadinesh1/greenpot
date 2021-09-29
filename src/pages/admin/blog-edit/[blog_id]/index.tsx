@@ -48,6 +48,9 @@ import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
 import { forceLogout } from '../../../../components/auth/auth';
 import { content } from '../../../../utils/content';
 import { useSnapshot } from 'valtio';
+import { FormInputText } from '../../../../components/forms/FormInputText';
+import { FormInputDropdown } from '../../../../components/forms/FormInputDropdown';
+import { FormInputDate } from "../../../../components/forms/FormInputDate";
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -97,9 +100,9 @@ export const getServerSideProps = async (context) => {
 			},
 		});
 		blog = resp.data;
-
-		selectedTag = blog?.tags?.length > 0 ? await getTags(blog.tags) : [];
-		selectedCat = blog?.categories?.length > 0 ? await getCategories(blog.categories) : [];
+		console.log("check data in serverside props--->", blog)
+		selectedTag = blog?.tag?.length > 0 ? await getTags(blog.tag) : [];
+		selectedCat = blog?.category?.length > 0 ? await getCategories(blog.category) : [];
 		repo = await getRepo(resp.data.repo_id);
 		repo_nano = repo.repo_id;
 
@@ -178,6 +181,8 @@ export default function Index({
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
 		description: blog.description,
 		author: blog.author,
+		thumbnail: blog.thumbnail,
+		layout: blog.layout
 	};
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
@@ -186,7 +191,7 @@ export default function Index({
 	const [uploadedFiles, setUploadedFiles] = useState(selectedImages?.length > 0 ? selectedImages : []);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
-
+	console.log("test pre selected values--->", selectedTag)
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 	const [showAssets, setShowAssets] = useState(false);
 	const [showMetaSection, setShowMetaSection] = useState(false);
@@ -198,7 +203,7 @@ export default function Index({
 		categories: yup.string().nullable().notRequired(),
 		tags: yup.string().nullable().notRequired(),
 		company_id: yup.string().nullable().notRequired(),
-		body: yup.string().nullable().notRequired(),
+		layout: yup.string().nullable().notRequired(),
 		thumbnail: yup.string().nullable().notRequired(),
 	});
 	const {
@@ -238,8 +243,8 @@ export default function Index({
 	};
 
 	//sunEditor
-	const [contentBody, setContentBody] = useState(blog.body);
-	const [contentInitBody, setContentInitBody] = useState(blog.body);
+	// const [contentBody, setContentBody] = useState(blog.body);
+	// const [contentInitBody, setContentInitBody] = useState(blog.body);
 
 	const handleShowAssets = () => {
 		setShowAssets(!showAssets);
@@ -251,9 +256,9 @@ export default function Index({
 		setShowAssets(false);
 	};
 
-	const handleCMSChange = (content) => {
-		setContentBody(content);
-	};
+	// const handleCMSChange = (content) => {
+	// 	setContentBody(content);
+	// };
 
 	const handleCloseDialog = () => {
 		setOpenDialog(false);
@@ -268,7 +273,7 @@ export default function Index({
 			setIsError1(true);
 			return;
 		}
-
+		console.log("check form data ---->", formData)
 		let status = event.nativeEvent.submitter.id === 'save' ? 'N' : 'Y';
 
 		let tempCatIds = selectedCategorys.map((o) => o.id);
@@ -285,12 +290,13 @@ export default function Index({
 			categories: uniqCategorys,
 			tag: uniqTags,
 			company_id: company_id,
-			// content: contentBody || '',
+			layout: formData.layout,
 			status: status,
 			createdAt: blog.published_on,
 			thumbnail: formData.thumbnail,
 		};
 		if (snap.obj != null) values['content'] = snap.obj;
+		console.log("test values data---->", values);
 
 		setSubmitting(true);
 		setServerErrors([]);
@@ -356,6 +362,11 @@ export default function Index({
 		disabled: uploadedFiles.length === uploadLimit ? true : false,
 	});
 
+	const options = [
+		{ label: 'Classic', value: 'classic' },
+		{ label: 'Classic pro', value: 'classic pro' },
+	];
+
 	return (
 		<>
 			<div className={styles.main_menu}>
@@ -382,66 +393,14 @@ export default function Index({
 					<div>
 						<div>
 							<form onSubmit={handleSubmit(onSubmit)}>
-								<div>
-									<Controller
-										name='title'
-										control={control}
-										rules={{ required: true }}
-										render={({ field }) => (
-											<TextField
-												type='text'
-												label='Title'
-												margin='dense'
-												variant='standard'
-												size='small'
-												fullWidth
-												error={!!errors.title}
-												helperText={errors?.title?.message}
-												{...field}
-											/>
-										)}
-									/>
+								<div className={styles.rowGap}>
+									<FormInputText name='title' control={control} label='Title' variant='standard' />
 								</div>
-								<div>
-									<Controller
-										name='description'
-										control={control}
-										rules={{ required: true }}
-										render={({ field }) => (
-											<TextField
-												type='text'
-												label='Subtitle'
-												margin='dense'
-												variant='standard'
-												size='small'
-												multiline
-												minRows={1}
-												maxRows={2}
-												fullWidth
-												error={!!errors.description}
-												helperText={errors?.description?.message}
-												{...field}
-											/>
-										)}
-									/>
+								<div className={styles.rowGap}>
+									<FormInputText name='description' control={control} label='Subtitle' variant='standard' />
 								</div>
-
-								<div>
-									<Controller
-										name='thumbnail'
-										control={control}
-										render={({ field }) => (
-											<TextField
-												type='text'
-												label='Thumbnail'
-												margin='dense'
-												variant='standard'
-												size='small'
-												fullWidth
-												{...field}
-											/>
-										)}
-									/>
+								<div className={styles.rowGap}>
+									<FormInputText name='thumbnail' control={control} label='Thumbnail' variant='standard' />
 								</div>
 
 								{!isEmpty(errors) ? (
@@ -454,8 +413,8 @@ export default function Index({
 										<ErrorSummary errors={errors} />
 									</div>
 								) : (
-									''
-								)}
+										''
+									)}
 
 								{MyEditor && <MyEditor />}
 
@@ -516,7 +475,7 @@ export default function Index({
 				</div>
 				<div className={showMetaSection ? `${styles.r_normal}` : `${styles.r_hidden}`}>
 					<div>META DATA</div>
-					<div>
+					<div className={styles.rowGap}>
 						<Autocomplete
 							multiple
 							id='tags-standard'
@@ -533,7 +492,7 @@ export default function Index({
 						/>
 						{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
 					</div>
-					<div>
+					<div className={styles.rowGap}>
 						<Autocomplete
 							multiple
 							id='tags-standard'
@@ -550,39 +509,58 @@ export default function Index({
 						/>
 						{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
 					</div>
-					<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-						<div style={{ marginLeft: '10px' }}>
-							<MuiPickersUtilsProvider utils={DateFnsUtils}>
-								<KeyboardDatePicker
-									margin='normal'
-									id='date-picker-dialog'
-									label='Article Date'
-									views={['year', 'month', 'date']}
-									value={selectedDate}
-									format='yyyy-MM-dd'
-									onChange={handleDateChange}
-									KeyboardButtonProps={{
-										'aria-label': 'change date',
-									}}
-									fullWidth
-								/>
-							</MuiPickersUtilsProvider>
-						</div>
+					<div className={styles.rowGap}>
+						<MuiPickersUtilsProvider utils={DateFnsUtils}>
+							<KeyboardDatePicker
+								margin='normal'
+								id='date-picker-dialog'
+								label='Article Date'
+								views={['year', 'month', 'date']}
+								value={selectedDate}
+								format='yyyy-MM-dd'
+								onChange={handleDateChange}
+								KeyboardButtonProps={{
+									'aria-label': 'change date',
+								}}
+								fullWidth
+							/>
+						</MuiPickersUtilsProvider>
 					</div>
-					<div style={{ marginRight: '10px', marginTop: '10px' }}>
-						<ReactHookFormSelect
-							id='author1'
+					{/* <div className={styles.rowGap}>
+						<FormInputDate
 							name='author'
-							label='Author'
-							className={styles.textField}
 							control={control}
-							defaultValue={blog.author}>
+							label='Airticle Date' />
+
+					</div> */}
+					<div className={styles.rowGap}>
+						<FormInputDropdown
+							name='author'
+							control={control}
+							width={'100%'}
+							defaultValue={{ label: '', value: '' }}
+							label='Select Author'						>
 							{authors.map((author, index) => (
 								<MenuItem key={index} value={author.first_name}>
 									{author.first_name}
 								</MenuItem>
 							))}
-						</ReactHookFormSelect>
+						</FormInputDropdown>
+					</div>
+					<div className={styles.rowGap}>
+						<FormInputDropdown
+							name='layout'
+							control={control}
+							width={'100%'}
+							defaultValue={{ label: '', value: '' }}
+							label='Select Layout'
+						>
+							{options.map((option: any) => (
+								<MenuItem key={option.value} value={option.value}>
+									{option.label}
+								</MenuItem>
+							))}
+						</FormInputDropdown>
 					</div>
 				</div>
 			</div>

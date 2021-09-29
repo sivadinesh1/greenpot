@@ -132,7 +132,7 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 			data: {
 				title: `Untitled - ${nanoid(11)}`,
 				slug: '',
-				body: '',
+				layout: 'Classic',
 				excerpt: '',
 
 				author: user.first_name,
@@ -156,7 +156,7 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 	return bigIntToString(result);
 };
 
-export const updateBlog = async (id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content) => {
+export const updateBlog = async (id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content, layout) => {
 	let arrayOfCategories = categories;
 	//&& categories.split(',');
 	let arrayOfTags = tag;
@@ -213,7 +213,8 @@ export const updateBlog = async (id, title, description, author, blogDate, categ
 			updated_by: company_id,
 			updatedAt: currentDate,
 			published_on: status === 'N' ? createdAt : currentDate,
-			thumbnail: thumbnail
+			thumbnail: thumbnail,
+			layout: layout
 		};
 
 		//dynamically set the valtio content
@@ -229,6 +230,7 @@ export const updateBlog = async (id, title, description, author, blogDate, categ
 			},
 			data: request
 		});
+		console.log("test updated result--->", result)
 	} catch (error) {
 		console.log('updateBlog error::' + error.message);
 	}

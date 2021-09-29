@@ -27,7 +27,7 @@ model blog {
   description   String?   @db.VarChar(200)
   slug          String?   @db.VarChar(300)
   excerpt       String?   @db.VarChar(350)
-  body          String
+  layout        String    @db.VarChar(50)
   category      Int[]
   tag           Int[]
   company_id    BigInt?

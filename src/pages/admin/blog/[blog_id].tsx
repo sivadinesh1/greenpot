@@ -30,11 +30,11 @@ export const getServerSideProps = async (context) => {
 			},
 		});
 		blog = resp.data;
-		
+
 		if (blog.publish_content == null)
 			isEmpty = true;
 		else
-			html = await jsonToHtml(blog.publish_content);
+			html = await jsonToHtml(blog.publish_content, blog.layout);
 
 	} catch (error) {
 		console.log(`error in blog view ${error}`);

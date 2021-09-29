@@ -5,4 +5,5 @@ export interface FormInputProps {
 	defaultValue?: any;
 	options?: any;
 	width?: any;
+	variant?: string;
 }

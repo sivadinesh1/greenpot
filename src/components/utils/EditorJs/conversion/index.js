@@ -1,10 +1,11 @@
-export const jsonToHtml = async (data) => {
-    const convertedHtml = await convertDataToHtml(data.blocks, "layout1")
+export const jsonToHtml = async (data, layout) => {
+    const convertedHtml = await convertDataToHtml(data.blocks, layout)
     return convertedHtml;
 };
 
 async function convertDataToHtml(blocks, layout) {
     var convertedHtml = "";
+    layout = layout.toString().toLowerCase().replace(" ", "_");
     convertedHtml += `<div class="${layout}_blog_posr_conatainer">`
     blocks.map(block => {
 

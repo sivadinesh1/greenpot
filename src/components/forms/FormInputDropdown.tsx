@@ -3,7 +3,7 @@ import { FormControl, InputLabel, MenuItem, Select } from '@material-ui/core';
 import { useFormContext, Controller } from 'react-hook-form';
 import { FormInputProps } from './FormInputProps';
 
-export const FormInputDropdown: React.FC<FormInputProps> = ({ name, label, control, defaultValue, options, width }) => {
+export const FormInputDropdown: React.FC<FormInputProps> = ({ name, label, control, defaultValue, options, width, children }) => {
 	const generateSingleOptions = () => {
 		return options.map((option: any) => {
 			return (
@@ -22,7 +22,8 @@ export const FormInputDropdown: React.FC<FormInputProps> = ({ name, label, contr
 				name={name}
 				render={({ field: { onChange, value } }) => (
 					<Select onChange={onChange} value={value} defaultValue={defaultValue}>
-						{generateSingleOptions()}
+						{/* {generateSingleOptions()} */}
+						{children}
 					</Select>
 				)}
 			/>
