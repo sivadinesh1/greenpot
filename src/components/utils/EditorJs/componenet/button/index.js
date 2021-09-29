@@ -47,25 +47,24 @@ export default class AnyButton {
     set data(data) {
         this._data = Object.assign({}, {
             link: this.api.sanitizer.clean(data.link || "", AnyButton.sanitize),
-            text: this.api.sanitizer.clean(data.text || "", AnyButton.sanitize),
-            color: this.api.sanitizer.clean(data.text || "", AnyButton.sanitize)
-
+            text: this.api.sanitizer.clean(data.text || "", AnyButton.sanitize)
         });
     }
     /**
      *
-     * @returns {{text: string, link: string,color:string}}
+     * @returns {{text: string, link: string}}
      */
     get data() {
         return this._data;
     }
 
     /**
+     * セーブ時のバリデーション
      * @param savedData
      * @returns {boolean}
      */
     validate(savedData) {
-        if (this._data.link === "" || this._data.text === "" | this._data.color === "") {
+        if (this._data.link === "" || this._data.text === "") {
             return false;
         }
 
@@ -87,8 +86,7 @@ export default class AnyButton {
     static get sanitize() {
         return {
             text: false,
-            link: false,
-            color: false
+            link: false
         }
     }
 
@@ -111,10 +109,8 @@ export default class AnyButton {
             anyButtonHolder: null,
             textInput: null,
             linkInput: null,
-            colorInput: null,
             registButton: null,
             anyButton: null,
-            colorInput: null
         }
         //css overwrite
         const _CSS = {
@@ -127,10 +123,9 @@ export default class AnyButton {
             inputHolder: "anyButtonContainer__inputHolder",
             inputText: "anyButtonContainer__input--text",
             inputLink: "anyButtonContainer__input--link",
-            inputColor: "anyButtonContainer__input--color",
             registButton: "anyButtonContainer__registerButton",
             anyButtonHolder: "anyButtonContainer__anyButtonHolder",
-            btnColor: "blue",
+            btnColor: "btn--default",
             toggleSwitch: "toggle-switch",
             toggleInput: "toggle-input",
             toggleLabel: "toggle-label",
@@ -140,8 +135,7 @@ export default class AnyButton {
 
         this.data = {
             link: "",
-            text: "",
-            color: ""
+            text: ""
         };
         this.data = data;
 
@@ -185,10 +179,6 @@ export default class AnyButton {
             contentEditable: !this.readOnly,
         })
         this.nodes.linkInput.dataset.placeholder = this.api.i18n.t('Link Url');
-        this.nodes.colorInput = this.make('div', [this.api.styles.input, this.CSS.input, this.CSS.inputText], {
-            contentEditable: !this.readOnly,
-        });
-        this.nodes.colorInput.dataset.placeholder = this.api.i18n.t('Color Text');
 
         this.nodes.registButton = this.make('button', [this.api.styles.button, this.CSS.registButton]);
         this.nodes.registButton.textContent = this.api.i18n.t('Set');
@@ -197,15 +187,13 @@ export default class AnyButton {
         this.nodes.registButton.addEventListener('click', (event) => {
             this.data = {
                 "link": this.nodes.linkInput.textContent,
-                "text": this.nodes.textInput.textContent,
-                "color": this.nodes.colorInput.textContent,
+                "text": this.nodes.textInput.textContent
             }
             this.show(AnyButton.STATE.VIEW);
         });
 
         inputHolder.appendChild(this.nodes.textInput);
         inputHolder.appendChild(this.nodes.linkInput);
-        inputHolder.appendChild(this.nodes.colorInput);
         inputHolder.appendChild(this.nodes.registButton);
 
         return inputHolder;
@@ -214,14 +202,11 @@ export default class AnyButton {
     init() {
         this.nodes.textInput.textContent = this._data.text;
         this.nodes.linkInput.textContent = this._data.link;
-        this.nodes.colorInput.textContent = this._data.color;
     }
 
     show(state) {
         this.nodes.anyButton.textContent = this._data.text;
         this.nodes.anyButton.setAttribute("href", this._data.link);
-        this.nodes.anyButton.textContent = this._data.color;
-        this.CSS.btnColor = `btn ${this._data.color}`;
         this.changeState(state);
     }
 
@@ -229,7 +214,6 @@ export default class AnyButton {
         const anyButtonHolder = this.make('div', [this.CSS.hide, this.CSS.anyButtonHolder]);
         this.nodes.anyButton = this.make('a', [this.CSS.btn, this.CSS.btnColor], {
             target: '_blank',
-            type: 'button',
             rel: 'nofollow noindex noreferrer',
         });
         this.nodes.anyButton.textContent = this.api.i18n.t("Default Button");
@@ -263,7 +247,6 @@ export default class AnyButton {
         const toggleHolder = this.make('div', [this.CSS.toggleSwitch]);
         this.nodes.toggleInput = this.make('input', [this.CSS.toggleInput],
             {
-                // "type": "button",
                 "type": "checkbox",
                 "id": "toggle"
             });
@@ -272,8 +255,7 @@ export default class AnyButton {
         this.nodes.toggleInput.addEventListener("change", (event) => {
             this.data = {
                 "link": this.nodes.linkInput.textContent,
-                "text": this.nodes.textInput.textContent,
-                "color": this.nodes.colorInput.textContent
+                "text": this.nodes.textInput.textContent
             }
             this.show(Number(this.nodes.toggleInput.checked))
         })

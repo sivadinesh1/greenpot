@@ -416,7 +416,7 @@ export default function Index({
 										''
 									)}
 
-								{MyEditor && <MyEditor />}
+								{MyEditor && <MyEditor data={blog.content} />}
 
 								<div className={styles.textCenter}>
 									{/* disabled={!formState.isValid} */}

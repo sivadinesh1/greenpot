@@ -13,11 +13,26 @@ import CheckList from "@editorjs/checklist";
 import Delimiter from "@editorjs/delimiter";
 import InlineCode from "@editorjs/inline-code";
 import SimpleImage from "@editorjs/simple-image";
-import AnyButton from '../utils/EditorJs/componenet/button'
-
+// import AnyButton from '../utils/EditorJs/componenet/button'
+import AnyButton from "editorjs-button";
+// const anyButton = require('anyButton');
 
 const EDITOR_JS_TOOLS = {
-  embed: Embed,
+  embed: {
+    class: Embed,
+    config: {
+      services: {
+        youtube: true,
+        coub: true,
+        instagram: true,
+        twitter: true,
+        facebook: true,
+        vimeo: true,
+        pinterest: true,
+        codepen: true
+      }
+    }
+  },
   table: Table,
   marker: Marker,
   list: List,

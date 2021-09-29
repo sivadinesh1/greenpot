@@ -30,7 +30,7 @@ export const getServerSideProps = async (context) => {
 			},
 		});
 		blog = resp.data;
-
+		console.log("test data ---->", blog.publish_content)
 		if (blog.publish_content == null)
 			isEmpty = true;
 		else
