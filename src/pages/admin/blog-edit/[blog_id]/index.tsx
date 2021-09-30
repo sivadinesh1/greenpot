@@ -203,6 +203,8 @@ export default function Index({
 	console.log('test pre selected values--->', selectedTag);
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 	const [showAssets, setShowAssets] = useState(false);
+	const [showApps, setShowApps] = useState(false);
+
 	const [showMetaSection, setShowMetaSection] = useState(false);
 
 	let schema = yup.object().shape({
@@ -251,12 +253,15 @@ export default function Index({
 		setOpenDialog(true);
 	};
 
-	//sunEditor
-	// const [contentBody, setContentBody] = useState(blog.body);
-	// const [contentInitBody, setContentInitBody] = useState(blog.body);
-
 	const handleShowAssets = () => {
 		setShowAssets(!showAssets);
+		setShowMetaSection(false);
+		setShowApps(false);
+	};
+
+	const handleShowApps = () => {
+		setShowApps(!showApps);
+		setShowAssets(false);
 		setShowMetaSection(false);
 	};
 
@@ -385,11 +390,14 @@ export default function Index({
 		<>
 			<div className={styles.main_menu}>
 				<div onClick={handleShowAssets} className={styles.menu_item}>
-					<Image src='/static/images/gallery.svg' alt='close' width='32px' height='32px' />
+					<Image src='/static/images/gallery.svg' alt='gallery' width='32px' height='32px' />
+				</div>
+				<div onClick={handleShowApps} className={styles.menu_item}>
+					<Image src='/static/images/apps.svg' alt='apps' width='32px' height='32px' />
 				</div>
 			</div>
 			<div className={styles.main_bg}>
-				<div className={showAssets ? `${styles.normal}` : `${styles.hidden}`}>
+				<div className={showAssets ? `${styles.assets} ${styles.show_assets}` : `${styles.assets}`}>
 					<div className={styles.drop_zone}>
 						<div {...getRootProps()} className={`${styles_drop_zone.drop_zone} ${isDragActive ? styles_drop_zone.active : null}`}>
 							<input {...getInputProps()} />
@@ -427,6 +435,9 @@ export default function Index({
 							</>
 						)}
 					</div>
+				</div>
+				<div className={showApps ? `${styles.apps} ${styles.show_apps}` : `${styles.apps}`}>
+					<div className={styles.drop_zone}>Apps !!!!!!!</div>
 				</div>
 				<div className={styles.blog_wrap}>
 					<div className={styles.action_bar}>
