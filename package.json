@@ -90,6 +90,8 @@
 		"@types/react": "^17.0.15",
 		"babel-jest": "^27.0.6",
 		"babel-plugin-styled-components": "^1.13.2",
+		"editorjs-text-color-plugin": "^1.1.22",
+		"editorjs-undo": "^0.3.0",
 		"eslint": "7.31.0",
 		"eslint-config-next": "^11.0.1",
 		"eslint-config-prettier": "^8.3.0",

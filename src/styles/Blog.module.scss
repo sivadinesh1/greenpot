@@ -249,6 +249,11 @@
 	letter-spacing: 1px;
 	color: darkblue;
 	text-align: center;
+    overflow: auto;
+	// overflow-x: auto;
+	// overflow-y: auto;
+	// white-space: nowrap;
+
 }
 
 .hidden {
@@ -288,6 +293,7 @@
 	border-radius: 5px;
 	padding: 10px;
 	object-fit: cover;
+	margin: 3px;
 }
 
 .image_item_close {
@@ -310,11 +316,11 @@
 }
 
 .article_thumbnail {
-	background-color: rgb(233, 233, 255);
+	// background-color: rgb(233, 233, 255);
 	display: grid;
 	place-content: center;
-	font-size: 14px;
-	font-weight: normal;
+	// font-size: 14px;
+	// font-weight: normal;
 }
 
 .main_bg {
@@ -345,3 +351,10 @@
 	// justify-content: center;
 	width: 100%;
 }
+.image{
+	height: 150px;
+	width: 150px;
+	object-fit: cover;
+
+}
+

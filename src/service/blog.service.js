@@ -263,3 +263,43 @@ export const getCountBlogPageByRepo = async (company_id) => {
 
 	return returnArr;
 };
+
+export const updateThumbnail = async (id, thumbnail) => {
+
+	let result = null;
+	try {
+		let request = {
+			thumbnail: thumbnail,
+		};
+
+		result = await prisma.blog.update({
+			where: {
+				id: Number(id),
+			},
+			data: request
+		});
+		console.log("thumbnail update result--->", result)
+	} catch (error) {
+		console.log('thumbnail update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateContent = async (id, content) => {
+	let result = null;
+	try {
+		let request = {
+			content: content,
+		};
+
+		result = await prisma.blog.update({
+			where: {
+				id: Number(id),
+			},
+			data: request
+		});
+	} catch (error) {
+		console.log('content update error::' + error.message);
+	}
+	return bigIntToString(result);
+};

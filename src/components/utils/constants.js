@@ -15,6 +15,7 @@ import InlineCode from "@editorjs/inline-code";
 import SimpleImage from "@editorjs/simple-image";
 // import AnyButton from '../utils/EditorJs/componenet/button'
 import AnyButton from "editorjs-button";
+import ColorPlugin from 'editorjs-text-color-plugin';
 // const anyButton = require('anyButton');
 
 const EDITOR_JS_TOOLS = {
@@ -46,6 +47,21 @@ const EDITOR_JS_TOOLS = {
       css: {
         "btnColor": "btn--gray",
       }
+    }
+  },
+  Color: {
+    class: ColorPlugin, // if load from CDN, please try: window.ColorPlugin
+    config: {
+      colorCollections: ['#FF1300', '#EC7878', '#9C27B0', '#673AB7', '#3F51B5', '#0070FF', '#03A9F4', '#00BCD4', '#4CAF50', '#8BC34A', '#CDDC39', '#FFF'],
+      defaultColor: '#FF1300',
+      type: 'text',
+    }
+  },
+  Marker: {
+    class: ColorPlugin, // if load from CDN, please try: window.ColorPlugin
+    config: {
+      defaultColor: '#FFBF00',
+      type: 'marker',
     }
   },
   image: {

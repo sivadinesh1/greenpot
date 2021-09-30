@@ -8,12 +8,12 @@ cloudinary.config({
 });
 
 export const getImages = async (path) => {
-	const data = cloudinary.search
+	const data = await cloudinary.search
 		.expression(
 			`folder:${path}/*`,
 		)
 		.sort_by('public_id', 'desc')
-		.max_results(5)
+		.max_results(20)
 		.execute()
 		.then((result) => {
 			return result.resources;

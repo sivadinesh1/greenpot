@@ -51,7 +51,7 @@ import { useSnapshot } from 'valtio';
 import { FormInputText } from '../../../../components/forms/FormInputText';
 import { FormInputDropdown } from '../../../../components/forms/FormInputDropdown';
 import { FormInputDate } from '../../../../components/forms/FormInputDate';
-import image from 'next/image';
+import ImageNext from 'next/image';
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -88,7 +88,6 @@ export const getServerSideProps = async (context) => {
 			},
 		});
 		accessRights = user?.data?.access_rights;
-		path = `C${user?.data?.company_id}/B${blog_id}`;
 		authors_result = await axios.get(`${process.env.API_URL}/author/company`, {
 			headers: {
 				cookie: cookie!,
@@ -101,7 +100,6 @@ export const getServerSideProps = async (context) => {
 			},
 		});
 		blog = resp.data;
-		console.log('check data in serverside props--->', blog);
 		selectedTag = blog?.tag?.length > 0 ? await getTags(blog.tag) : [];
 		selectedCat = blog?.category?.length > 0 ? await getCategories(blog.category) : [];
 		repo = await getRepo(resp.data.repo_id);
@@ -118,6 +116,8 @@ export const getServerSideProps = async (context) => {
 		//const categories = await getAllCategories(company_id);
 		tags = await getAllTags(company_id);
 
+		//fetch uploaded images
+		path = `C${user?.data?.company_id}/B${blog.id}`;
 		selectedImages = await getImages(path);
 	} catch (error) {
 		console.log(`error in blog edit ${error}`);
@@ -181,10 +181,25 @@ export default function Index({
 
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [imageFile, setImageFile] = useState<any>();
+	const [currentBlog, setCurrentBlog] = useState<any>(blog);
 
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
+
+	const setThumbnail = async () => {
+		let request = {
+			id: currentBlog.id,
+			thumbnail: imageFile.url
+		}
+
+		let resp = await axios.put(`/api/blog/updateThumb`, request);
+		console.log("test response thumbail 2--->", resp);
+		if (resp.status === 200) {
+			setCurrentBlog(resp.data)
+			setAnchorEl(null);
+		}
+	}
 
 	const preloadedValues = {
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
@@ -195,7 +210,7 @@ export default function Index({
 	};
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
-	const uploadLimit = 2;
+	const uploadLimit = 10;
 
 	const [uploadedFiles, setUploadedFiles] = useState(selectedImages?.length > 0 ? selectedImages : []);
 
@@ -270,10 +285,6 @@ export default function Index({
 		setShowAssets(false);
 	};
 
-	// const handleCMSChange = (content) => {
-	// 	setContentBody(content);
-	// };
-
 	const handleClick = (event, item) => {
 		setAnchorEl(event.currentTarget);
 		setImageFile(item);
@@ -285,6 +296,7 @@ export default function Index({
 	const snap = useSnapshot(content);
 
 	const onSubmit = async (formData, event) => {
+		console.log('check form data ---->', formData);
 		if (submitting) {
 			return false;
 		}
@@ -292,7 +304,6 @@ export default function Index({
 			setIsError1(true);
 			return;
 		}
-		console.log('check form data ---->', formData);
 		let status = event.nativeEvent.submitter.id === 'save' ? 'N' : 'Y';
 
 		let tempCatIds = selectedCategorys.map((o) => o.id);
@@ -346,6 +357,7 @@ export default function Index({
 		const data = { publicId: file.public_id, folder: file.folder, operation: 'DELETE' };
 		const response = await axios.post(`/api/blog`, data);
 		setUploadedFiles([...response.data]);
+		// setAnchorEl(null);
 	};
 
 	//cloudinary
@@ -427,6 +439,7 @@ export default function Index({
 												cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
 												publicId={file.public_id}
 												width='100'
+												height='100'
 												crop='scale'
 											/>
 										</div>
@@ -440,22 +453,25 @@ export default function Index({
 					<div className={styles.drop_zone}>Apps !!!!!!!</div>
 				</div>
 				<div className={styles.blog_wrap}>
-					<div className={styles.action_bar}>
-						<div className={styles.filler}>&nbsp;</div>
-						<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
-							Save
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<div className={styles.action_bar}>
+							<div className={styles.filler}>&nbsp;</div>
+							<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
+								Save
 						</Button>
-						{accessRights != 'W' && (
-							<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
-								Publish
+							{accessRights != 'W' && (
+								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
+									Publish
 							</Button>
-						)}
-					</div>
-					<div>
+							)}
+						</div>
 						<div>
-							<form onSubmit={handleSubmit(onSubmit)}>
+							<div>
+								{/* <form onSubmit={handleSubmit(onSubmit)}> */}
 								<div className={styles.article_head_info}>
-									<div className={styles.article_thumbnail}>Thumbnail Not Set</div>
+									<div className={styles.article_thumbnail}>
+										<div className={styles.image}><ImageNext src={currentBlog.thumbnail} width={"150px"} height={"150px"} /></div>
+									</div>
 									<div>
 										<div className={styles.rowGap}>
 											<FormInputText name='title' control={control} label='Title' variant='standard' />
@@ -479,50 +495,51 @@ export default function Index({
 									''
 								)} */}
 
-								{MyEditor && <MyEditor data={blog.content} />}
-							</form>
-						</div>
+								{MyEditor && <MyEditor data={blog.content} blogId={blog.id} />}
+								{/* </form> */}
+							</div>
 
-						<div>
-							<Dialog
-								// classes={{ paper: classes.dialogPaper }}
-								fullWidth={true}
-								maxWidth='lg'
-								open={openDialog}
-								onClose={handleCloseDialog}
-								aria-labelledby='max-width-dialog-title'>
-								<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
-								<DialogContent dividers>
-									<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
-										{uploadedFiles.map((file) => (
-											<div key={file.public_id} style={{ margin: '10px auto' }}>
-												<div onClick={() => removeImage(file)}>
-													<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
-												</div>
-												<Image
-													cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
-													publicId={file.public_id}
-													width='100'
-													crop='scale'
-												/>
+							<div>
+								<Dialog
+									// classes={{ paper: classes.dialogPaper }}
+									fullWidth={true}
+									maxWidth='lg'
+									open={openDialog}
+									onClose={handleCloseDialog}
+									aria-labelledby='max-width-dialog-title'>
+									<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
+									<DialogContent dividers>
+										<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
+											{uploadedFiles.map((file) => (
+												<div key={file.public_id} style={{ margin: '10px auto' }}>
+													<div onClick={() => removeImage(file)}>
+														<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
+													</div>
+													<Image
+														cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+														publicId={file.public_id}
+														width='100'
+														crop='scale'
+													/>
 
-												<div className={styles.textCenter}>
-													<CopyToClipboard text={file.url} onCopy={() => setCopy(true)}>
-														<Button>Copy</Button>
-													</CopyToClipboard>
+													<div className={styles.textCenter}>
+														<CopyToClipboard text={file.url} onCopy={() => setCopy(true)}>
+															<Button>Copy</Button>
+														</CopyToClipboard>
+													</div>
 												</div>
-											</div>
-										))}
-									</div>
-								</DialogContent>
-								<DialogActions>
-									<Button onClick={handleCloseDialog} color='primary'>
-										Back
+											))}
+										</div>
+									</DialogContent>
+									<DialogActions>
+										<Button onClick={handleCloseDialog} color='primary'>
+											Back
 									</Button>
-								</DialogActions>
-							</Dialog>
+									</DialogActions>
+								</Dialog>
+							</div>
 						</div>
-					</div>
+					</form>
 				</div>
 				<div className={showMetaSection ? `${styles.r_normal}` : `${styles.r_hidden}`}>
 					<div>META DATA</div>
@@ -615,7 +632,9 @@ export default function Index({
 				</div>
 			</div>
 			<div className={showMetaSection ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
-				<div onClick={handleShowMetaSection}>RMenu</div>
+				<div onClick={handleShowMetaSection} className={styles.menu_item}>
+					<Image src='/static/images/form.svg' alt='edit' width='30px' height='30px' />
+				</div>
 			</div>
 
 			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
@@ -625,7 +644,7 @@ export default function Index({
 			</Snackbar>
 
 			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
-				<MenuItem onClick={handleClose}>Set as thumbnail</MenuItem>
+				<MenuItem onClick={() => setThumbnail()}>Set as thumbnail</MenuItem>
 				<MenuItem onClick={handleClose}>
 					<CopyToClipboard text={imageFile?.url} onCopy={() => setCopy(true)}>
 						<Button>Copy url</Button>
