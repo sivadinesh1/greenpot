@@ -16,7 +16,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-
+import InputLabel from '@material-ui/core/InputLabel';
 import { Image } from 'cloudinary-react';
 
 import { useDropzone } from 'react-dropzone';
@@ -52,6 +52,9 @@ import { FormInputText } from '../../../../components/forms/FormInputText';
 import { FormInputDropdown } from '../../../../components/forms/FormInputDropdown';
 import { FormInputDate } from '../../../../components/forms/FormInputDate';
 import ImageNext from 'next/image';
+import Switch from '@mui/material/Switch';
+import FormControlLabel from '@mui/material/FormControlLabel';
+
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -207,6 +210,9 @@ export default function Index({
 		author: blog.author,
 		thumbnail: blog.thumbnail,
 		layout: blog.layout,
+		slug: blog.slug,
+		is_author: blog.is_author,
+		is_publish_date: blog.is_publish_date
 	};
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
@@ -221,6 +227,7 @@ export default function Index({
 	const [showApps, setShowApps] = useState(false);
 
 	const [showMetaSection, setShowMetaSection] = useState(false);
+	const [showLayout, setShowLayout] = useState(false)
 
 	let schema = yup.object().shape({
 		title: yup.string().required('Title is required').min(3).max(72),
@@ -229,8 +236,11 @@ export default function Index({
 		categories: yup.string().nullable().notRequired(),
 		tags: yup.string().nullable().notRequired(),
 		company_id: yup.string().nullable().notRequired(),
+		slug: yup.string().nullable().notRequired(),
 		layout: yup.string().nullable().notRequired(),
 		thumbnail: yup.string().nullable().notRequired(),
+		is_author: yup.boolean().nullable().notRequired(),
+		is_publish_date: yup.boolean().nullable().notRequired(),
 	});
 	const {
 		register,
@@ -283,7 +293,13 @@ export default function Index({
 	const handleShowMetaSection = () => {
 		setShowMetaSection(!showMetaSection);
 		setShowAssets(false);
+		setShowLayout(false)
 	};
+	const handleShowLayout = () => {
+		setShowLayout(!showLayout)
+		setShowMetaSection(false);
+		setShowAssets(false);
+	}
 
 	const handleClick = (event, item) => {
 		setAnchorEl(event.currentTarget);
@@ -294,6 +310,10 @@ export default function Index({
 		setOpenDialog(false);
 	};
 	const snap = useSnapshot(content);
+
+	const handleView = () => {
+		Router.push(`/admin/blog/${blog.blog_id}`)
+	}
 
 	const onSubmit = async (formData, event) => {
 		console.log('check form data ---->', formData);
@@ -324,6 +344,8 @@ export default function Index({
 			status: status,
 			createdAt: blog.published_on,
 			thumbnail: formData.thumbnail,
+			is_publish_date: formData.is_publish_date,
+			is_author: formData.is_author
 		};
 		if (snap.obj != null) values['content'] = snap.obj;
 		console.log('test values data---->', values);
@@ -456,9 +478,9 @@ export default function Index({
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className={styles.action_bar}>
 							<div className={styles.filler}>&nbsp;</div>
-							<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
-								Save
-						</Button>
+							<Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
+								view
+							</Button>
 							{accessRights != 'W' && (
 								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
 									Publish
@@ -467,21 +489,6 @@ export default function Index({
 						</div>
 						<div>
 							<div>
-								{/* <form onSubmit={handleSubmit(onSubmit)}> */}
-								<div className={styles.article_head_info}>
-									<div className={styles.article_thumbnail}>
-										<div className={styles.image}><ImageNext src={currentBlog.thumbnail} width={"150px"} height={"150px"} /></div>
-									</div>
-									<div>
-										<div className={styles.rowGap}>
-											<FormInputText name='title' control={control} label='Title' variant='standard' />
-										</div>
-										<div className={styles.rowGap}>
-											<FormInputText name='description' control={control} label='Subtitle' variant='standard' />
-										</div>
-									</div>
-								</div>
-
 								{/* {!isEmpty(errors) ? (
 									<div>
 										<div className='error-header'>
@@ -501,35 +508,48 @@ export default function Index({
 
 							<div>
 								<Dialog
-									// classes={{ paper: classes.dialogPaper }}
-									fullWidth={true}
-									maxWidth='lg'
+									maxWidth='xl'
 									open={openDialog}
 									onClose={handleCloseDialog}
 									aria-labelledby='max-width-dialog-title'>
-									<DialogTitle id='customized-dialog-title'>Image Gallery</DialogTitle>
+									<DialogTitle id='customized-dialog-title'>Media Gallery</DialogTitle>
 									<DialogContent dividers>
-										<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: 'repeat(7, 1fr)', margin: 'auto auto' }}>
-											{uploadedFiles.map((file) => (
-												<div key={file.public_id} style={{ margin: '10px auto' }}>
-													<div onClick={() => removeImage(file)}>
-														<Image src='/static/images/close.svg' alt='close' width='10px' height='10px' />
-													</div>
-													<Image
-														cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
-														publicId={file.public_id}
-														width='100'
-														crop='scale'
-													/>
+										<div className={styles.no_image}>
+											{uploadedFiles.length === 0 && (
+												<>
+													<div>No Images</div>
+												</>
+											)}
 
-													<div className={styles.textCenter}>
-														<CopyToClipboard text={file.url} onCopy={() => setCopy(true)}>
-															<Button>Copy</Button>
-														</CopyToClipboard>
-													</div>
+											{uploadedFiles.length > 0 && (
+												<div style={{ display: 'grid', padding: '6px 6px 6px', gridTemplateColumns: '1fr 1fr 1fr', margin: 'auto auto auto' }}>
+													{uploadedFiles.map((file) => (
+														<div key={file.public_id} className={styles.image_item}>
+															<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
+																<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
+															</div>
+
+															<Image
+																cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+																publicId={file.public_id}
+																width='100'
+																height='100'
+																crop='scale'
+															/>
+														</div>
+													))}
 												</div>
-											))}
+											)}
 										</div>
+										<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
+											<MenuItem onClick={() => setThumbnail()}>Set as thumbnail</MenuItem>
+											<MenuItem onClick={handleClose}>
+												<CopyToClipboard text={imageFile?.url} onCopy={() => setCopy(true)}>
+													<Button>Copy url</Button>
+												</CopyToClipboard>
+											</MenuItem>
+										</Menu>
+
 									</DialogContent>
 									<DialogActions>
 										<Button onClick={handleCloseDialog} color='primary'>
@@ -543,97 +563,150 @@ export default function Index({
 				</div>
 				<div className={showMetaSection ? `${styles.r_normal}` : `${styles.r_hidden}`}>
 					<div>META DATA</div>
-					<div className={styles.rowGap}>
-						<Autocomplete
-							multiple
-							id='tags-standard'
-							freeSolo
-							filterSelectedOptions
-							fullWidth
-							options={categories}
-							onChange={(e, newValue) => setSelectedCategorys(newValue)}
-							getOptionLabel={(option) => option.name}
-							value={selectedCategorys}
-							renderInput={(params) => (
-								<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
-							)}
-						/>
-						{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
-					</div>
-					<div className={styles.rowGap}>
-						<Autocomplete
-							multiple
-							id='tags-standard'
-							freeSolo
-							filterSelectedOptions
-							fullWidth
-							options={tags}
-							onChange={(e, newValue) => setSelectedTags(newValue)}
-							getOptionLabel={(option) => option.name}
-							value={selectedTags}
-							renderInput={(params) => (
-								<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
-							)}
-						/>
-						{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
-					</div>
-					<div className={styles.rowGap}>
-						<MuiPickersUtilsProvider utils={DateFnsUtils}>
-							<KeyboardDatePicker
-								margin='normal'
-								id='date-picker-dialog'
-								label='Article Date'
-								views={['year', 'month', 'date']}
-								value={selectedDate}
-								format='yyyy-MM-dd'
-								onChange={handleDateChange}
-								KeyboardButtonProps={{
-									'aria-label': 'change date',
-								}}
+					<form onSubmit={handleSubmit(onSubmit)}>
+						<div className={styles.rowGap}>
+							<FormInputText name='title' control={control} label='SEO Blog Title' variant='standard' />
+						</div>
+						<div className={styles.rowGap}>
+							<FormInputText name='slug' control={control} label='Slug' variant='standard' />
+						</div>
+						<div className={styles.rowGap}>
+							<FormInputText name='description' control={control} label='SEO Blog Description' variant='standard' />
+						</div>
+						<div className={styles.rowGap}>
+							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>Feature Image</InputLabel>
+							<div className={styles.article_thumbnail}>
+								<div className={styles.image}><ImageNext src={currentBlog.thumbnail} width={"150px"} height={"150px"} /></div>
+							</div>
+							<div className={styles.flex_end}><Button onClick={handleOpenDialog} color='primary'>On Change</Button></div>
+						</div>
+						<div className={styles.rowGap}>
+							<Autocomplete
+								multiple
+								id='tags-standard'
+								freeSolo
+								filterSelectedOptions
 								fullWidth
+								options={categories}
+								onChange={(e, newValue) => setSelectedCategorys(newValue)}
+								getOptionLabel={(option) => option.name}
+								value={selectedCategorys}
+								renderInput={(params) => (
+									<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+								)}
 							/>
-						</MuiPickersUtilsProvider>
-					</div>
-					{/* <div className={styles.rowGap}>
-						<FormInputDate
-							name='author'
-							control={control}
-							label='Airticle Date' />
+							{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
+						</div>
+						<div className={styles.rowGap}>
+							<Autocomplete
+								multiple
+								id='tags-standard'
+								freeSolo
+								filterSelectedOptions
+								fullWidth
+								options={tags}
+								onChange={(e, newValue) => setSelectedTags(newValue)}
+								getOptionLabel={(option) => option.name}
+								value={selectedTags}
+								renderInput={(params) => (
+									<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
+								)}
+							/>
+							{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
+						</div>
+						<div className={styles.rowGap}>
+							<MuiPickersUtilsProvider utils={DateFnsUtils}>
+								<KeyboardDatePicker
+									margin='normal'
+									id='date-picker-dialog'
+									label='Article Date'
+									views={['year', 'month', 'date']}
+									value={selectedDate}
+									format='yyyy-MM-dd'
+									onChange={handleDateChange}
+									KeyboardButtonProps={{
+										'aria-label': 'change date',
+									}}
+									fullWidth
+								/>
+							</MuiPickersUtilsProvider>
+						</div>
+						<div className={styles.rowGap}>
+							<FormInputDropdown
+								name='author'
+								control={control}
+								width={'100%'}
+								defaultValue={{ label: '', value: '' }}
+								label='Select Author'>
+								{authors.map((author, index) => (
+									<MenuItem key={index} value={author.first_name}>
+										{author.first_name}
+									</MenuItem>
+								))}
+							</FormInputDropdown>
+						</div>
+						<div className={styles.rowGap}>
+							<FormInputDropdown
+								name='layout'
+								control={control}
+								width={'100%'}
+								defaultValue={{ label: '', value: '' }}
+								label='Select Layout'>
+								{options.map((option: any) => (
+									<MenuItem key={option.value} value={option.value}>
+										{option.label}
+									</MenuItem>
+								))}
+							</FormInputDropdown>
+						</div>
+						<div className={styles.rowGap}>
+							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>By Line</InputLabel>
+							<div className={styles.blog_switch}>
+								{/* <div>
+									<FormControlLabel
+										value="end"
+										control={<Switch color="primary" />}
+										label="Date Edited"
+										labelPlacement="end"
+									/>
+								</div> */}
 
-					</div> */}
-					<div className={styles.rowGap}>
-						<FormInputDropdown
-							name='author'
-							control={control}
-							width={'100%'}
-							defaultValue={{ label: '', value: '' }}
-							label='Select Author'>
-							{authors.map((author, index) => (
-								<MenuItem key={index} value={author.first_name}>
-									{author.first_name}
-								</MenuItem>
-							))}
-						</FormInputDropdown>
-					</div>
-					<div className={styles.rowGap}>
-						<FormInputDropdown
-							name='layout'
-							control={control}
-							width={'100%'}
-							defaultValue={{ label: '', value: '' }}
-							label='Select Layout'>
-							{options.map((option: any) => (
-								<MenuItem key={option.value} value={option.value}>
-									{option.label}
-								</MenuItem>
-							))}
-						</FormInputDropdown>
-					</div>
+								<div>
+									<div className={styles.flex_center}>
+										<div><Controller name='is_author' control={control} render={({ field }) => <Switch {...field} />} /></div>
+										<div style={{ paddingTop: '5px' }}>Show author </div>
+									</div>
+								</div>
+								<div>
+									<div className={styles.flex_center}>
+										<div><Controller name='is_publish_date' control={control} render={({ field }) => <Switch {...field} />} /></div>
+										<div style={{ paddingTop: '5px' }}>Date published </div>
+									</div>
+								</div>
+								<div>
+									<div className={styles.flex_center}>
+										<div><Controller control={control} name='someName' render={({ field }) => <Switch disabled {...field} />} /></div>
+										<div style={{ paddingTop: '5px' }}>Date edited </div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className={styles.flex_center}>
+							<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
+								Save</Button>
+						</div>
+					</form>
+				</div>
+				<div className={showLayout ? `${styles.r_normal}` : `${styles.r_hidden}`}>
+					<div>Test Layout</div>
 				</div>
 			</div>
 			<div className={showMetaSection ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
 				<div onClick={handleShowMetaSection} className={styles.menu_item}>
 					<Image src='/static/images/form.svg' alt='edit' width='30px' height='30px' />
+				</div>
+				<div onClick={handleShowLayout} className={styles.menu_item}>
+					<Image src='/static/images/layout.svg' alt='edit' width='30px' height='30px' />
 				</div>
 			</div>
 
@@ -642,7 +715,6 @@ export default function Index({
 					{message}
 				</MuiAlert>
 			</Snackbar>
-
 			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
 				<MenuItem onClick={() => setThumbnail()}>Set as thumbnail</MenuItem>
 				<MenuItem onClick={handleClose}>

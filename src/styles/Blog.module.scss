@@ -113,7 +113,7 @@
 }
 
 .rowGap {
-	padding: 1rem;
+	padding: 0.5rem;
 }
 
 .textField {
@@ -316,9 +316,10 @@
 }
 
 .article_thumbnail {
-	// background-color: rgb(233, 233, 255);
+	 background-color: rgb(233, 233, 255);
 	display: grid;
-	place-content: center;
+	 place-content: center;
+	// padding: 20px 0;
 	// font-size: 14px;
 	// font-weight: normal;
 }
@@ -336,7 +337,7 @@
 	max-width: 650px;
 	margin: 0 auto;
 	margin-bottom: 0.5rem;
-	position: sticky;
+	// position: sticky;
 	top: 40px;
 	z-index: 9999;
 	width: 100%;
@@ -352,9 +353,122 @@
 	width: 100%;
 }
 .image{
-	height: 150px;
-	width: 150px;
+	height: 120px;
+	width: 120px;
 	object-fit: cover;
+}
+
+
+.blog_view_wrap {
+	display: inline-block;
+	position: relative;
+	min-height: 100vh;
+	width: 100%;
+
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	border-radius: 10px;
+
+	margin: 0 auto;
+	// height: calc(100% - 53px);
+	margin-top: 80px;
+	padding: 1rem 2rem;
+	background-color: #fff;
+	
+}
+.blog_view{
+	display: flex;
+	justify-content: center;
+	padding:2rem;
+	background-color: white;
+}
+
+.mobile{
+	display: flex;
+	justify-content: center;
+	width: 500px;
+	border-radius: 5px;
 
 }
 
+.desktop{
+	display: flex;
+	justify-content: center;
+	width: 800px;
+	border-radius: 5px;
+	
+}
+
+// custom style
+
+.button {
+	display: inline-flex;
+	align-items: center;
+	border: 0;
+	padding: 0.375em 0.75em;
+	border-radius: 4px;
+	background-color: transparent;
+	cursor: pointer;
+	border-bottom: 1px solid;
+	margin-right: 0.5rem;
+	transition: .25s ease;
+	font-weight: 500;
+	svg {
+	   margin-right: 0.375em;
+	   width: 1.25em;
+	   height: 1.25em;
+	}
+ 
+	&--save {
+	   background-color: #e0e4fa;
+	   color: #2f47be;
+	   &:hover {
+		  color: #e0e4fa;
+		  background-color: #2f47be;
+	   }
+	}
+ 
+	&--schedule {
+	   background-color: #ece0fa;
+	   color: #722fbe;
+	   &:hover {
+		  color: #ece0fa;
+		  background-color: #722fbe;
+	   }
+	}
+ 
+	&--publish {
+	   background-color: #8ae2b6;
+	   color: #22744b;
+	   &:hover {
+		  color: #8ae2b6;
+		  background-color: #22744b;
+	   }
+	}
+ 
+	&--delete {
+	   background-color: #fdc8bf;
+	   color: #bd1717;
+	   &:hover {
+		  color: #fdc8bf;
+		  background-color: #bd1717;
+	   }
+	}
+ }
+ 
+
+ .flex_end{
+	 display: flex;
+	 justify-content: flex-end;
+	 padding: 10px;
+ }
+
+ .flex_center{
+	display: flex;
+	justify-content: center;
+	// padding: 10px;
+}
+.blog_switch{
+	display: flex;
+	flex-direction: column;
+	text-align: center;
+}

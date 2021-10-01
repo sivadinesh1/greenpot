@@ -156,7 +156,7 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 	return bigIntToString(result);
 };
 
-export const updateBlog = async (id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content, layout) => {
+export const updateBlog = async (id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content, layout, is_author, is_publish_date) => {
 	let arrayOfCategories = categories;
 	//&& categories.split(',');
 	let arrayOfTags = tag;
@@ -214,7 +214,9 @@ export const updateBlog = async (id, title, description, author, blogDate, categ
 			updatedAt: currentDate,
 			published_on: status === 'N' ? createdAt : currentDate,
 			thumbnail: thumbnail,
-			layout: layout
+			layout: layout,
+			is_author: is_author,
+			is_publish_date: is_publish_date
 		};
 
 		//dynamically set the valtio content

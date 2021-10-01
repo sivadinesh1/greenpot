@@ -4,7 +4,7 @@ import { Button } from '@material-ui/core';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import edjsHTML from '../../../components/editor-convertion'
-
+import styles from '../../../styles/Blog.module.scss'
 // import EditorView from '../../EditorView';
 // import content from '*.jpg';
 let EditorView;
@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
 }
 
 
-export default function BlogView({ blog, html, isEmpty }) {
+export default function BlogView({ blog, html, isEmpty, view }) {
 	const router = useRouter();
 	const edjsParser = edjsHTML();
 	//manual convertion using switch
@@ -47,14 +47,18 @@ export default function BlogView({ blog, html, isEmpty }) {
 			</div>
 
 			<br />
-			<div>{blog.title}</div>
-			<br />
-			{!isEmpty && <div dangerouslySetInnerHTML={{ __html: html }}></div>}
-			{isEmpty && <div>still Not publish the Blog</div>}
+			<div className={view === "mobile" ? styles.mobile : styles.desktop} >
+				<div className={styles.blog_view_wrap}>
+					<div>{blog.title}</div>
+					<br />
+					{!isEmpty && <div dangerouslySetInnerHTML={{ __html: html }}></div>}
+					{isEmpty && <div>still Not publish the Blog</div>}
+				</div>
+			</div>
 			{/* <div>
 				{EditorView && blog.publish_content && <EditorView content={blog.publish_content} />}
 				{blog.publish_content == null && <div>still Not publish the Blog</div>}
 			</div> */}
-		</div>
+		</div >
 	);
 }
