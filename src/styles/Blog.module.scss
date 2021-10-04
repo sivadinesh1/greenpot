@@ -472,3 +472,27 @@
 	flex-direction: column;
 	text-align: center;
 }
+
+
+.layout{
+	position: relative;
+	width: 80px;
+	height: 50px;
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	border-radius: 10px;
+	margin: 4px auto;
+	padding: 5px;
+	background-color: #fff;
+	text-align: center;
+}
+.layout_list{
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	width: 200px;
+}
+.layout_title{
+	text-align: center;
+	font-size: 10px;
+	font-family:  "Layout", sans-serif;
+	color:black;
+}

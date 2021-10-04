@@ -8,7 +8,7 @@ import dynamic from 'next/dynamic';
 import { makeStyles } from '@material-ui/core/styles';
 
 import TextField from '@material-ui/core/TextField';
-import { Button, Divider, Menu, MenuItem } from '@material-ui/core';
+import { Button, Divider, Menu, MenuItem, withWidth } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -54,6 +54,10 @@ import { FormInputDate } from '../../../../components/forms/FormInputDate';
 import ImageNext from 'next/image';
 import Switch from '@mui/material/Switch';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import AdUnitsIcon from '@mui/icons-material/AdUnits';
+import AdbIcon from '@mui/icons-material/Adb';
+
 
 
 let MyEditor;
@@ -340,7 +344,6 @@ export default function Index({
 			categories: uniqCategorys,
 			tag: uniqTags,
 			company_id: company_id,
-			layout: formData.layout,
 			status: status,
 			createdAt: blog.published_on,
 			thumbnail: formData.thumbnail,
@@ -420,6 +423,82 @@ export default function Index({
 		{ label: 'Classic pro', value: 'classic pro' },
 	];
 
+
+	var layoutarray = [
+		{
+			label: "classic",
+			icon: AdUnitsIcon
+		},
+		{
+			label: "classic pro",
+			icon: AdbIcon
+		}
+		, {
+			label: "layout3",
+			icon: AdbIcon
+		},
+		// {
+		// 	label: "layout4",
+		// 	icon: AdbIcon
+		// }, {
+		// 	label: "layout5",
+		// 	icon: AdbIcon
+		// },
+		// {
+		// 	label: "layout6",
+		// 	icon: AdbIcon
+		// }
+	]
+
+	const initialArray = (data) => {
+		var initialGroup = {}
+		data.map((layout) => {
+			initialGroup[layout.label] = false;
+		});
+		return initialGroup;
+	}
+
+	let group = initialArray(layoutarray);
+	let initialGroup = { ...group }
+
+	initialGroup[blog.layout.toString().toLowerCase().replace("_", " ")] = true
+	const [layoutGroup, setLayoutGroup] = useState(initialGroup);
+
+	const handleLayout = async (event) => {
+		setLayoutGroup({ ...group, [event.target.name]: true })
+		let request = {
+			id: currentBlog.id,
+			layout: event.target.name.toString().toLowerCase().replace(" ", "_")
+		}
+		let resp = await axios.put(`/api/blog/updateLayout`, request);
+		if (resp.status === 200) {
+			setCurrentBlog(resp.data)
+		}
+	};
+
+	//layout option 
+	const chooseLayout = () => {
+
+		return (
+			<div className={styles.layout_list}>
+				{Object.keys(layoutGroup).map((key, index) => (
+					<div className={styles.layout}>
+						<Checkbox
+							checked={layoutGroup[key]}
+							onChange={handleLayout}
+							inputProps={{ 'aria-label': 'controlled' }}
+							name={key}
+							icon={<AdbIcon />}
+							checkedIcon={<AdbIcon />}
+						// label="test"
+						/>
+						<div className={styles.layout_title}>{key}</div> </div>
+
+				))}
+			</div>
+		);
+
+	}
 	return (
 		<>
 			<div className={styles.main_menu}>
@@ -481,6 +560,9 @@ export default function Index({
 							<Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
 								view
 							</Button>
+							<Button variant='contained' color='primary' style={{ marginLeft: '10px' }}>
+								clear
+							</Button>
 							{accessRights != 'W' && (
 								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
 									Publish
@@ -489,19 +571,6 @@ export default function Index({
 						</div>
 						<div>
 							<div>
-								{/* {!isEmpty(errors) ? (
-									<div>
-										<div className='error-header'>
-											<span style={{ borderBottom: '1px solid red', fontWeight: 'bold', paddingBottom: '2px' }}>
-												Please fix below errors
-											</span>
-										</div>
-										<ErrorSummary errors={errors} />
-									</div>
-								) : (
-									''
-								)} */}
-
 								{MyEditor && <MyEditor data={blog.content} blogId={blog.id} />}
 								{/* </form> */}
 							</div>
@@ -645,7 +714,7 @@ export default function Index({
 								))}
 							</FormInputDropdown>
 						</div>
-						<div className={styles.rowGap}>
+						{/* <div className={styles.rowGap}>
 							<FormInputDropdown
 								name='layout'
 								control={control}
@@ -658,7 +727,7 @@ export default function Index({
 									</MenuItem>
 								))}
 							</FormInputDropdown>
-						</div>
+						</div> */}
 						<div className={styles.rowGap}>
 							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>By Line</InputLabel>
 							<div className={styles.blog_switch}>
@@ -699,6 +768,7 @@ export default function Index({
 				</div>
 				<div className={showLayout ? `${styles.r_normal}` : `${styles.r_hidden}`}>
 					<div>Test Layout</div>
+					{chooseLayout()}
 				</div>
 			</div>
 			<div className={showMetaSection ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>

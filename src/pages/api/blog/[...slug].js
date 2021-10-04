@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { getRepoBlogSummary, getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId, updateThumbnail, updateContent } from '../../../service/blog.service';
+import { getRepoBlogSummary, getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId, updateThumbnail, updateContent, updateLayout } from '../../../service/blog.service';
 import { getRepos } from '../../../service/repository.service';
 import { bigIntToString } from '../../../db-config/utils';
 import { auth } from '../../../middleware/auth';
@@ -86,6 +86,10 @@ const handler = nc()
 		} else if (slug[0] === 'updateContent') {
 			const { id, content } = req.body;
 			const result = await updateContent(id, content);
+			res.status(200).json(result);
+		} else if (slug[0] === 'updateLayout') {
+			const { id, layout } = req.body;
+			const result = await updateLayout(id, layout);
 			res.status(200).json(result);
 		}
 	});

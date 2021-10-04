@@ -140,7 +140,6 @@ export const getCustomTempByNano = async (nanoid) => {
 
 export const getLeadPageByRepo = async (id) => {
 	var response = [];
-	console.log('check request data', id);
 	try {
 		const result = await prisma.lead_page.findMany({
 			where: {

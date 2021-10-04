@@ -156,7 +156,7 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 	return bigIntToString(result);
 };
 
-export const updateBlog = async (id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content, layout, is_author, is_publish_date) => {
+export const updateBlog = async (id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content, is_author, is_publish_date) => {
 	let arrayOfCategories = categories;
 	//&& categories.split(',');
 	let arrayOfTags = tag;
@@ -214,7 +214,6 @@ export const updateBlog = async (id, title, description, author, blogDate, categ
 			updatedAt: currentDate,
 			published_on: status === 'N' ? createdAt : currentDate,
 			thumbnail: thumbnail,
-			layout: layout,
 			is_author: is_author,
 			is_publish_date: is_publish_date
 		};
@@ -232,7 +231,6 @@ export const updateBlog = async (id, title, description, author, blogDate, categ
 			},
 			data: request
 		});
-		console.log("test updated result--->", result)
 	} catch (error) {
 		console.log('updateBlog error::' + error.message);
 	}
@@ -280,7 +278,6 @@ export const updateThumbnail = async (id, thumbnail) => {
 			},
 			data: request
 		});
-		console.log("thumbnail update result--->", result)
 	} catch (error) {
 		console.log('thumbnail update error::' + error.message);
 	}
@@ -302,6 +299,25 @@ export const updateContent = async (id, content) => {
 		});
 	} catch (error) {
 		console.log('content update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateLayout = async (id, layout) => {
+	let result = null;
+	try {
+		let request = {
+			layout: layout,
+		};
+
+		result = await prisma.blog.update({
+			where: {
+				id: Number(id),
+			},
+			data: request
+		});
+	} catch (error) {
+		console.log('layout update error::' + error.message);
 	}
 	return bigIntToString(result);
 };

@@ -18,7 +18,7 @@ const handler = nc()
 		}
 	})
 	.put(async (req, res) => {
-		const { id, title, description, author, blogDate, categories, tag, content, company_id, status, createdAt, thumbnail, layout, is_author, is_publish_date } = req.body;
+		const { id, title, description, author, blogDate, categories, tag, content, company_id, status, createdAt, thumbnail, is_author, is_publish_date } = req.body;
 
 		const errors = [];
 		const isdata = await checkDuplicateTitle(title, company_id);
@@ -95,7 +95,7 @@ const handler = nc()
 		// 	},
 		// });
 
-		const result = await updateBlog(id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content, layout, is_author, is_publish_date);
+		const result = await updateBlog(id, title, description, author, blogDate, categories, tag, company_id, status, createdAt, thumbnail, content, is_author, is_publish_date);
 
 		res.status(201).send({ title: title, repo_id: result.repo_id, message: 'success' });
 	});
