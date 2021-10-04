@@ -26,11 +26,11 @@ function MyEditor({ data, blogId }) {
 		content.obj = savedData;
 		let request = {
 			id: blogId,
-			content: savedData
-		}
+			content: savedData,
+		};
 		let resp = await axios.put(`/api/blog/updateContent`, request);
-		console.log("test response content updtea--->1", resp);
-	}
+		console.log('test response content updtea--->1', resp);
+	};
 
 	const debounceOnChange = React.useCallback(debounce(saveBlog, 5000), []);
 
@@ -41,10 +41,22 @@ function MyEditor({ data, blogId }) {
 	// 	setEditorData(savedData)
 	// 	 saveBlog();
 	// }
+	// const handleReady = (editor) => {
+	// 	debugger;
+	// 	const undo = new Undo({ editor });
+	// 	undo.initialize(data);
+	// };
+
+	// const handleReady = (editor) => {
+	// 	const undo = new Undo({ editor });
+	// 	undo.initialize(data);
+	// };
+
 	const handleReady = (editor) => {
 		const undo = new Undo({ editor });
 		undo.initialize(data);
 	};
+
 	return (
 		<>
 			<EditorJs
@@ -60,7 +72,6 @@ function MyEditor({ data, blogId }) {
 				data={data}
 				onReady={handleReady}
 			/>
-
 		</>
 	);
 }
