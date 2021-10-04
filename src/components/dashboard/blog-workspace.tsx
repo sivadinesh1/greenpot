@@ -66,26 +66,23 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 
 	const handleBlogView = () => {
 		setAnchorEl(null);
-		Router.push(`/admin/blog/${blogItem.blog_id}`)
-	}
+		Router.push(`/admin/blog/${blogItem.blog_id}`);
+	};
 
 	return (
 		<>
 			<div className={styles.page_header}>{selectedRepo?.repo_name}</div>
 			<div className={styles.repo_list}>
 				<div className={styles.repo_creator}>
-					{selectedRepo?.repo_type === 'B' && (
-						<div className={styles.left} onClick={(event) => handleNewArticle(event)}>
-							<div>New Blog Article</div>
-							<div style={{ placeSelf: 'center' }}>
-								<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
-							</div>
+					<div className={styles.left} onClick={(event) => handleNewArticle(event)}>
+						<div>New Blog Article</div>
+						<div style={{ placeSelf: 'center' }}>
+							<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
 						</div>
-					)}
+					</div>
 				</div>
 
-				{selectedRepo?.repo_type === 'B' &&
-					blogs &&
+				{blogs &&
 					blogs?.map((item, index) => {
 						return (
 							<div key={index} className={styles.list_blogs}>
@@ -93,14 +90,21 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 									{item.title}
 								</div> */}
 								<div className={styles.thumbnail} onClick={() => editBlog(item)}>
-									<Image src={item.thumbnail} height='155px' width='180px' />
-									<div>{item.title}</div>
+									<Image
+										key={index}
+										src={item.thumbnail}
+										height={176}
+										width={280}
+										layout='responsive'
+										objectFit='cover'
+										objectPosition='top center'
+									/>
 								</div>
 								<div className={styles.footer}>
-									<div>&nbsp;</div>
+									<div>{item.title}</div>
 
 									<div onClick={(event) => handleClick(event, item)}>
-										<Image src='/static/images/three-dots.svg' alt='edit' width='24px' height='24px' />
+										<Image src='/static/images/vertical-three-dots.svg' alt='edit' width='24px' height='24px' />
 									</div>
 								</div>
 							</div>

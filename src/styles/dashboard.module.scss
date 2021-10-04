@@ -45,13 +45,13 @@
 
 .list_blogs {
 	display: grid;
-	grid-template-rows: 1fr 60px;
-	width: 180px;
-	height: 210px;
+	grid-template-rows: 1fr 80px;
+	width: 280px;
+	height: 256px;
 	color: #774f38;
 	font-weight: 400;
 	font-size: 16px;
-	background-color: rgb(255, 255, 255);
+	//background-color: rgb(255, 255, 255);
 	// background-color: #c5e0dc;
 	border-radius: 1rem;
 	border-radius: 8px;
@@ -60,12 +60,10 @@
 	transition: all 0.2s ease-in 0s;
 	animation: 0.3s ease-in-out 0s;
 
-	.thumbnail{
-		object-fit: cover;
-
-		.blog_title {
-			text-align: center;
-		}
+	.thumbnail {
+		// object-fit: cover;
+		// background-color: black;
+		// opacity: 0.6;
 	}
 
 	.blog_title {
@@ -77,8 +75,8 @@
 	.footer {
 		display: grid;
 		grid-template-columns: 1fr 30px;
-		padding: 1rem;
-		background-color: #fff;
+		padding: 0.3rem 0.1rem 0.1rem 0.5rem;
+		//background-color: #fff;
 
 		.right {
 			text-align: center;
@@ -88,9 +86,9 @@
 
 .repo_list {
 	display: flex;
-
+	padding: 1rem;
 	flex-wrap: wrap;
-	gap: 1rem;
+	gap: 2rem;
 }
 
 .page_header {
