@@ -57,6 +57,8 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import AdUnitsIcon from '@mui/icons-material/AdUnits';
 import AdbIcon from '@mui/icons-material/Adb';
+import DeleteDialog from '../../../../components/elements/ui/Dialog/DeleteDialog';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 
 
@@ -499,6 +501,24 @@ export default function Index({
 		);
 
 	}
+
+	// delete option 
+	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+	const handleOpenDeleteDialog = () => {
+		setOpenDeleteDialog(true);
+	};
+
+	const handleCloseDeleteDialog = () => {
+		setOpenDeleteDialog(false);
+	};
+	const confirmDelete = async () => {
+		let response = await axios.delete(`/api/blog/${currentBlog.id}`);
+		if (response.status === 200) {
+			Router.push(`/dashboard`);
+			handleCloseDeleteDialog();
+		}
+		//mutate();
+	};
 	return (
 		<>
 			<div className={styles.main_menu}>
@@ -571,7 +591,7 @@ export default function Index({
 						</div>
 						<div>
 							<div>
-								{MyEditor && <MyEditor data={blog.content} blogId={blog.id} />}
+								{MyEditor && <MyEditor data={blog.content == null ? undefined : blog.content} blogId={blog.id} />}
 								{/* </form> */}
 							</div>
 
@@ -769,6 +789,13 @@ export default function Index({
 				<div className={showLayout ? `${styles.r_normal}` : `${styles.r_hidden}`}>
 					<div>Test Layout</div>
 					{chooseLayout()}
+					<br />
+					<Divider />
+					<div>Action</div>
+					<Divider />
+					<div onClick={() => handleOpenDeleteDialog()} className={styles.blog_delete}>
+						<DeleteIcon /> Move to Trash
+					</div>
 				</div>
 			</div>
 			<div className={showMetaSection ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
@@ -779,6 +806,17 @@ export default function Index({
 					<Image src='/static/images/layout.svg' alt='edit' width='30px' height='30px' />
 				</div>
 			</div>
+
+			{openDeleteDialog && (
+				<DeleteDialog
+					open={openDeleteDialog}
+					handleClose={handleCloseDeleteDialog}
+					windowTitle='Delete this article?'
+					deleteMessage='It will be un-published and deleted and wont be able to recover it.'
+					title={currentBlog?.title}
+					confirmDelete={confirmDelete}
+				/>
+			)}
 
 			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
 				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>

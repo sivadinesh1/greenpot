@@ -127,7 +127,7 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 	try {
 		user = await getUserById(user_id);
 		let currentDate = new Date();
-		let thumbnail = 'https://res.cloudinary.com/sanjayaalam/image/upload/v1632287841/thumbnail1_m5vija.png'
+		let thumbnail = 'https://res.cloudinary.com/sanjayaalam/image/upload/v1633349662/C1/B1/gieglefcwr3iu1xzjkoo.png'
 		result = await prisma.blog.create({
 			data: {
 				title: `Untitled - ${nanoid(11)}`,

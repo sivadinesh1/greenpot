@@ -496,3 +496,19 @@
 	font-family:  "Layout", sans-serif;
 	color:black;
 }
+.blog_delete{
+	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	border-radius: 10px;
+	color: white;
+	padding: 15px;
+	background-color:red;
+	width: 150px;
+	cursor: pointer;
+	text-align: center;
+	margin: 15px;
+}
+
+.blog_delete:hover {
+	background-color: lighten( red, 30%);
+	cursor: pointer;
+}
