@@ -22,7 +22,7 @@ const options = [
 export const FormInputMultiCheckbox: React.FC<FormInputProps> = ({
   name,
   control,
-  setValue,
+  // setValue,
   label,
 }) => {
   const [selectedItems, setSelectedItems] = useState<any>([]);
@@ -37,9 +37,9 @@ export const FormInputMultiCheckbox: React.FC<FormInputProps> = ({
     }
   };
 
-  useEffect(() => {
-    setValue(name, selectedItems);
-  }, [selectedItems]);
+  // useEffect(() => {
+  //   setValue(name, selectedItems);
+  // }, [selectedItems]);
 
   return (
     <FormControl size={"small"} variant={"outlined"}>
@@ -52,7 +52,7 @@ export const FormInputMultiCheckbox: React.FC<FormInputProps> = ({
               control={
                 <Controller
                   name={name}
-                  render={({}) => {
+                  render={({ }) => {
                     return (
                       <Checkbox
                         checked={selectedItems.includes(option.value)}

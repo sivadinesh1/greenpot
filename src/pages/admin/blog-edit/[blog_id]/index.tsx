@@ -144,6 +144,8 @@ interface FormData {
 	categories: any[];
 	tags: any[];
 	thumbnail: string;
+	is_author: boolean;
+	is_publish_date: boolean;
 }
 
 type ErrorSummaryProps<T> = {
@@ -489,7 +491,7 @@ export default function Index({
 		return (
 			<div className={styles.layout_list}>
 				{Object.keys(layoutGroup).map((key, index) => (
-					<div className={styles.layout_grid}>
+					<div className={styles.layout_grid} key={index}>
 						<Checkbox
 							checked={layoutGroup[key]}
 							onChange={handleLayout}
@@ -497,7 +499,7 @@ export default function Index({
 							name={key}
 							icon={<AdbIcon />}
 							checkedIcon={<AdbIcon />}
-							// label="test"
+						// label="test"
 						/>
 						<div className={styles.layout_title}>{key}</div>{' '}
 					</div>
@@ -538,7 +540,7 @@ export default function Index({
 					<div className={styles.drop_zone}>
 						<div {...getRootProps()} className={`${styles_drop_zone.drop_zone} ${isDragActive ? styles_drop_zone.active : null}`}>
 							<input {...getInputProps()} />
-							Drag'n'drop files, or click to select files
+							{`Drag'n'drop files, or click to select files`}
 						</div>
 						{/* {uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
 						 */}
@@ -793,14 +795,14 @@ export default function Index({
 										<div style={{ paddingTop: '5px' }}>Date published </div>
 									</div>
 								</div>
-								<div>
+								{/* <div>
 									<div className={styles.flex_center}>
 										<div>
 											<Controller control={control} name='someName' render={({ field }) => <Switch disabled {...field} />} />
 										</div>
 										<div style={{ paddingTop: '5px' }}>Date edited </div>
 									</div>
-								</div>
+								</div> */}
 							</div>
 						</div>
 						<div className={styles.flex_center}>

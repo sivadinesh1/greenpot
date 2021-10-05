@@ -17,7 +17,8 @@ export const FormInputText = ({ name, control, label, variant }: FormInputProps)
 					value={value}
 					fullWidth
 					label={label}
-					variant={variant === undefined ? 'outlined' : variant}
+					// variant={variant === undefined ? 'outlined' : variant}
+					variant="standard"
 					InputLabelProps={{ shrink: true }}
 				/>
 			)}

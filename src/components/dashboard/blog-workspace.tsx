@@ -66,7 +66,7 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 
 	const handleBlogView = () => {
 		setAnchorEl(null);
-		Router.push(`/admin/blog/${blogItem.blog_id}`);
+		Router.push(`/blog/${blogItem.blog_id}`);
 	};
 
 	return (

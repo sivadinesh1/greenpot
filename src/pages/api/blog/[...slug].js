@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { getRepoBlogSummary, getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId, updateThumbnail, updateContent, updateLayout } from '../../../service/blog.service';
+import { getRepoBlogSummary, getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId, updateThumbnail, updateContent, updateLayout, getAllBlogs } from '../../../service/blog.service';
 import { getRepos } from '../../../service/repository.service';
 import { bigIntToString } from '../../../db-config/utils';
 import { auth } from '../../../middleware/auth';
@@ -28,6 +28,10 @@ const handler = nc()
 			const result = await getBlogsByRepo(slug[1]);
 			res.status(200).json(result);
 		}
+		// else if (slug[0] === 'getAll') {
+		// 	const result = await getAllBlogs();
+		// 	res.status(200).json(result);
+		// }
 
 		// else if (slug[0] === 'fetch-repos') {
 		// 	let result = null;
