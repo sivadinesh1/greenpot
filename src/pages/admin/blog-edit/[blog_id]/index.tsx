@@ -60,8 +60,6 @@ import AdbIcon from '@mui/icons-material/Adb';
 import DeleteDialog from '../../../../components/elements/ui/Dialog/DeleteDialog';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-
-
 let MyEditor;
 if (typeof window !== 'undefined') {
 	MyEditor = dynamic(() => import('../../../../components/Editor'));
@@ -199,16 +197,16 @@ export default function Index({
 	const setThumbnail = async () => {
 		let request = {
 			id: currentBlog.id,
-			thumbnail: imageFile.url
-		}
+			thumbnail: imageFile.url,
+		};
 
 		let resp = await axios.put(`/api/blog/updateThumb`, request);
-		console.log("test response thumbail 2--->", resp);
+		console.log('test response thumbail 2--->', resp);
 		if (resp.status === 200) {
-			setCurrentBlog(resp.data)
+			setCurrentBlog(resp.data);
 			setAnchorEl(null);
 		}
-	}
+	};
 
 	const preloadedValues = {
 		title: blog.title.startsWith('Untitled') ? '' : blog.title,
@@ -218,7 +216,7 @@ export default function Index({
 		layout: blog.layout,
 		slug: blog.slug,
 		is_author: blog.is_author,
-		is_publish_date: blog.is_publish_date
+		is_publish_date: blog.is_publish_date,
 	};
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
@@ -233,7 +231,7 @@ export default function Index({
 	const [showApps, setShowApps] = useState(false);
 
 	const [showMetaSection, setShowMetaSection] = useState(false);
-	const [showLayout, setShowLayout] = useState(false)
+	const [showLayout, setShowLayout] = useState(false);
 
 	let schema = yup.object().shape({
 		title: yup.string().required('Title is required').min(3).max(72),
@@ -288,24 +286,33 @@ export default function Index({
 		setShowAssets(!showAssets);
 		setShowMetaSection(false);
 		setShowApps(false);
+		setShowLayout(false);
 	};
 
 	const handleShowApps = () => {
 		setShowApps(!showApps);
 		setShowAssets(false);
 		setShowMetaSection(false);
+		setShowLayout(false);
 	};
 
 	const handleShowMetaSection = () => {
 		setShowMetaSection(!showMetaSection);
 		setShowAssets(false);
-		setShowLayout(false)
+		setShowLayout(false);
+		setShowApps(false);
 	};
 	const handleShowLayout = () => {
-		setShowLayout(!showLayout)
 		setShowMetaSection(false);
 		setShowAssets(false);
-	}
+		setShowApps(false);
+		setShowLayout(!showLayout);
+	};
+
+	const handleCloseRightBar = () => {
+		setShowMetaSection(false);
+		setShowLayout(false);
+	};
 
 	const handleClick = (event, item) => {
 		setAnchorEl(event.currentTarget);
@@ -318,8 +325,8 @@ export default function Index({
 	const snap = useSnapshot(content);
 
 	const handleView = () => {
-		Router.push(`/admin/blog/${blog.blog_id}`)
-	}
+		Router.push(`/admin/blog/${blog.blog_id}`);
+	};
 
 	const onSubmit = async (formData, event) => {
 		console.log('check form data ---->', formData);
@@ -350,7 +357,7 @@ export default function Index({
 			createdAt: blog.published_on,
 			thumbnail: formData.thumbnail,
 			is_publish_date: formData.is_publish_date,
-			is_author: formData.is_author
+			is_author: formData.is_author,
 		};
 		if (snap.obj != null) values['content'] = snap.obj;
 		console.log('test values data---->', values);
@@ -425,19 +432,18 @@ export default function Index({
 		{ label: 'Classic pro', value: 'classic pro' },
 	];
 
-
 	var layoutarray = [
 		{
-			label: "classic",
-			icon: AdUnitsIcon
+			label: 'classic',
+			icon: AdUnitsIcon,
 		},
 		{
-			label: "classic pro",
-			icon: AdbIcon
-		}
-		, {
-			label: "layout3",
-			icon: AdbIcon
+			label: 'classic pro',
+			icon: AdbIcon,
+		},
+		{
+			label: 'layout3',
+			icon: AdbIcon,
 		},
 		// {
 		// 	label: "layout4",
@@ -450,41 +456,40 @@ export default function Index({
 		// 	label: "layout6",
 		// 	icon: AdbIcon
 		// }
-	]
+	];
 
 	const initialArray = (data) => {
-		var initialGroup = {}
+		var initialGroup = {};
 		data.map((layout) => {
 			initialGroup[layout.label] = false;
 		});
 		return initialGroup;
-	}
+	};
 
 	let group = initialArray(layoutarray);
-	let initialGroup = { ...group }
+	let initialGroup = { ...group };
 
-	initialGroup[blog.layout.toString().toLowerCase().replace("_", " ")] = true
+	initialGroup[blog.layout.toString().toLowerCase().replace('_', ' ')] = true;
 	const [layoutGroup, setLayoutGroup] = useState(initialGroup);
 
 	const handleLayout = async (event) => {
-		setLayoutGroup({ ...group, [event.target.name]: true })
+		setLayoutGroup({ ...group, [event.target.name]: true });
 		let request = {
 			id: currentBlog.id,
-			layout: event.target.name.toString().toLowerCase().replace(" ", "_")
-		}
+			layout: event.target.name.toString().toLowerCase().replace(' ', '_'),
+		};
 		let resp = await axios.put(`/api/blog/updateLayout`, request);
 		if (resp.status === 200) {
-			setCurrentBlog(resp.data)
+			setCurrentBlog(resp.data);
 		}
 	};
 
-	//layout option 
+	//layout option
 	const chooseLayout = () => {
-
 		return (
 			<div className={styles.layout_list}>
 				{Object.keys(layoutGroup).map((key, index) => (
-					<div className={styles.layout}>
+					<div className={styles.layout_grid}>
 						<Checkbox
 							checked={layoutGroup[key]}
 							onChange={handleLayout}
@@ -492,17 +497,16 @@ export default function Index({
 							name={key}
 							icon={<AdbIcon />}
 							checkedIcon={<AdbIcon />}
-						// label="test"
+							// label="test"
 						/>
-						<div className={styles.layout_title}>{key}</div> </div>
-
+						<div className={styles.layout_title}>{key}</div>{' '}
+					</div>
 				))}
 			</div>
 		);
+	};
 
-	}
-
-	// delete option 
+	// delete option
 	const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 	const handleOpenDeleteDialog = () => {
 		setOpenDeleteDialog(true);
@@ -586,7 +590,7 @@ export default function Index({
 							{accessRights != 'W' && (
 								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
 									Publish
-							</Button>
+								</Button>
 							)}
 						</div>
 						<div>
@@ -596,11 +600,7 @@ export default function Index({
 							</div>
 
 							<div>
-								<Dialog
-									maxWidth='xl'
-									open={openDialog}
-									onClose={handleCloseDialog}
-									aria-labelledby='max-width-dialog-title'>
+								<Dialog maxWidth='xl' open={openDialog} onClose={handleCloseDialog} aria-labelledby='max-width-dialog-title'>
 									<DialogTitle id='customized-dialog-title'>Media Gallery</DialogTitle>
 									<DialogContent dividers>
 										<div className={styles.no_image}>
@@ -611,7 +611,13 @@ export default function Index({
 											)}
 
 											{uploadedFiles.length > 0 && (
-												<div style={{ display: 'grid', padding: '6px 6px 6px', gridTemplateColumns: '1fr 1fr 1fr', margin: 'auto auto auto' }}>
+												<div
+													style={{
+														display: 'grid',
+														padding: '6px 6px 6px',
+														gridTemplateColumns: '1fr 1fr 1fr',
+														margin: 'auto auto auto',
+													}}>
 													{uploadedFiles.map((file) => (
 														<div key={file.public_id} className={styles.image_item}>
 															<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
@@ -630,7 +636,13 @@ export default function Index({
 												</div>
 											)}
 										</div>
-										<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
+										<Menu
+											id='simple-menu'
+											anchorEl={anchorEl}
+											keepMounted
+											open={Boolean(anchorEl)}
+											elevation={2}
+											onClose={handleClose}>
 											<MenuItem onClick={() => setThumbnail()}>Set as thumbnail</MenuItem>
 											<MenuItem onClick={handleClose}>
 												<CopyToClipboard text={imageFile?.url} onCopy={() => setCopy(true)}>
@@ -638,19 +650,18 @@ export default function Index({
 												</CopyToClipboard>
 											</MenuItem>
 										</Menu>
-
 									</DialogContent>
 									<DialogActions>
 										<Button onClick={handleCloseDialog} color='primary'>
 											Back
-									</Button>
+										</Button>
 									</DialogActions>
 								</Dialog>
 							</div>
 						</div>
 					</form>
 				</div>
-				<div className={showMetaSection ? `${styles.r_normal}` : `${styles.r_hidden}`}>
+				<div className={showMetaSection ? `${styles.meta} ${styles.show_meta}` : `${styles.meta}`}>
 					<div>META DATA</div>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className={styles.rowGap}>
@@ -665,9 +676,15 @@ export default function Index({
 						<div className={styles.rowGap}>
 							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>Feature Image</InputLabel>
 							<div className={styles.article_thumbnail}>
-								<div className={styles.image}><ImageNext src={currentBlog.thumbnail} width={"150px"} height={"150px"} /></div>
+								<div className={styles.image}>
+									<ImageNext src={currentBlog.thumbnail} width={'150px'} height={'150px'} />
+								</div>
 							</div>
-							<div className={styles.flex_end}><Button onClick={handleOpenDialog} color='primary'>On Change</Button></div>
+							<div className={styles.flex_end}>
+								<Button onClick={handleOpenDialog} color='primary'>
+									On Change
+								</Button>
+							</div>
 						</div>
 						<div className={styles.rowGap}>
 							<Autocomplete
@@ -762,19 +779,25 @@ export default function Index({
 
 								<div>
 									<div className={styles.flex_center}>
-										<div><Controller name='is_author' control={control} render={({ field }) => <Switch {...field} />} /></div>
+										<div>
+											<Controller name='is_author' control={control} render={({ field }) => <Switch {...field} />} />
+										</div>
 										<div style={{ paddingTop: '5px' }}>Show author </div>
 									</div>
 								</div>
 								<div>
 									<div className={styles.flex_center}>
-										<div><Controller name='is_publish_date' control={control} render={({ field }) => <Switch {...field} />} /></div>
+										<div>
+											<Controller name='is_publish_date' control={control} render={({ field }) => <Switch {...field} />} />
+										</div>
 										<div style={{ paddingTop: '5px' }}>Date published </div>
 									</div>
 								</div>
 								<div>
 									<div className={styles.flex_center}>
-										<div><Controller control={control} name='someName' render={({ field }) => <Switch disabled {...field} />} /></div>
+										<div>
+											<Controller control={control} name='someName' render={({ field }) => <Switch disabled {...field} />} />
+										</div>
 										<div style={{ paddingTop: '5px' }}>Date edited </div>
 									</div>
 								</div>
@@ -782,29 +805,30 @@ export default function Index({
 						</div>
 						<div className={styles.flex_center}>
 							<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
-								Save</Button>
+								Save
+							</Button>
 						</div>
 					</form>
-				</div>
-				<div className={showLayout ? `${styles.r_normal}` : `${styles.r_hidden}`}>
-					<div>Test Layout</div>
-					{chooseLayout()}
-					<br />
-					<Divider />
-					<div>Action</div>
-					<Divider />
 					<div onClick={() => handleOpenDeleteDialog()} className={styles.blog_delete}>
 						<DeleteIcon /> Move to Trash
 					</div>
 				</div>
+				<div className={showLayout ? `${styles.layout} ${styles.show_layout}` : `${styles.layout}`}>{chooseLayout()}</div>
 			</div>
-			<div className={showMetaSection ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
+			<div className={showMetaSection || showLayout ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
 				<div onClick={handleShowMetaSection} className={styles.menu_item}>
 					<Image src='/static/images/form.svg' alt='edit' width='30px' height='30px' />
 				</div>
 				<div onClick={handleShowLayout} className={styles.menu_item}>
 					<Image src='/static/images/layout.svg' alt='edit' width='30px' height='30px' />
 				</div>
+				{(showMetaSection || showLayout) && (
+					<>
+						<div onClick={handleCloseRightBar} className={styles.menu_item} style={{ marginTop: 'auto' }}>
+							<Image src='/static/images/right_arrow.svg' alt='edit' width='30px' height='30px' />
+						</div>
+					</>
+				)}
 			</div>
 
 			{openDeleteDialog && (
