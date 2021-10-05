@@ -9,20 +9,15 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import Image from 'next/image';
 import { mutate } from 'swr';
+import { FormInputText } from '../../forms/FormInputText';
 
-interface FormData {
+
+interface IFormData {
 	name: string;
 }
 
-const ColorButton = withStyles(() => ({
-	root: {
-		color: '#000',
-		backgroundColor: '#fff',
-		'&:hover': {
-			backgroundColor: '#f0f0ff',
-		},
-	},
-}))(Button);
+
+
 
 const useStyles = makeStyles((theme) => ({
 	margin: {
@@ -40,16 +35,16 @@ const useStyles = makeStyles((theme) => ({
 	},
 }));
 
-const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen }) => {
+const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen, chooseMode, company_id }) => {
 	const preloadedValues = {
-		name: editItem.name,
+		name: '',
 	};
 
 	let schema = yup.object().shape({
 		name: yup.string().required().min(3).max(60),
 	});
 
-	const form = useForm<FormData>({
+	const form = useForm<IFormData>({
 		defaultValues: preloadedValues,
 		mode: 'onTouched',
 		resolver: yupResolver(schema),
@@ -68,10 +63,20 @@ const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen 
 	} = form;
 
 	useEffect(() => {
-		setValue('name', editItem.name);
-	}, [editItem.name]);
+		if (onMode === 'edit') {
+			setValue('name', editItem.name);
+		}
+	}, [onMode, editItem]);
 
-	const onSubmit = (formData, event) => {
+	const onSubmit = async (formData: IFormData) => {
+		if (onMode === 'edit') {
+			editCategory(formData);
+		} else {
+			addCategory(formData);
+		}
+	};
+
+	const editCategory = (formData) => {
 		if (submitting) {
 			return false;
 		}
@@ -95,53 +100,58 @@ const EditCategory = ({ editItem, onMode, onReloadCategoryList, handleSnackOpen 
 			setSubmitting(false);
 			if (response.status === 200 && response.data.result === 'success') {
 				onReloadCategoryList();
-				handleMode();
 				handleSnackOpen('Category Successfully Updated');
+				chooseMode('add');
 				reset({ name: '' });
 			}
 		});
 	};
 
-	const classes = useStyles();
+	const addCategory = async (formData) => {
+		if (submitting) {
+			return false;
+		}
+		const values = {
+			name: formData.name,
+			company_id: company_id,
+		};
+		setSubmitting(true);
+		setServerErrors([]);
+		setError(false);
 
-	const handleMode = () => {
-		onMode('add');
+		const response = await axios.post(`/api/category`, values);
+
+		if (response.data.errors) {
+			setServerErrors(response.data.errors);
+			setError(true);
+		}
+
+		setSubmitting(false);
+
+		if (response.status === 201) {
+			onReloadCategoryList();
+			handleSnackOpen('Category Successfully Added');
+			reset({ name: '' });
+			chooseMode('add');
+		}
 	};
+
+	const classes = useStyles();
 
 	return (
 		<div>
-			<div className={styles.title}>EDIT CATEGORY</div>
+			<div className={styles.title}>{onMode === 'edit' ? 'Edit Category' : 'Add Category'}</div>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<div className={styles.formGap}>
-					<Controller
-						name='name'
-						control={control}
-						rules={{ required: true }}
-						render={({ field }) => (
-							<TextField
-								type='text'
-								label='Title'
-								margin='dense'
-								variant='standard'
-								size='small'
-								fullWidth
-								error={!!errors.name}
-								helperText={errors?.name?.message}
-								{...field}
-							/>
-						)}
-					/>
+					<FormInputText name='name' control={control} label='Enter Category Name' />
+
 				</div>
 				<div className={styles.textCenter}>
-					<ColorButton variant='contained' color='primary' className={classes.buttonProps} type='submit'>
-						Edit Category
-					</ColorButton>
+					<Button variant='contained' color='primary' type='submit'>
+						{onMode === 'edit' ? 'Update' : 'Create'}
+					</Button>
 				</div>
-				<div className={styles.backToAdd} onClick={() => handleMode()}>
-					<Image src='/static/images/back.svg' alt='back' width='20px' height='20px' />
 
-					<span>Back to Add Category</span>
-				</div>
 			</form>
 			{serverErrors && (
 				<div className='error-table'>

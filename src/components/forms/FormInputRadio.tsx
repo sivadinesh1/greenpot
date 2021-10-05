@@ -26,8 +26,9 @@ export const FormInputRadio: React.FC<FormInputProps> = ({
   label,
 }) => {
   const generateRadioOptions = () => {
-    return options.map((singleOption) => (
+    return options.map((singleOption, index) => (
       <FormControlLabel
+        key={index}
         value={singleOption.value}
         label={singleOption.label}
         control={<Radio />}
@@ -46,10 +47,10 @@ export const FormInputRadio: React.FC<FormInputProps> = ({
           fieldState: { error },
           formState,
         }) => (
-          <RadioGroup value={value} onChange={onChange}>
-            {generateRadioOptions()}
-          </RadioGroup>
-        )}
+            <RadioGroup value={value} onChange={onChange}>
+              {generateRadioOptions()}
+            </RadioGroup>
+          )}
       />
     </FormControl>
   );

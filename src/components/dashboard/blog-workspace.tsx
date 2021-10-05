@@ -64,34 +64,47 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 		Router.push(`/admin/blog-edit/${item.blog_id}`);
 	};
 
+	const handleBlogView = () => {
+		setAnchorEl(null);
+		Router.push(`/blog/${blogItem.blog_id}`);
+	};
+
 	return (
 		<>
 			<div className={styles.page_header}>{selectedRepo?.repo_name}</div>
 			<div className={styles.repo_list}>
 				<div className={styles.repo_creator}>
-					{selectedRepo?.repo_type === 'B' && (
-						<div className={styles.left} onClick={(event) => handleNewArticle(event)}>
-							<div>New Blog Article</div>
-							<div style={{ placeSelf: 'center' }}>
-								<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
-							</div>
+					<div className={styles.left} onClick={(event) => handleNewArticle(event)}>
+						<div>New Blog Article</div>
+						<div style={{ placeSelf: 'center' }}>
+							<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
 						</div>
-					)}
+					</div>
 				</div>
 
-				{selectedRepo?.repo_type === 'B' &&
-					blogs &&
+				{blogs &&
 					blogs?.map((item, index) => {
 						return (
 							<div key={index} className={styles.list_blogs}>
-								<div className={styles.blog_title} onClick={() => editBlog(item)}>
+								{/* <div className={styles.blog_title} onClick={() => editBlog(item)}>
 									{item.title}
+								</div> */}
+								<div className={styles.thumbnail} onClick={() => editBlog(item)}>
+									<Image
+										key={index}
+										src={item.thumbnail}
+										height={176}
+										width={280}
+										layout='responsive'
+										objectFit='cover'
+										objectPosition='top center'
+									/>
 								</div>
 								<div className={styles.footer}>
-									<div>&nbsp;</div>
+									<div>{item.title}</div>
 
 									<div onClick={(event) => handleClick(event, item)}>
-										<Image src='/static/images/three-dots.svg' alt='edit' width='24px' height='24px' />
+										<Image src='/static/images/vertical-three-dots.svg' alt='edit' width='24px' height='24px' />
 									</div>
 								</div>
 							</div>
@@ -112,6 +125,7 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
 				<MenuItem onClick={handleClose}>Profile</MenuItem>
 				<MenuItem onClick={handleClose}>My account</MenuItem>
+				<MenuItem onClick={handleBlogView}>View</MenuItem>
 				<Divider />
 				<MenuItem onClick={handleBlogDelete}>
 					<span style={{ color: 'red', fontSize: '12px' }}>Delete</span>

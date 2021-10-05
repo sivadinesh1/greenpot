@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { getRepoBlogSummary, getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId } from '../../../service/blog.service';
+import { getRepoBlogSummary, getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId, updateThumbnail, updateContent, updateLayout, getAllBlogs } from '../../../service/blog.service';
 import { getRepos } from '../../../service/repository.service';
 import { bigIntToString } from '../../../db-config/utils';
 import { auth } from '../../../middleware/auth';
@@ -28,6 +28,10 @@ const handler = nc()
 			const result = await getBlogsByRepo(slug[1]);
 			res.status(200).json(result);
 		}
+		// else if (slug[0] === 'getAll') {
+		// 	const result = await getAllBlogs();
+		// 	res.status(200).json(result);
+		// }
 
 		// else if (slug[0] === 'fetch-repos') {
 		// 	let result = null;
@@ -77,6 +81,21 @@ const handler = nc()
 		var returnValue = bigIntToString(result);
 
 		res.status(200).json(returnValue);
+	}).put(async (req, res) => {
+		const { slug } = req.query;
+		if (slug[0] === 'updateThumb') {
+			const { id, thumbnail } = req.body;
+			const result = await updateThumbnail(id, thumbnail);
+			res.status(200).json(result);
+		} else if (slug[0] === 'updateContent') {
+			const { id, content } = req.body;
+			const result = await updateContent(id, content);
+			res.status(200).json(result);
+		} else if (slug[0] === 'updateLayout') {
+			const { id, layout } = req.body;
+			const result = await updateLayout(id, layout);
+			res.status(200).json(result);
+		}
 	});
 
 export default handler;

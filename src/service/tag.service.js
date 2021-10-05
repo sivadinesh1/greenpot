@@ -81,13 +81,26 @@ export const getAllBlog = async () => {
 };
 
 export const getTags = async (ids) => {
-	let query = `select * from tag t where t.id in (${ids})`;
+	// let query = `select * from tag t where t.id in (${ids})`;
 
-	return new Promise(function (resolve) {
-		db.any(query, []).then((data) => {
-			resolve(data);
+	// return new Promise(function (resolve) {
+	// 	db.any(query, []).then((data) => {
+	// 		resolve(data);
+	// 	});
+	// });
+	let result = null;
+	try {
+		result = await prisma.tag.findMany({
+			where: {
+				id: {
+					in: ids,
+				}
+			}
 		});
-	});
+	} catch (error) {
+		console.log('get tag error :: ' + error.message);
+	}
+	return bigIntToString(result);
 };
 
 export const createTag = async (name, company_id) => {

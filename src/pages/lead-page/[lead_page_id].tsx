@@ -17,10 +17,11 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useDropzone } from 'react-dropzone';
 import Dialog from '@material-ui/core/Dialog';
-import Dialogblocks from '@material-ui/core/Dialogblocks';
+import DialogContent from '@material-ui/core/DialogContent';
 import Image from 'next/image';
 import styles1 from '../../styles/Home.module.scss';
 import Builder from '../../components/Builder';
+import { ILeadPage } from '../../model/LeadPage'
 
 const ColorButton = withStyles(() => ({
 	root: {
@@ -67,7 +68,7 @@ export const getServerSideProps = async (context) => {
 	};
 };
 
-const collection = ({ isError, collection }) => {
+const Collection = ({ isError, collection }) => {
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();
@@ -76,11 +77,11 @@ const collection = ({ isError, collection }) => {
 
 	const [data, setData] = useState(collection.blocks);
 	let objKeys = Object.keys(data);
-	const [currentSection, setCurrentSection] = useState();
+	const [currentSection, setCurrentSection] = useState<ILeadPage>();
 	const [fields, setFields] = useState([]);
 	const [mode, setMode] = useState('view');
 	const [currentKey, setCurrentKey] = useState();
-	const [currentField, setCurrentField] = useState();
+	const [currentField, setCurrentField] = useState("");
 	const [availableImages, setAvailableImages] = useState([]);
 
 	const [schedule, setSchedule] = useState([]);
@@ -101,15 +102,17 @@ const collection = ({ isError, collection }) => {
 
 	const handleUpdate = () => {
 		let oldObj = currentSection;
-		console.log('check current section data--->', oldObj);
-		oldObj.blocks[0].value = watch('company');
-		oldObj.blocks[1].value = watch('blocks');
-		setLoads(loads.length > 0 ? [...loads, oldObj] : [oldObj]);
+		// console.log('check current section data--->', oldObj);
+		// oldObj["blocks"][0].value = watch('company', oldObj.blocks[0].value.toString());
+		// oldObj["blocks"][1].value = watch('blocks', oldObj.blocks[1].value.toString());
+		// // oldObj["blocks"][0].value = watch('company');
+		// // oldObj["blocks"][1].value = watch('blocks');
+		// setLoads(loads.length > 0 ? [...loads, oldObj] : [oldObj]);
+		// setUndo([...undo, oldObj]);
+		// console.log(' check handle value --->', oldObj);
+		// console.log(' check handle value 1--->', loads);
+		// console.log(' check handle value 2--->', undo);
 
-		console.log(' check handle value --->', oldObj);
-		console.log(' check handle value 1--->', loads);
-		console.log(' check handle value 2--->', undo);
-		setUndo([...undo, oldObj]);
 	};
 
 	const undoChanges = () => {
@@ -176,7 +179,7 @@ const collection = ({ isError, collection }) => {
 
 	const handleImage = async (name) => {
 		console.log('test handle image method call', name);
-		await setCurrentField(name);
+		setCurrentField(name);
 		handleOpenUpload();
 		handleCloseDialog();
 		console.log('test current field', currentField);
@@ -205,7 +208,7 @@ const collection = ({ isError, collection }) => {
 			});
 			const data = await response.json();
 			console.log('check data --->', currentField);
-			setValue(currentField, data.secure_url);
+			// setValue(currentField, data.secure_url);
 		});
 	}, []);
 
@@ -217,28 +220,33 @@ const collection = ({ isError, collection }) => {
 	});
 
 	const edit = () => {
-		switch (currentKey) {
-			case 'Header':
-				if (currentSection.status === 'Active')
-					return (
-						<Header
-							blocks={watch('blocks', currentSection.blocks[1].value)}
-							company={watch('company', currentSection.blocks[0].value)}
-							imageUrl={watch('image', currentSection.blocks[2].value)}
-							backgroundImage={watch('background', currentSection.blocks[3].value)}
-						/>
-					);
-			case 'Footer':
-				if (currentSection.status === 'Active') return <Footer data={watch('footer', currentSection.blocks[0].value)} />;
-		}
+		// switch (currentKey) {
+		// 	case 'Header':
+		// 		if (currentSection?.status === 'Active')
+		// 			return (
+		// 				<Header
+		// 					// blocks={watch('blocks', currentSection.blocks[1].value)}
+		// 					// company={watch('company', currentSection.blocks[0].value)}
+		// 					// imageUrl={watch('image', currentSection.blocks[2].value)}
+		// 					// backgroundImage={watch('background', currentSection.blocks[3].value)}
+		// 					blocks={watch('blocks', false)}
+		// 					company={watch('company', false)}
+		// 					imageUrl={watch('image', false)}
+		// 					backgroundImage={watch('background', false)}
+		// 				/>
+		// 			);
+		// 	case 'Footer':
+		// 		if (currentSection?.status === 'Active') return <Footer data={watch('footer', currentSection.blocks[0].value)} />;
+		// }
 	};
 
 	return (
 		<>
 			<div className={styles.header_card}>
-				<div style={{ display: 'flex', alignItems: 'center', justifyblocks: 'center' }}>{`${collection.repo.name} / ${collection.name}`}</div>
-				<div style={{ display: 'flex', alignItems: 'center', justifyblocks: 'center' }}>Customize</div>
-				<div style={{ display: 'flex', alignItems: 'center', justifyblocks: 'center' }}>
+				{/* , justifyblocks: 'center' */}
+				<div style={{ display: 'flex', alignItems: 'center' }}>{`${collection.repo.name} / ${collection.name}`}</div>
+				<div style={{ display: 'flex', alignItems: 'center' }}>Customize</div>
+				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
 						<div>
 							<div style={{ float: 'left', cursor: 'pointer', paddingRight: '5px' }}>
@@ -280,21 +288,21 @@ const collection = ({ isError, collection }) => {
 										if (row.type === 'text') {
 											return (
 												<div className={styles.formGap} key={index} onChange={() => handleUpdate()}>
-													<Controller
-														name={row.name}
+													{/* <Controller
+														name={row.name as any}
 														key={index}
 														control={control}
 														rules={{ required: true }}
 														render={({ field }) => (
 															<TextField type='text' label={row.label} margin='dense' variant='standard' size='small' fullWidth {...field} />
 														)}
-													/>
+													/> */}
 												</div>
 											);
 										} else if (row.type === 'text-area') {
 											return (
 												<div className={styles.formGap} key={index} onChange={() => handleUpdate()}>
-													<Controller
+													{/* <Controller
 														name={row.name}
 														key={index}
 														control={control}
@@ -312,7 +320,7 @@ const collection = ({ isError, collection }) => {
 																{...field}
 															/>
 														)}
-													/>
+													/> */}
 												</div>
 											);
 										}
@@ -339,7 +347,7 @@ const collection = ({ isError, collection }) => {
 			{/* image upload dialog model */}
 			<div>
 				<Dialog open={openDialog} onClose={handleCloseDialog}>
-					<Dialogblocks style={{ width: '500px' }}>
+					<DialogContent style={{ width: '500px' }}>
 						<div className={styles1.dialog_pop}>
 							<div style={{ fontSize: '20px' }}>Choose Image</div>
 							<div style={{ cursor: 'pointer' }}>
@@ -357,13 +365,13 @@ const collection = ({ isError, collection }) => {
 								})}
 							</div>
 						</div>
-					</Dialogblocks>
+					</DialogContent>
 				</Dialog>
 			</div>
 
 			<div>
 				<Dialog fullScreen open={uploadDialog} onClose={handleCloseUpload}>
-					<Dialogblocks>
+					<DialogContent>
 						<div className={styles1.dialog_pop}>
 							<div style={{ fontSize: '20px' }}>Image Upload</div>
 							<div style={{ fontSize: '20px' }}>&emsp;</div>
@@ -379,14 +387,14 @@ const collection = ({ isError, collection }) => {
 								</div>
 							</div>
 						</div>
-					</Dialogblocks>
+					</DialogContent>
 				</Dialog>
 			</div>
 		</>
 	);
 };
 
-export default CustomTemp;
+export default Collection;
 
 async function getSignature(folderPath) {
 	const response = await fetch(`/api/cloudinary/${folderPath}`);

@@ -27,7 +27,7 @@ model blog {
   description   String?   @db.VarChar(200)
   slug          String?   @db.VarChar(300)
   excerpt       String?   @db.VarChar(350)
-  body          String
+  layout        String    @db.VarChar(50)
   category      Int[]
   tag           Int[]
   company_id    BigInt?
@@ -43,7 +43,13 @@ model blog {
   updated_by    BigInt?
   updatedAt     DateTime? @updatedAt
   repo          repo   @relation(fields: [repo_id], references: [id])
-  
+  thumbnail     String?    @db.VarChar(500)
+  publish_content    Json?
+  content            Json?
+  is_author     Boolean?   
+  is_publish_date     Boolean?
+  word_count     String?    @db.VarChar(10)
+  read_time     String?    @db.VarChar(15)
   @@unique([blog_id], name: "blog_unique")
 }
 

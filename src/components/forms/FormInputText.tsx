@@ -3,7 +3,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import TextField from '@material-ui/core/TextField';
 import { FormInputProps } from './FormInputProps';
 
-export const FormInputText = ({ name, control, label }: FormInputProps) => {
+export const FormInputText = ({ name, control, label, variant }: FormInputProps) => {
 	return (
 		<Controller
 			name={name}
@@ -17,7 +17,8 @@ export const FormInputText = ({ name, control, label }: FormInputProps) => {
 					value={value}
 					fullWidth
 					label={label}
-					variant='outlined'
+					// variant={variant === undefined ? 'outlined' : variant}
+					variant="standard"
 					InputLabelProps={{ shrink: true }}
 				/>
 			)}

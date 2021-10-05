@@ -11,6 +11,8 @@ import { FormInputDropdown } from '../components/forms/FormInputDropdown';
 import { FormInputText } from '../components/forms/FormInputText';
 import { IRepo } from '../model/Repo';
 import styles from '../styles/RepoSidebar.module.scss';
+import { MenuItem } from '@material-ui/core';
+
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
@@ -166,8 +168,13 @@ const RepoSidebar = ({ repos, reloadRepos }) => {
 								width={'50%'}
 								defaultValue={{ label: '', value: '' }}
 								label='Select'
-								options={options}
-							/>
+							>{options.map((option: any) => (
+								<MenuItem key={option.value} value={option.value}>
+									{option.label}
+								</MenuItem>
+							))}
+							</FormInputDropdown>
+
 
 							<div className={styles.action_btns}>
 								<Button
