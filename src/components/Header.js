@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Router from 'next/router';
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 
 import React, { useState } from 'react';
 import styles from '../styles/Home.module.scss';
@@ -17,13 +17,13 @@ import { Button } from '@material-ui/core';
 import { content } from '../utils/content';
 import { useSnapshot } from 'valtio';
 import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert'
+import MuiAlert from '@material-ui/lab/Alert';
 // import Snackbar from '@mui/material/Snackbar';
 // import MuiAlert from '@mui/material/Alert';
 
 const Header = ({ username = '' }) => {
 	const snap = useSnapshot(content);
-	const router = useRouter()
+	const router = useRouter();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const handleClick = (event) => {
 		setAnchorEl(event.currentTarget);
@@ -32,7 +32,6 @@ const Header = ({ username = '' }) => {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	const [isError, setIsError] = useState(false);
-
 
 	const handleClose = () => {
 		setAnchorEl(null);
@@ -51,48 +50,55 @@ const Header = ({ username = '' }) => {
 	};
 
 	const handlePublish = async () => {
-		console.log("handle publish method call--->", snap.obj)
+		console.log('handle publish method call--->', snap.obj);
 		let requestBody = {
-			status: "P",
-			published_status: "Y",
-			blog_id: router.query.blog_id
-		}
+			status: 'P',
+			published_status: 'Y',
+			blog_id: router.query.blog_id,
+		};
 		if (snap.obj != null) requestBody['content'] = snap.obj;
 		let resp = await axios.put(`/api/blog/publish`, requestBody);
 		if (resp.status === 200) {
 			// Router.push('/dashboard')
-			console.log("check data--->", resp.data)
+			console.log('check data--->', resp.data);
 			if (resp.data.isError) {
 				setSnack(true);
 				setMessage(`Fill the mandatory fields ${resp.data.error} `);
-				setIsError(true)
+				setIsError(true);
 			} else {
 				setSnack(true);
 				setMessage('blog published successfully');
-				Router.push('/dashboard')
+				Router.push('/dashboard');
 			}
-
 		}
-	}
+	};
 
 	return (
 		<>
 			<div className={styles.toolbar__wrapper}>
 				<div>
-					<Link href={`/ dashboard`}>
+					<Link href={`/dashboard`}>
 						<a style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 							<Image src='/static/images/webb1.svg' alt='edit' width='80px' height='42px' />
 						</a>
 					</Link>
 				</div>
-				{router.pathname === "/admin/blog-edit/[blog_id]" && <div>
-					<Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
-						view
-					</Button>
-					<Button variant='contained' onClick={() => handlePublish()} color='primary' disable={true} id='publish' style={{ marginLeft: '10px' }}>
-						Publish
-					</Button>
-				</div>}
+				{router.pathname === '/admin/blog-edit/[blog_id]' && (
+					<div>
+						<Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
+							view
+						</Button>
+						<Button
+							variant='contained'
+							onClick={() => handlePublish()}
+							color='primary'
+							disable={true}
+							id='publish'
+							style={{ marginLeft: '10px' }}>
+							Publish
+						</Button>
+					</div>
+				)}
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<div style={{ zIndex: '10', position: 'relative', display: 'flex', paddingLeft: '16px', cursor: 'pointer' }}>
 						<div style={{ padding: '0 0.8rem' }} onClick={handleClick}>
@@ -103,13 +109,13 @@ const Header = ({ username = '' }) => {
 
 						<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
 							<MenuItem onClick={handleClose}>
-								<Link href={`/ admin / category`}>
+								<Link href={`/admin/category`}>
 									<a>Category</a>
 								</Link>
 							</MenuItem>
 
 							<MenuItem onClick={handleClose}>
-								<Link href={`/ admin / tag`}>
+								<Link href={`/admin/tag`}>
 									<a>Tags</a>
 								</Link>
 							</MenuItem>
@@ -134,7 +140,7 @@ const Header = ({ username = '' }) => {
 				</div>
 			</div>
 			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
-				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled' severity={isError ? "error" : "success"}>
+				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled' severity={isError ? 'error' : 'success'}>
 					{message}
 				</MuiAlert>
 			</Snackbar>

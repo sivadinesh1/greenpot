@@ -6,5 +6,5 @@ export interface FormInputProps {
 	options?: any;
 	width?: any;
 	variant?: string;
-	onChange?: any;
+	onCustomChange?: any;
 }
