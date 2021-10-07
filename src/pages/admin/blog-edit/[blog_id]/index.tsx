@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
-import { useRouter } from "next/router";
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useForm, Controller, FieldErrors, useWatch } from 'react-hook-form';
 import * as yup from 'yup';
@@ -88,7 +88,7 @@ export const getServerSideProps = async (context) => {
 	let selectedImages = null;
 
 	try {
-		console.log("test routing information ----->", context.props)
+		console.log('test routing information ----->', context.props);
 		cookie = context?.req?.headers.cookie;
 		blog_id = context.params.blog_id as string;
 		user = await axios.get(`${process.env.API_URL}/auth/user`, {
@@ -494,8 +494,9 @@ export default function Index({
 	// watch((data) => { console.log("Test text field change value", data) })
 
 	const handleAutoSaveTitle = (event) => {
-		console.log("check auto save data --->", event.target.value)
-	}
+		console.log('check auto save data --->', event.target.value);
+		setValue('title', event.target.value);
+	};
 	//layout option
 	const chooseLayout = () => {
 		return (
@@ -509,7 +510,7 @@ export default function Index({
 							name={key}
 							icon={<AdbIcon />}
 							checkedIcon={<AdbIcon />}
-						// label="test"
+							// label="test"
 						/>
 						<div className={styles.layout_title}>{key}</div>{' '}
 					</div>
@@ -674,7 +675,7 @@ export default function Index({
 						<div className={styles.rowGap}>
 							{/* <FormInputText name='title' control={control} label='SEO Blog Title' variant='standard' /> */}
 							{/* <FormInputText name='title' control={control} onChange={handleAutoSaveTitle} label='SEO Blog Title' variant='standard' /> */}
-							<FormInputText name='title' control={control} customOnChange={handleAutoSaveTitle} label='SEO Blog Title' variant='standard' />
+							<FormInputText name='title' control={control} onChange={handleAutoSaveTitle} label='SEO Blog Title' variant='standard' />
 						</div>
 						<div className={styles.rowGap}>
 							<FormInputText name='slug' control={control} label='Slug' variant='standard' />
