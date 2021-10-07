@@ -1,64 +1,47 @@
+import { getBlogByNanoId } from "../../service/blog.service";
+import { jsonToHtml } from '../../components/utils/EditorJs/conversion'
 
-import { getAllBlogs, getBlogByNanoId } from "../../service/blog.service";
-import { useRouter } from 'next/router'
-import React, { useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import styles from "../../styles/Blog.module.scss";
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
-import TabletAndroidIcon from '@mui/icons-material/TabletAndroid';
-import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
-import Meta from '../../components/meta'
+export const getServerSideProps = async (context) => {
+	const blog_id = context.params.blog_id as string;
+	let isError = false;
+	let cookie = null;
+	let blog = null;
+	let html = null;
+	let isEmpty = false;
+	try {
+		blog = await getBlogByNanoId(blog_id)
+		if (blog.publish_content == null)
+			isEmpty = true;
+		else
+			html = await jsonToHtml(blog.publish_content, blog.layout);
 
-export async function getStaticProps(context) {
-    // let blogs = await getAllBlogs()
-    let blogs = await getBlogByNanoId(context.params.blog_id)
-    return {
-        props: { blogs },
-    }
-}
+	} catch (error) {
+		console.log(`error in blog view ${error}`);
+		isError = true;
+	}
 
-export async function getStaticPaths() {
-    let blogs = await getAllBlogs()
+	return {
+		props: { isError, blog, html, isEmpty },
+	};
 
-    const paths = blogs.map(blog => ({
-        params: { blog_id: blog.blog_id.toString() },
-    }))
-    return { paths, fallback: false }
-}
+};
 
-const Blog = ({ blog }) => {
-    console.log("check data --->", blog)
-    const router = useRouter()
-    const { blog_id } = router.query
-    const [value, setValue] = React.useState('laptop');
 
-    const handleButton = (data) => {
-        console.log("check value --->")
-        setValue(data)
-    }
-    return (
-        <div>
-            <h1>Todos</h1>
+const Blog = ({ html }) => {
+	// render code
+	return (
+		<div>
+			<h1>Todos</h1>
 
-            <Meta title="Test" description="Test meta component" />
-            <div className={styles.flex_center}>
-                <div><IconButton color="primary" id="mobile" onClick={(event) => handleButton("smartphone")}>
-                    <PhoneAndroidIcon />
-                </IconButton></div>
-                <div><IconButton color="primary" id="tablet" onClick={(event) => handleButton("tablet")}>
-                    <TabletAndroidIcon />
-                </IconButton></div>
-                <div><IconButton color="primary" id="laptop" onClick={(event) => handleButton("laptop")}>
-                    <DesktopWindowsIcon />
-                </IconButton></div>
-            </div>
+			<div dangerouslySetInnerHTML={{ __html: html }}></div>
+			{/* <div className='laptop'>
+				<div className='content'>
 
-            <div className={value}>
-                <div className='content'>
-                    <iframe src={`http://localhost:3000/blog-preview/${blog_id}`} style={{ width: '100%', border: 'none', height: '100%' }} />
-                </div>
-            </div>
-        </div>
-    );
-}
+					<iframe src='https://www.ndtv.com' style={{ width: '100%', border: 'none', height: '100%' }} />
+				</div>
+			</div> */}
+		</div>
+	);
+};
+
 export default Blog;

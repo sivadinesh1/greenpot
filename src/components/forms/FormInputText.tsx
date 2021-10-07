@@ -3,17 +3,19 @@ import { Controller, useFormContext } from 'react-hook-form';
 import TextField from '@material-ui/core/TextField';
 import { FormInputProps } from './FormInputProps';
 
-export const FormInputText = ({ name, control, label, variant }: FormInputProps) => {
+export const FormInputText = ({ name, control, label, variant, customOnChange }: FormInputProps) => {
 	return (
 		<Controller
 			name={name}
 			control={control}
-			render={({ field: { onChange, value }, fieldState: { error }, formState }) => (
+			render={({ field: { customOnChange, value }, fieldState: { error }, formState }) => (
+				// render={({ field: { onChange, value }, fieldState: { error }, formState }) => (
 				<TextField
 					helperText={error ? error.message : null}
 					size='small'
 					error={!!error}
-					onChange={onChange}
+					// onChange={onChange}
+					onChange={customOnChange}
 					value={value}
 					fullWidth
 					label={label}

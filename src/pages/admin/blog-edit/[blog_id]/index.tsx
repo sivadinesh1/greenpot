@@ -1,7 +1,8 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
+import { useRouter } from "next/router";
 import axios from 'axios';
-import { useForm, Controller, FieldErrors } from 'react-hook-form';
+import { useForm, Controller, FieldErrors, useWatch } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dynamic from 'next/dynamic';
@@ -87,6 +88,7 @@ export const getServerSideProps = async (context) => {
 	let selectedImages = null;
 
 	try {
+		console.log("test routing information ----->", context.props)
 		cookie = context?.req?.headers.cookie;
 		blog_id = context.params.blog_id as string;
 		user = await axios.get(`${process.env.API_URL}/auth/user`, {
@@ -326,9 +328,9 @@ export default function Index({
 	};
 	const snap = useSnapshot(content);
 
-	const handleView = () => {
-		Router.push(`/admin/blog/${blog.blog_id}`);
-	};
+	// const handleView = () => {
+	// 	Router.push(`/admin/blog/${blog.blog_id}`);
+	// };
 
 	const onSubmit = async (formData, event) => {
 		console.log('check form data ---->', formData);
@@ -486,6 +488,14 @@ export default function Index({
 		}
 	};
 
+	// watch((value, { name, type }) => console.log(value, name, type));
+	// useWatch("title", (value) => { console.log("Test text field change value", value) })
+	// useWatch()
+	// watch((data) => { console.log("Test text field change value", data) })
+
+	const handleAutoSaveTitle = (event) => {
+		console.log("check auto save data --->", event.target.value)
+	}
 	//layout option
 	const chooseLayout = () => {
 		return (
@@ -583,17 +593,12 @@ export default function Index({
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className={styles.action_bar}>
 							<div className={styles.filler}>&nbsp;</div>
-							<Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
-								view
-							</Button>
-							<Button variant='contained' color='primary' style={{ marginLeft: '10px' }}>
-								clear
-							</Button>
-							{accessRights != 'W' && (
+
+							{/* {accessRights != 'W' && (
 								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
 									Publish
 								</Button>
-							)}
+							)} */}
 						</div>
 						<div>
 							<div>
@@ -667,7 +672,9 @@ export default function Index({
 					<div>META DATA</div>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className={styles.rowGap}>
-							<FormInputText name='title' control={control} label='SEO Blog Title' variant='standard' />
+							{/* <FormInputText name='title' control={control} label='SEO Blog Title' variant='standard' /> */}
+							{/* <FormInputText name='title' control={control} onChange={handleAutoSaveTitle} label='SEO Blog Title' variant='standard' /> */}
+							<FormInputText name='title' control={control} customOnChange={handleAutoSaveTitle} label='SEO Blog Title' variant='standard' />
 						</div>
 						<div className={styles.rowGap}>
 							<FormInputText name='slug' control={control} label='Slug' variant='standard' />

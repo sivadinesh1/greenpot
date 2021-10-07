@@ -321,3 +321,132 @@ export const updateLayout = async (id, layout) => {
 	}
 	return bigIntToString(result);
 };
+
+export const publishBlog = async (body) => {
+	let result = null;
+	try {
+		const { content, status, published_status, blog_id } = body
+		let currentDate = new Date();
+		let request = {
+			status: status,
+			published: published_status,
+			published_on: currentDate,
+		};
+
+		if (content != undefined) {
+			request["content"] = content
+			request["publish_content"] = content
+		}
+
+		console.log("test request data---->", request)
+		result = await prisma.blog.update({
+			where: {
+				blog_id: blog_id,
+			},
+			data: request
+		});
+		console.log("test response in publish--->", result)
+	} catch (error) {
+		console.log('blog publish error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateTitle = async (id, title) => {
+	let result = null;
+	try {
+		let request = {
+			title: title,
+		};
+
+		result = await prisma.blog.update({
+			where: {
+				id: Number(id),
+			},
+			data: request
+		});
+	} catch (error) {
+		console.log('title update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateDescription = async (id, description) => {
+	let result = null;
+	try {
+		let request = {
+			description: description,
+		};
+
+		result = await prisma.blog.update({
+			where: {
+				id: Number(id),
+			},
+			data: request
+		});
+	} catch (error) {
+		console.log('description update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateBlogDate = async (id, articleDate) => {
+	let result = null;
+	try {
+		let request = {
+			blog_date: articleDate,
+		};
+
+		result = await prisma.blog.update({
+			where: {
+				id: Number(id),
+			},
+			data: request
+		});
+	} catch (error) {
+		console.log('blog date update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateAuthor = async (id, author) => {
+	let result = null;
+	try {
+		let request = {
+			author: author,
+		};
+
+		result = await prisma.blog.update({
+			where: {
+				id: Number(id),
+			},
+			data: request
+		});
+	} catch (error) {
+		console.log('author update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const validation = async (blog_id) => {
+	let blog = await getBlogByNanoId(blog_id);
+	console.log("test validation data--->", typeof blog.description)
+	let obj = {}
+	let error = []
+	if (blog.title === null || blog.title.match("Untitled -"))
+		error.push('title')
+	if (blog.description === undefined || blog.description === '' || blog.description === ' ')
+		error.push('description')
+	if (blog.author === undefined || blog.author === '' || blog.author === ' ')
+		error.push('author')
+
+	console.log("check error 1", error)
+	if (error.length > 0) {
+		obj["error"] = error;
+		obj["isError"] = true
+	} else {
+		obj["isError"] = false
+	}
+	console.log("check error 2", obj)
+	return obj;
+}

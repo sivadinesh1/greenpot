@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { getRepoBlogSummary, getBlogsByCompany, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId, updateThumbnail, updateContent, updateLayout, getAllBlogs } from '../../../service/blog.service';
+import { getRepoBlogSummary, getBlogsByCompany, validation, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId, updateThumbnail, updateContent, updateLayout, getAllBlogs, publishBlog } from '../../../service/blog.service';
 import { getRepos } from '../../../service/repository.service';
 import { bigIntToString } from '../../../db-config/utils';
 import { auth } from '../../../middleware/auth';
@@ -95,6 +95,17 @@ const handler = nc()
 			const { id, layout } = req.body;
 			const result = await updateLayout(id, layout);
 			res.status(200).json(result);
+		} else if (slug[0] === 'publish') {
+			let resp = await validation(req.body.blog_id)
+			if (resp.isError) {
+				res.status(200).json(resp);
+			} else {
+				const result = await publishBlog(req.body);
+				result["isError"] = false;
+				res.status(200).json(result);
+			}
+
+
 		}
 	});
 
