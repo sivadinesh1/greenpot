@@ -79,6 +79,8 @@ model company {
   updated_by    BigInt?
   createddate   DateTime? @db.Timestamp(6)
   updateddate   DateTime? @db.Timestamp(6)
+  blog_home_format     String?   @db.VarChar(50)
+
   
   repo         repo[]
   @@unique([company_id], name: "company_unique")

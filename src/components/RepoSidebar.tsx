@@ -100,6 +100,20 @@ const RepoSidebar = ({ repos, reloadRepos }) => {
 		setSnack(true);
 		setMessage(message);
 	};
+	let blog_formats = [
+		{
+			label: "Format-0",
+			value: "format-0"
+		},
+		{
+			label: "Format-1",
+			value: "format-1"
+		},
+		{
+			label: "Format-2",
+			value: "format-2"
+		}
+	]
 
 	return (
 		<>
@@ -139,6 +153,24 @@ const RepoSidebar = ({ repos, reloadRepos }) => {
 				)}
 
 				<div className={styles.last}>
+					<li className={styles.ul}>
+						{/* <a className={styles.a} href='http://startific.com'>
+							<Image src='/static/images/edit.svg' alt='edit' width='24px' height='24px' />
+							<span className={styles.nav_text}>Settings</span>
+						</a> */}
+						<FormInputDropdown
+							name='author'
+							control={control}
+							width={'100%'}
+							defaultValue={{ label: '', value: '' }}
+							label='Select Blog Format'>
+							{blog_formats.map((format, index) => (
+								<MenuItem key={index} value={format.value}>
+									{format.label}
+								</MenuItem>
+							))}
+						</FormInputDropdown>
+					</li>
 					<li className={styles.ul}>
 						<a className={styles.a} href='http://startific.com'>
 							<Image src='/static/images/edit.svg' alt='edit' width='24px' height='24px' />

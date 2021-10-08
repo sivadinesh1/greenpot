@@ -193,7 +193,8 @@ export default function Index({
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [imageFile, setImageFile] = useState<any>();
 	const [currentBlog, setCurrentBlog] = useState<any>(blog);
-
+	let maxCat = 3;
+	let maxTag = 15;
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
@@ -270,9 +271,15 @@ export default function Index({
 	const [selectedDate, setSelectedDate] = React.useState(format(parseISO(blog.blog_date), 'yyyy-MM-dd'));
 	const [formattedDate, setFormattedDate] = React.useState(format(parseISO(blog.blog_date), 'MMM dd, yyyy'));
 
-	const handleDateChange = (date) => {
+	const handleDateChange = async (date) => {
 		setSelectedDate(date);
 		setFormattedDate(format(date, 'MMM dd, yyyy'));
+		console.log("Test date value -->", parseISO(selectedDate))
+		let request = {
+			id: currentBlog.id,
+			blogDate: parseISO(selectedDate)
+		};
+		let resp = await axios.put(`/api/blog/autoSaveBlogDate`, request);
 	};
 
 	//error style
@@ -327,10 +334,6 @@ export default function Index({
 		setOpenDialog(false);
 	};
 	const snap = useSnapshot(content);
-
-	// const handleView = () => {
-	// 	Router.push(`/admin/blog/${blog.blog_id}`);
-	// };
 
 	const onSubmit = async (formData, event) => {
 		console.log('check form data ---->', formData);
@@ -431,11 +434,6 @@ export default function Index({
 		disabled: uploadedFiles.length === uploadLimit ? true : false,
 	});
 
-	const options = [
-		{ label: 'Classic', value: 'classic' },
-		{ label: 'Classic pro', value: 'classic pro' },
-	];
-
 	var layoutarray = [
 		{
 			label: 'classic',
@@ -448,18 +446,7 @@ export default function Index({
 		{
 			label: 'layout3',
 			icon: AdbIcon,
-		},
-		// {
-		// 	label: "layout4",
-		// 	icon: AdbIcon
-		// }, {
-		// 	label: "layout5",
-		// 	icon: AdbIcon
-		// },
-		// {
-		// 	label: "layout6",
-		// 	icon: AdbIcon
-		// }
+		}
 	];
 
 	const initialArray = (data) => {
@@ -488,15 +475,64 @@ export default function Index({
 		}
 	};
 
-	// watch((value, { name, type }) => console.log(value, name, type));
-	// useWatch("title", (value) => { console.log("Test text field change value", value) })
-	// useWatch()
-	// watch((data) => { console.log("Test text field change value", data) })
-
-	const handleAutoSaveTitle = (event) => {
-		console.log('check auto save data --->', event.target.value);
+	const handleAutoSaveTitle = async (event) => {
 		setValue('title', event.target.value);
+		let request = {
+			id: currentBlog.id,
+			title: event.target.value
+		};
+		await axios.put(`/api/blog/autoSaveTitle`, request);
 	};
+
+	const handleAutoSaveSlug = async (event) => {
+		setValue('slug', event.target.value);
+		let request = {
+			id: currentBlog.id,
+			slug: event.target.value
+		};
+		await axios.put(`/api/blog/autoSaveSlug`, request);
+	};
+	const handleAutoSaveDescription = async (event) => {
+		setValue('description', event.target.value);
+		let request = {
+			id: currentBlog.id,
+			description: event.target.value
+		};
+		await axios.put(`/api/blog/autoSaveDescription`, request);
+	};
+	const handleAutoSaveAuthor = async (event) => {
+		console.log("test author info data --->", event.target.value)
+		setValue('author', event.target.value);
+		let request = {
+			id: currentBlog.id,
+			author: event.target.value
+		};
+		await axios.put(`/api/blog/autoSaveAuthor`, request);
+	};
+
+	const handleAutoSaveCategory = async (value) => {
+		setSelectedCategorys(value);
+		let tempCatIds = value.map((o) => Number(o.id));
+		let uniqCategorys = Array.from(new Set(tempCatIds));
+		let request = {
+			id: currentBlog.id,
+			category: uniqCategorys
+		};
+		if (value.length <= maxCat)
+			await axios.put(`/api/blog/autoSaveCategory`, request);
+	}
+
+	const handleAutoSaveTag = async (value) => {
+		setSelectedTags(value);
+		let tempTagIds = value.map((o) => Number(o.id));
+		let uniqTag = Array.from(new Set(tempTagIds));
+		let request = {
+			id: currentBlog.id,
+			tag: uniqTag
+		};
+		if (value.length <= maxTag)
+			await axios.put(`/api/blog/autoSaveTag`, request);
+	}
 	//layout option
 	const chooseLayout = () => {
 		return (
@@ -510,7 +546,7 @@ export default function Index({
 							name={key}
 							icon={<AdbIcon />}
 							checkedIcon={<AdbIcon />}
-							// label="test"
+						// label="test"
 						/>
 						<div className={styles.layout_title}>{key}</div>{' '}
 					</div>
@@ -536,6 +572,7 @@ export default function Index({
 		}
 		//mutate();
 	};
+	console.log("check meta data--->", uploadedFiles)
 	return (
 		<>
 			<div className={styles.main_menu}>
@@ -567,7 +604,7 @@ export default function Index({
 						{uploadedFiles.length > 0 && (
 							<>
 								<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: '1fr 1fr', margin: 'auto auto' }}>
-									{uploadedFiles.map((file) => (
+									{uploadedFiles.map((file, index) => (
 										<div key={file.public_id} className={styles.image_item}>
 											<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
 												<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
@@ -580,6 +617,10 @@ export default function Index({
 												height='100'
 												crop='scale'
 											/>
+											<div>
+												{`${file.original_filename === undefined ? "image " + (index + 1) : file.original_filename}.${file.format} ${file.width}x${file.height}`}
+											</div>
+
 										</div>
 									))}
 								</div>
@@ -675,13 +716,13 @@ export default function Index({
 						<div className={styles.rowGap}>
 							{/* <FormInputText name='title' control={control} label='SEO Blog Title' variant='standard' /> */}
 							{/* <FormInputText name='title' control={control} onChange={handleAutoSaveTitle} label='SEO Blog Title' variant='standard' /> */}
-							<FormInputText name='title' control={control} onChange={handleAutoSaveTitle} label='SEO Blog Title' variant='standard' />
+							<FormInputText name='title' control={control} onCustomChange={(e) => handleAutoSaveTitle(e)} label='SEO Blog Title' variant='standard' />
 						</div>
 						<div className={styles.rowGap}>
-							<FormInputText name='slug' control={control} label='Slug' variant='standard' />
+							<FormInputText name='slug' control={control} onCustomChange={(e) => handleAutoSaveSlug(e)} label='Slug' variant='standard' />
 						</div>
 						<div className={styles.rowGap}>
-							<FormInputText name='description' control={control} label='SEO Blog Description' variant='standard' />
+							<FormInputText name='description' control={control} onCustomChange={(e) => handleAutoSaveDescription(e)} label='SEO Blog Description' variant='standard' />
 						</div>
 						<div className={styles.rowGap}>
 							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>Feature Image</InputLabel>
@@ -704,14 +745,14 @@ export default function Index({
 								filterSelectedOptions
 								fullWidth
 								options={categories}
-								onChange={(e, newValue) => setSelectedCategorys(newValue)}
+								onChange={(e, newValue) => handleAutoSaveCategory(newValue)}
 								getOptionLabel={(option) => option.name}
 								value={selectedCategorys}
 								renderInput={(params) => (
 									<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
 								)}
 							/>
-							{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
+							{selectedCategorys.length > maxCat && <div style={errorStyle}>Select maximum {maxCat} categories</div>}
 						</div>
 						<div className={styles.rowGap}>
 							<Autocomplete
@@ -721,14 +762,14 @@ export default function Index({
 								filterSelectedOptions
 								fullWidth
 								options={tags}
-								onChange={(e, newValue) => setSelectedTags(newValue)}
+								onChange={(e, newValue) => handleAutoSaveTag(newValue)}
 								getOptionLabel={(option) => option.name}
 								value={selectedTags}
 								renderInput={(params) => (
 									<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
 								)}
 							/>
-							{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
+							{selectedTags.length > maxTag && <p style={errorStyle}>Select maximum  {maxTag} Tags</p>}
 						</div>
 						<div className={styles.rowGap}>
 							<MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -753,12 +794,14 @@ export default function Index({
 								control={control}
 								width={'100%'}
 								defaultValue={{ label: '', value: '' }}
-								label='Select Author'>
+								label='Select Author'
+								onCustomChange={(e) => handleAutoSaveAuthor(e)}>
 								{authors.map((author, index) => (
 									<MenuItem key={index} value={author.first_name}>
 										{author.first_name}
 									</MenuItem>
 								))}
+
 							</FormInputDropdown>
 						</div>
 						{/* <div className={styles.rowGap}>
@@ -778,15 +821,6 @@ export default function Index({
 						<div className={styles.rowGap}>
 							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>By Line</InputLabel>
 							<div className={styles.blog_switch}>
-								{/* <div>
-									<FormControlLabel
-										value="end"
-										control={<Switch color="primary" />}
-										label="Date Edited"
-										labelPlacement="end"
-									/>
-								</div> */}
-
 								<div>
 									<div className={styles.flex_center}>
 										<div>
@@ -803,21 +837,13 @@ export default function Index({
 										<div style={{ paddingTop: '5px' }}>Date published </div>
 									</div>
 								</div>
-								{/* <div>
-									<div className={styles.flex_center}>
-										<div>
-											<Controller control={control} name='someName' render={({ field }) => <Switch disabled {...field} />} />
-										</div>
-										<div style={{ paddingTop: '5px' }}>Date edited </div>
-									</div>
-								</div> */}
 							</div>
 						</div>
-						<div className={styles.flex_center}>
+						{/* <div className={styles.flex_center}>
 							<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
 								Save
 							</Button>
-						</div>
+						</div> */}
 					</form>
 					<div onClick={() => handleOpenDeleteDialog()} className={styles.blog_delete}>
 						<DeleteIcon /> Move to Trash

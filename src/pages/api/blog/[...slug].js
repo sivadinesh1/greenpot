@@ -1,5 +1,25 @@
 import nc from 'next-connect';
-import { getRepoBlogSummary, getBlogsByCompany, validation, createBlogEntry, getBlogById, getBlogsByRepo, getBlogByNanoId, updateThumbnail, updateContent, updateLayout, getAllBlogs, publishBlog } from '../../../service/blog.service';
+import {
+	getRepoBlogSummary,
+	getBlogsByCompany,
+	validation,
+	createBlogEntry,
+	getBlogById,
+	getBlogsByRepo,
+	getBlogByNanoId,
+	updateThumbnail,
+	updateContent,
+	updateLayout,
+	getAllBlogs,
+	publishBlog,
+	updateTitle,
+	updateAuthor,
+	updateBlogDate,
+	updateDescription,
+	updateSlug,
+	updateCategory,
+	updateTag
+} from '../../../service/blog.service';
 import { getRepos } from '../../../service/repository.service';
 import { bigIntToString } from '../../../db-config/utils';
 import { auth } from '../../../middleware/auth';
@@ -104,8 +124,36 @@ const handler = nc()
 				result["isError"] = false;
 				res.status(200).json(result);
 			}
-
-
+		} else if (slug[0] === 'autoSaveTitle') {
+			const { id, title } = req.body
+			const result = await updateTitle(id, title);
+			res.status(200).json(result);
+		} else if (slug[0] === 'autoSaveDescription') {
+			const { id, description } = req.body
+			const result = await updateDescription(id, description);
+			res.status(200).json(result);
+		} else if (slug[0] === 'autoSaveAuthor') {
+			const { id, author } = req.body
+			const result = await updateAuthor(id, author);
+			res.status(200).json(result); updateSlug
+		} else if (slug[0] === 'autoSaveBlogDate') {
+			const { id, blogDate } = req.body
+			console.log("check server side data--->", req.body)
+			const result = await updateBlogDate(id, blogDate);
+			res.status(200).json(result);
+		} else if (slug[0] === 'autoSaveSlug') {
+			const { id, slug } = req.body
+			const result = await updateSlug(id, slug);
+			res.status(200).json(result);
+		} else if (slug[0] === 'autoSaveCategory') {
+			const { id, category } = req.body
+			console.log("check vale in catarray", category)
+			const result = await updateCategory(id, category);
+			res.status(200).json(result);
+		} else if (slug[0] === 'autoSaveTag') {
+			const { id, tag } = req.body
+			const result = await updateTag(id, tag);
+			res.status(200).json(result);
 		}
 	});
 
