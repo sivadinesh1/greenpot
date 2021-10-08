@@ -18,7 +18,8 @@ import {
 	updateDescription,
 	updateSlug,
 	updateCategory,
-	updateTag
+	updateTag,
+	getBlogsByCategory
 } from '../../../service/blog.service';
 import { getRepos } from '../../../service/repository.service';
 import { bigIntToString } from '../../../db-config/utils';
@@ -46,6 +47,9 @@ const handler = nc()
 			res.status(200).json(result);
 		} else if (slug[0] === 'repo') {
 			const result = await getBlogsByRepo(slug[1]);
+			res.status(200).json(result);
+		} else if (slug[0] === 'category') {
+			const result = await getBlogsByCategory(slug[1]);
 			res.status(200).json(result);
 		}
 		// else if (slug[0] === 'getAll') {
@@ -155,6 +159,7 @@ const handler = nc()
 			const result = await updateTag(id, tag);
 			res.status(200).json(result);
 		}
+
 	});
 
 export default handler;

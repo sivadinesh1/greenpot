@@ -5,13 +5,13 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { FormInputDropdown } from '../components/forms/FormInputDropdown';
 import { FormInputText } from '../components/forms/FormInputText';
 import { IRepo } from '../model/Repo';
 import styles from '../styles/RepoSidebar.module.scss';
 import { MenuItem } from '@material-ui/core';
+import { useForm, Controller } from 'react-hook-form';
 
 
 import Snackbar from '@material-ui/core/Snackbar';
@@ -22,14 +22,15 @@ interface IFormData {
 	repo_type: string;
 }
 
-const defaultValues = {
-	name: '',
-	repo_type: '',
-};
 
-const RepoSidebar = ({ repos, reloadRepos }) => {
+
+const RepoSidebar = ({ repos, reloadRepos, company_id }) => {
 	const [currentRepo, setCurrentRepo] = useState(repos[0]);
-
+	const defaultValues = {
+		name: '',
+		repo_type: '',
+		blog_home_format: "format-0"
+	};
 	let schema = yup.object().shape({
 		name: yup.string().required().max(70),
 		repo_type: yup.string().required(),
@@ -113,7 +114,16 @@ const RepoSidebar = ({ repos, reloadRepos }) => {
 			label: "Format-2",
 			value: "format-2"
 		}
-	]
+	];
+	const handleBlogFormat = async (event) => {
+		console.log("check current blog format value--->", event.target.value);
+		const request = {
+			id: company_id,
+			blogFormat: event.target.value,
+		};
+
+		await axios.put(`/api/company/updateBlogFormat`, request);
+	}
 
 	return (
 		<>
@@ -159,11 +169,13 @@ const RepoSidebar = ({ repos, reloadRepos }) => {
 							<span className={styles.nav_text}>Settings</span>
 						</a> */}
 						<FormInputDropdown
-							name='author'
+							name='blog_home_format'
 							control={control}
 							width={'100%'}
 							defaultValue={{ label: '', value: '' }}
-							label='Select Blog Format'>
+							label='Select Blog Format'
+							onCustomChange={(e) => handleBlogFormat(e)}
+						>
 							{blog_formats.map((format, index) => (
 								<MenuItem key={index} value={format.value}>
 									{format.label}

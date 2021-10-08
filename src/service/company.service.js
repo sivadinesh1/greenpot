@@ -71,6 +71,7 @@ export const getByNano = async (id) => {
 				company_id: id,
 			},
 		});
+		console.log("check data--->", result)
 	} catch (error) {
 		console.log('getByNano error::' + error.message);
 	}
@@ -114,4 +115,21 @@ export const deleteById = async (id) => {
 	const [deleteCompany, upadateRepo] = await prisma.$transaction([query1, query2]);
 	console.log('test result ---->', upadateRepo);
 	return bigIntToString(deleteCompany);
+};
+
+export const updateBlogFormat = async (id, data) => {
+	let result = null;
+	try {
+		result = await prisma.company.update({
+			where: {
+				id: Number(id),
+			},
+			data: {
+				blog_home_format: data,
+			}
+		});
+	} catch (error) {
+		console.log('update blog format error::' + error.message);
+	}
+	return bigIntToString(result);
 };

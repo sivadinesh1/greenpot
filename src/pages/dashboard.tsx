@@ -36,7 +36,7 @@ export const getServerSideProps = async (context) => {
 		if (repos.length === 0) {
 		} else {
 			repo_id = repos[0].id;
-
+			company_id = repos[0].company_id;
 			// fetch blogs
 			let result1 = await axios.get(`${process.env.API_URL}/blog/repo/${repo_id}`, {
 				headers: {
@@ -104,7 +104,7 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 
 	return (
 		<>
-			<RepoSidebar repos={repoArr} reloadRepos={reloadRepos} />
+			<RepoSidebar repos={repoArr} reloadRepos={reloadRepos} company_id={company_id} />
 
 			<div className={styles.wrapper}>
 				{repoArr && repoArr.length === 0 && <NoWorkspace />}

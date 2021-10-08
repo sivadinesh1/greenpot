@@ -479,3 +479,22 @@ export const validation = async (blog_id) => {
 	}
 	return obj;
 }
+
+
+export const getBlogsByCategory = async (categoryId) => {
+	let response = null;
+	try {
+		const result = await prisma.blog.findMany({
+			where: {
+				category: {
+					has: Number(categoryId),
+				}
+			}
+		});
+		response = bigIntToString(result);
+
+	} catch (error) {
+		console.log("Error occurred in blog service getBlogsByCategory method ", error)
+	}
+	return response;
+}

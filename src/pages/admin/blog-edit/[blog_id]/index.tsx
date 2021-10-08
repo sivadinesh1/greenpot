@@ -714,8 +714,6 @@ export default function Index({
 					<div>META DATA</div>
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className={styles.rowGap}>
-							{/* <FormInputText name='title' control={control} label='SEO Blog Title' variant='standard' /> */}
-							{/* <FormInputText name='title' control={control} onChange={handleAutoSaveTitle} label='SEO Blog Title' variant='standard' /> */}
 							<FormInputText name='title' control={control} onCustomChange={(e) => handleAutoSaveTitle(e)} label='SEO Blog Title' variant='standard' />
 						</div>
 						<div className={styles.rowGap}>
