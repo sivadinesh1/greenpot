@@ -274,10 +274,10 @@ export default function Index({
 	const handleDateChange = async (date) => {
 		setSelectedDate(date);
 		setFormattedDate(format(date, 'MMM dd, yyyy'));
-		console.log("Test date value -->", parseISO(selectedDate))
+		console.log('Test date value -->', parseISO(selectedDate));
 		let request = {
 			id: currentBlog.id,
-			blogDate: parseISO(selectedDate)
+			blogDate: parseISO(selectedDate),
 		};
 		let resp = await axios.put(`/api/blog/autoSaveBlogDate`, request);
 	};
@@ -446,7 +446,7 @@ export default function Index({
 		{
 			label: 'layout3',
 			icon: AdbIcon,
-		}
+		},
 	];
 
 	const initialArray = (data) => {
@@ -479,7 +479,7 @@ export default function Index({
 		setValue('title', event.target.value);
 		let request = {
 			id: currentBlog.id,
-			title: event.target.value
+			title: event.target.value,
 		};
 		await axios.put(`/api/blog/autoSaveTitle`, request);
 	};
@@ -488,7 +488,7 @@ export default function Index({
 		setValue('slug', event.target.value);
 		let request = {
 			id: currentBlog.id,
-			slug: event.target.value
+			slug: event.target.value,
 		};
 		await axios.put(`/api/blog/autoSaveSlug`, request);
 	};
@@ -496,16 +496,16 @@ export default function Index({
 		setValue('description', event.target.value);
 		let request = {
 			id: currentBlog.id,
-			description: event.target.value
+			description: event.target.value,
 		};
 		await axios.put(`/api/blog/autoSaveDescription`, request);
 	};
 	const handleAutoSaveAuthor = async (event) => {
-		console.log("test author info data --->", event.target.value)
+		console.log('test author info data --->', event.target.value);
 		setValue('author', event.target.value);
 		let request = {
 			id: currentBlog.id,
-			author: event.target.value
+			author: event.target.value,
 		};
 		await axios.put(`/api/blog/autoSaveAuthor`, request);
 	};
@@ -516,11 +516,10 @@ export default function Index({
 		let uniqCategorys = Array.from(new Set(tempCatIds));
 		let request = {
 			id: currentBlog.id,
-			category: uniqCategorys
+			category: uniqCategorys,
 		};
-		if (value.length <= maxCat)
-			await axios.put(`/api/blog/autoSaveCategory`, request);
-	}
+		if (value.length <= maxCat) await axios.put(`/api/blog/autoSaveCategory`, request);
+	};
 
 	const handleAutoSaveTag = async (value) => {
 		setSelectedTags(value);
@@ -528,11 +527,10 @@ export default function Index({
 		let uniqTag = Array.from(new Set(tempTagIds));
 		let request = {
 			id: currentBlog.id,
-			tag: uniqTag
+			tag: uniqTag,
 		};
-		if (value.length <= maxTag)
-			await axios.put(`/api/blog/autoSaveTag`, request);
-	}
+		if (value.length <= maxTag) await axios.put(`/api/blog/autoSaveTag`, request);
+	};
 	//layout option
 	const chooseLayout = () => {
 		return (
@@ -546,7 +544,7 @@ export default function Index({
 							name={key}
 							icon={<AdbIcon />}
 							checkedIcon={<AdbIcon />}
-						// label="test"
+							// label="test"
 						/>
 						<div className={styles.layout_title}>{key}</div>{' '}
 					</div>
@@ -572,14 +570,17 @@ export default function Index({
 		}
 		//mutate();
 	};
-	console.log("check meta data--->", uploadedFiles)
+	console.log('check meta data--->', uploadedFiles);
+
+	// onClick={handleShowMetaSection} className={showMetaSection ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`
+
 	return (
 		<>
 			<div className={styles.main_menu}>
-				<div onClick={handleShowAssets} className={styles.menu_item}>
+				<div onClick={handleShowAssets} className={showAssets ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
 					<Image src='/static/images/gallery.svg' alt='gallery' width='32px' height='32px' />
 				</div>
-				<div onClick={handleShowApps} className={styles.menu_item}>
+				<div onClick={handleShowApps} className={showApps ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
 					<Image src='/static/images/apps.svg' alt='apps' width='32px' height='32px' />
 				</div>
 			</div>
@@ -618,9 +619,10 @@ export default function Index({
 												crop='scale'
 											/>
 											<div>
-												{`${file.original_filename === undefined ? "image " + (index + 1) : file.original_filename}.${file.format} ${file.width}x${file.height}`}
+												{`${file.original_filename === undefined ? 'image ' + (index + 1) : file.original_filename}.${
+													file.format
+												} ${file.width}x${file.height}`}
 											</div>
-
 										</div>
 									))}
 								</div>
@@ -629,24 +631,12 @@ export default function Index({
 					</div>
 				</div>
 				<div className={showApps ? `${styles.apps} ${styles.show_apps}` : `${styles.apps}`}>
-					<div className={styles.drop_zone}>Apps !!!!!!!</div>
+					<div className={styles.drop_zone}></div>
 				</div>
 				<div className={styles.blog_wrap}>
 					<form onSubmit={handleSubmit(onSubmit)}>
-						<div className={styles.action_bar}>
-							<div className={styles.filler}>&nbsp;</div>
-
-							{/* {accessRights != 'W' && (
-								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
-									Publish
-								</Button>
-							)} */}
-						</div>
 						<div>
-							<div>
-								{MyEditor && <MyEditor data={blog.content == null ? undefined : blog.content} blogId={blog.id} />}
-								{/* </form> */}
-							</div>
+							<div>{MyEditor && <MyEditor data={blog.content == null ? undefined : blog.content} blogId={blog.id} />}</div>
 
 							<div>
 								<Dialog maxWidth='xl' open={openDialog} onClose={handleCloseDialog} aria-labelledby='max-width-dialog-title'>
@@ -711,16 +701,34 @@ export default function Index({
 					</form>
 				</div>
 				<div className={showMetaSection ? `${styles.meta} ${styles.show_meta}` : `${styles.meta}`}>
-					<div>META DATA</div>
+					&nbsp;
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className={styles.rowGap}>
-							<FormInputText name='title' control={control} onCustomChange={(e) => handleAutoSaveTitle(e)} label='SEO Blog Title' variant='standard' />
+							<FormInputText
+								name='title'
+								control={control}
+								onCustomChange={(e) => handleAutoSaveTitle(e)}
+								label='SEO Blog Title'
+								variant='standard'
+							/>
 						</div>
 						<div className={styles.rowGap}>
-							<FormInputText name='slug' control={control} onCustomChange={(e) => handleAutoSaveSlug(e)} label='Slug' variant='standard' />
+							<FormInputText
+								name='slug'
+								control={control}
+								onCustomChange={(e) => handleAutoSaveSlug(e)}
+								label='Slug'
+								variant='standard'
+							/>
 						</div>
 						<div className={styles.rowGap}>
-							<FormInputText name='description' control={control} onCustomChange={(e) => handleAutoSaveDescription(e)} label='SEO Blog Description' variant='standard' />
+							<FormInputText
+								name='description'
+								control={control}
+								onCustomChange={(e) => handleAutoSaveDescription(e)}
+								label='SEO Blog Description'
+								variant='standard'
+							/>
 						</div>
 						<div className={styles.rowGap}>
 							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>Feature Image</InputLabel>
@@ -767,7 +775,7 @@ export default function Index({
 									<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
 								)}
 							/>
-							{selectedTags.length > maxTag && <p style={errorStyle}>Select maximum  {maxTag} Tags</p>}
+							{selectedTags.length > maxTag && <p style={errorStyle}>Select maximum {maxTag} Tags</p>}
 						</div>
 						<div className={styles.rowGap}>
 							<MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -799,7 +807,6 @@ export default function Index({
 										{author.first_name}
 									</MenuItem>
 								))}
-
 							</FormInputDropdown>
 						</div>
 						{/* <div className={styles.rowGap}>
@@ -817,7 +824,6 @@ export default function Index({
 							</FormInputDropdown>
 						</div> */}
 						<div className={styles.rowGap}>
-							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>By Line</InputLabel>
 							<div className={styles.blog_switch}>
 								<div>
 									<div className={styles.flex_center}>
@@ -844,16 +850,16 @@ export default function Index({
 						</div> */}
 					</form>
 					<div onClick={() => handleOpenDeleteDialog()} className={styles.blog_delete}>
-						<DeleteIcon /> Move to Trash
+						<DeleteIcon /> Delete Article
 					</div>
 				</div>
 				<div className={showLayout ? `${styles.layout} ${styles.show_layout}` : `${styles.layout}`}>{chooseLayout()}</div>
 			</div>
 			<div className={showMetaSection || showLayout ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
-				<div onClick={handleShowMetaSection} className={styles.menu_item}>
+				<div onClick={handleShowMetaSection} className={showMetaSection ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
 					<Image src='/static/images/form.svg' alt='edit' width='30px' height='30px' />
 				</div>
-				<div onClick={handleShowLayout} className={styles.menu_item}>
+				<div onClick={handleShowLayout} className={showLayout ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
 					<Image src='/static/images/layout.svg' alt='edit' width='30px' height='30px' />
 				</div>
 				{(showMetaSection || showLayout) && (

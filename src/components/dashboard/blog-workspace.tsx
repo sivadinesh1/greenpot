@@ -14,6 +14,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
 import DeleteDialog from '../elements/ui/Dialog/DeleteDialog';
+import { formatDistance } from 'date-fns';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
 
 const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 	useEffect(() => {
@@ -22,6 +27,12 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 
 	const [blogItem, setBlogItem] = useState<any>();
 	const [openDialog, setOpenDialog] = useState(false);
+
+	const [view, setView] = React.useState('list');
+
+	const handleChange = (event, nextView) => {
+		setView(nextView);
+	};
 
 	const handleNewArticle = async (event) => {
 		event.stopPropagation();
@@ -69,48 +80,110 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 		Router.push(`/blog-preview/${blogItem.blog_id}`);
 	};
 
+	const dateAgo = (date) => {
+		return formatDistance(new Date(date), new Date(), { addSuffix: true });
+	};
+
 	return (
 		<>
-			<div className={styles.page_header}>{selectedRepo?.repo_name}</div>
-			<div className={styles.repo_list}>
-				<div className={styles.repo_creator}>
-					<div className={styles.left} onClick={(event) => handleNewArticle(event)}>
-						<div>New Blog Article</div>
-						<div style={{ placeSelf: 'center' }}>
-							<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
-						</div>
+			<div className={styles.page_header}>
+				<div className={styles.title_header}>{selectedRepo?.repo_name}</div>
+
+				<div className={styles.page_header_right}>
+					<div>
+						<ToggleButtonGroup orientation='horizontal' value={view} exclusive onChange={handleChange}>
+							<ToggleButton value='list' aria-label='list'>
+								<ViewListIcon />
+							</ToggleButton>
+							<ToggleButton value='module' aria-label='module'>
+								<ViewModuleIcon />
+							</ToggleButton>
+						</ToggleButtonGroup>
+					</div>
+					<div onClick={(event) => handleNewArticle(event)}>
+						<span className={styles.plus}>+ New Blog</span>
 					</div>
 				</div>
+			</div>
 
-				{blogs &&
-					blogs?.map((item, index) => {
-						return (
-							<div key={index} className={styles.list_blogs}>
-								{/* <div className={styles.blog_title} onClick={() => editBlog(item)}>
-									{item.title}
-								</div> */}
-								<div className={styles.thumbnail} onClick={() => editBlog(item)}>
-									<Image
-										key={index}
-										src={item.thumbnail}
-										height={176}
-										width={280}
-										layout='responsive'
-										objectFit='cover'
-										objectPosition='top center'
-									/>
+			{view === 'module' ? (
+				<div className={styles.repo_list}>
+					{blogs &&
+						blogs?.map((item, index) => {
+							return (
+								<div key={index} className={styles.list_blogs}>
+									<div className={styles.thumbnail} onClick={() => editBlog(item)}>
+										<Image
+											key={index}
+											src={item.thumbnail}
+											height={176}
+											width={280}
+											layout='responsive'
+											objectFit='cover'
+											objectPosition='top center'
+										/>
+									</div>
+									<div className={styles.footer}>
+										<div>
+											<div className={styles.footer_header}>{item.title}</div>
+											<div className={styles.footer_subheader}>{item.author}</div>
+
+											<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+												<div className={styles.footer_subheader}>{dateAgo(item.blog_date)}</div>
+												<div className={styles.footer_subheader}>
+													{item.status === 'D' && (
+														<div className={styles.draft}>
+															<span style={{ padding: '0.5rem' }}>Draft</span>
+														</div>
+													)}
+													{item.status === 'P' && (
+														<div className={styles.published}>
+															<span style={{ padding: '0.5rem' }}>Published</span>
+														</div>
+													)}
+												</div>
+											</div>
+										</div>
+										<div onClick={(event) => handleClick(event, item)}>
+											<Image src='/static/images/vertical-three-dots.svg' alt='edit' width='24px' height='24px' />
+										</div>
+									</div>
 								</div>
-								<div className={styles.footer}>
-									<div>{item.title}</div>
+							);
+						})}
+				</div>
+			) : (
+				<div className={styles.table}>
+					<div className={styles.table_header}>
+						<div>#</div>
+						<div>Title</div>
+						<div>Author</div>
+						<div>Created Date</div>
+						<div>Status</div>
+						<div>&nbsp;</div>
+					</div>
 
-									<div onClick={(event) => handleClick(event, item)}>
+					{blogs &&
+						blogs?.map((item, index) => {
+							return (
+								<div key={index} className={styles.table_row} onClick={() => editBlog(item)}>
+									<div>{index + 1}</div>
+									<div>{item.title}</div>
+									<div>{item.author}</div>
+
+									<div>{dateAgo(item.blog_date)}</div>
+
+									{item.status === 'D' && <div className={styles.draft}>Draft</div>}
+									{item.status === 'P' && <div className={styles.published}>Published</div>}
+									<div className={styles.actions} onClick={(event) => handleClick(event, item)}>
 										<Image src='/static/images/vertical-three-dots.svg' alt='edit' width='24px' height='24px' />
 									</div>
 								</div>
-							</div>
-						);
-					})}
-			</div>
+							);
+						})}
+				</div>
+			)}
+
 			{openDialog && (
 				<DeleteDialog
 					open={openDialog}
@@ -123,8 +196,6 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 			)}
 
 			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
-				<MenuItem onClick={handleClose}>Profile</MenuItem>
-				<MenuItem onClick={handleClose}>My account</MenuItem>
 				<MenuItem onClick={handleBlogView}>View</MenuItem>
 				<Divider />
 				<MenuItem onClick={handleBlogDelete}>

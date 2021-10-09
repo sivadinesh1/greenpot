@@ -46,7 +46,7 @@ const Header = ({ username = '' }) => {
 		});
 	};
 	const handleView = () => {
-		Router.push(`/blog/${router.query.blog_id}`);
+		Router.push(`/blog-preview/${router.query.blog_id}`);
 	};
 
 	const handlePublish = async () => {
@@ -83,12 +83,23 @@ const Header = ({ username = '' }) => {
 						</a>
 					</Link>
 				</div>
-				{router.pathname === '/admin/blog-edit/[blog_id]' && (
-					<div>
-						<Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
+
+				<div style={{ display: 'flex', alignItems: 'center' }}>
+					{router.pathname === '/admin/blog-edit/[blog_id]' && (
+						<div style={{ display: 'flex' }}>
+							{/* <Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
 							view
-						</Button>
-						<Button
+						</Button> */}
+
+							<div onClick={() => handleView()} style={{ display: 'contents', cursor: 'pointer' }}>
+								<Image src='/static/images/preview.svg' alt='gallery' width='30px' height='30px' />
+							</div>
+
+							<div onClick={() => handlePublish()}>
+								<span className={styles.publish}>Publish</span>
+							</div>
+
+							{/* <Button
 							variant='contained'
 							onClick={() => handlePublish()}
 							color='primary'
@@ -96,10 +107,9 @@ const Header = ({ username = '' }) => {
 							id='publish'
 							style={{ marginLeft: '10px' }}>
 							Publish
-						</Button>
-					</div>
-				)}
-				<div style={{ display: 'flex', alignItems: 'center' }}>
+						</Button> */}
+						</div>
+					)}
 					<div style={{ zIndex: '10', position: 'relative', display: 'flex', paddingLeft: '16px', cursor: 'pointer' }}>
 						<div style={{ padding: '0 0.8rem' }} onClick={handleClick}>
 							{username}

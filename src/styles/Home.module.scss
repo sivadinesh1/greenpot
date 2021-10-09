@@ -333,3 +333,21 @@
 .same-as-selected {
 	background-color: rgba(0, 0, 0, 0.1);
 }
+
+.publish {
+	font-size: 13px;
+	border: 1px solid red;
+	border-radius: 4px;
+	color: red;
+	background-color: #fff;
+	padding: 0.3rem 0.5rem;
+	line-height: 40px;
+	margin-left: 1rem;
+	cursor: pointer;
+}
+
+.publish:hover {
+	color: #fff;
+	background-color: red;
+	cursor: pointer;
+}
