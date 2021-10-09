@@ -16,6 +16,7 @@ import { useForm, Controller } from 'react-hook-form';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Router from 'next/router';
 
 interface IFormData {
 	name: string;
@@ -29,7 +30,7 @@ const RepoSidebar = ({ repos, reloadRepos, company_id }) => {
 	const defaultValues = {
 		name: '',
 		repo_type: '',
-		blog_home_format: "format-0"
+		// blog_home_format: "format-0"
 	};
 	let schema = yup.object().shape({
 		name: yup.string().required().max(70),
@@ -56,6 +57,12 @@ const RepoSidebar = ({ repos, reloadRepos, company_id }) => {
 		reset();
 		setOpenDialog(false);
 	};
+
+	const handleBlogHomeFormat = () => {
+		// Router.push(`/company/dashboard/${company_id}`)
+		Router.push(`/company/dashboard/uPgPdRz0w94`)
+
+	}
 
 	const onSubmit = async (formData: IFormData) => {
 		console.log('Test current data --->', formData);
@@ -182,6 +189,11 @@ const RepoSidebar = ({ repos, reloadRepos, company_id }) => {
 								</MenuItem>
 							))}
 						</FormInputDropdown>
+					</li>
+					<li className={styles.ul}>
+						<a className={styles.a} onClick={() => handleBlogHomeFormat()}>
+							<span className={styles.nav_text}>View Blog Home</span>
+						</a>
 					</li>
 					<li className={styles.ul}>
 						<a className={styles.a} href='http://startific.com'>

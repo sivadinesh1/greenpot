@@ -78,6 +78,28 @@ export const getByNano = async (id) => {
 	return bigIntToString(result);
 };
 
+export const getByNanoWithAssociation = async (id) => {
+	let result = null;
+	try {
+		result = await prisma.company.findUnique({
+			where: {
+				company_id: id,
+			},
+			include: {
+				repo: {
+					include: {
+						blog: true,
+					},
+				},
+			},
+		});
+		console.log("check data--->", result)
+	} catch (error) {
+		console.log('getByNano error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
 export const getList = async () => {
 	let result = null;
 	try {

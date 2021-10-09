@@ -498,3 +498,19 @@ export const getBlogsByCategory = async (categoryId) => {
 	}
 	return response;
 }
+
+export const getBlogsByCompnay = async (company_id) => {
+	let response = null;
+	try {
+		const result = await prisma.blog.findMany({
+			where: {
+				company_id: Number(company_id)
+			}
+		});
+		response = bigIntToString(result);
+
+	} catch (error) {
+		console.log("Error occurred in blog service getBlogsByCategory method ", error)
+	}
+	return response;
+}

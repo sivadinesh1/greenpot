@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { getById, getByNano, deleteById, updateBlogFormat } from '../../../service/company.service';
+import { getById, getByNano, deleteById, updateBlogFormat, getByNanoWithAssociation } from '../../../service/company.service';
 import { auth } from '../../../middleware/auth';
 
 const handler = nc()
@@ -11,6 +11,9 @@ const handler = nc()
 			res.status(200).json(result);
 		} else if (slug[0] === 'getByNano') {
 			const result = await getByNano(slug[1]);
+			res.status(200).json(result);
+		} else if (slug[0] === 'getByNanoWithAssociation') {
+			const result = await getByNanoWithAssociation(slug[1]);
 			res.status(200).json(result);
 		}
 	})
