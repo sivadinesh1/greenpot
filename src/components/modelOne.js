@@ -1,15 +1,15 @@
-import styles from '../../styles/blog-format/format0.module.scss';
-
 import Image from 'next/image';
+import styles from '../styles/blog-format/format0.module.scss';
 
-const Format = ({ blog_format, blogs }) => {
+
+const Model = ({ blog_format, blogs }) => {
     console.log('check data in component--->', blog_format);
     console.log('check data in component--->2', blogs);
 
     return (
         <div>
             <div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', backgroundColor: 'red' }}>
-                <div>Menu</div>
+                <div>Menu1</div>
                 <div>blogs</div>
             </div>
 
@@ -37,4 +37,4 @@ const Format = ({ blog_format, blogs }) => {
     );
 };
 
-export default Format;
+export default Model;

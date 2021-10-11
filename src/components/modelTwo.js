@@ -1,4 +1,4 @@
-import styles from "../../styles/blog-format/format1.module.scss";
+import styles from "../styles/blog-format/format1.module.scss";
 import Image from 'next/image';
 
 const Format1 = ({ blog_format, blogs }) => {
@@ -7,7 +7,6 @@ const Format1 = ({ blog_format, blogs }) => {
 
     return (
         <div className={styles.container}>
-            <div><h1>Test render...</h1></div>
             <div>{blog_format}</div>
 
             <div className={styles.list}>

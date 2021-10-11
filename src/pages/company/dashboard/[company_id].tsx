@@ -60,7 +60,6 @@ const TemplateOne = ({ isError, company, blogs }) => {
                 <div>Test static page</div>
                 {company.blog_home_format === "format-0" && <Format blog_format={company.blog_home_format} blogs={blogs} />}
                 {company.blog_home_format === "format-1" && <Format1 blog_format={company.blog_home_format} blogs={blogs} />}
-
             </div>
         </>
     );
