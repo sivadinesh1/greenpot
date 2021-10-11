@@ -60,7 +60,7 @@ const RepoSidebar = ({ repos, reloadRepos, company_id }) => {
 
 	const handleBlogHomeFormat = () => {
 		// Router.push(`/company/dashboard/${company_id}`)
-		Router.push(`/company/dashboard/uPgPdRz0w94`)
+		Router.push(`/blogs/uPgPdRz0w94`)
 
 	}
 

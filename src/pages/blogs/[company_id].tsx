@@ -9,14 +9,13 @@ import styles from '../../styles/blog-format/format0.module.scss';
 import Format from '../../components/blogFormat/format';
 import Format1 from '../../components/blogFormat/format1';
 
-export async function getStaticProps(context) {
+export async function getServerSideProps(context) {
 	let company_nano = null;
 	let isError = false;
 	let company = null;
 	let company_id = null;
 	let categories = null;
 	let blogs = null;
-	let videoList = null;
 	try {
 		company_nano = context.params.company_id;
 		//fetch company detail based on nanoid
@@ -36,21 +35,12 @@ export async function getStaticProps(context) {
 		isError = true;
 	}
 	return {
-		props: { isError, company, categories, blogs, videoList },
-		revalidate: 1,
+		props: { isError, company, categories, blogs }
 	};
 }
 
-export async function getStaticPaths() {
-	let companies = await getList();
 
-	const paths = companies.map((company) => ({
-		params: { company_id: company.company_id.toString() },
-	}));
-	return { paths, fallback: false };
-}
-
-const TemplateOne = ({ isError, company, blogs }) => {
+const TemplateOne = ({ isError, company, blogs, categories }) => {
 	return (
 		<>
 			<div className={styles.container}>
