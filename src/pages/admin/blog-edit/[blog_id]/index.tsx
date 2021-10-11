@@ -9,7 +9,7 @@ import dynamic from 'next/dynamic';
 import { makeStyles } from '@material-ui/core/styles';
 
 import TextField from '@material-ui/core/TextField';
-import { Button, Divider, Menu, MenuItem, withWidth } from '@material-ui/core';
+import { Button, Divider, Menu, MenuItem, withWidth, FormControl, Input } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -60,6 +60,9 @@ import AdUnitsIcon from '@mui/icons-material/AdUnits';
 import AdbIcon from '@mui/icons-material/Adb';
 import DeleteDialog from '../../../../components/elements/ui/Dialog/DeleteDialog';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -86,6 +89,7 @@ export const getServerSideProps = async (context) => {
 	let company_id = null;
 	let tags = null;
 	let selectedImages = null;
+	let images = null;
 
 	try {
 		console.log('test routing information ----->', context.props);
@@ -128,12 +132,16 @@ export const getServerSideProps = async (context) => {
 		//fetch uploaded images
 		path = `C${user?.data?.company_id}/B${blog.id}`;
 		selectedImages = await getImages(path);
+
+		//fetch unsplash images
+		let unsplashRes = await axios.get(`https://api.unsplash.com/photos/?client_id=xEgxLpBbjc6QDigyUa6pNU7dWdaA2HoQTE8bIGVSnkI`)
+		images = unsplashRes.data
 	} catch (error) {
 		console.log(`error in blog edit ${error}`);
 		isError = true;
 	}
 	return {
-		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors, isError },
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors, isError, images },
 	};
 };
 
@@ -183,16 +191,17 @@ export default function Index({
 	accessRights,
 	authors,
 	isError,
+	images
 }) {
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();
 		}
 	}, []);
-
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [imageFile, setImageFile] = useState<any>();
 	const [currentBlog, setCurrentBlog] = useState<any>(blog);
+	const [unsplashImage, setUnsplashImage] = useState(images)
 	let maxCat = 3;
 	let maxTag = 15;
 	const handleClose = () => {
@@ -230,7 +239,6 @@ export default function Index({
 	const [uploadedFiles, setUploadedFiles] = useState(selectedImages?.length > 0 ? selectedImages : []);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
-	console.log('test pre selected values--->', selectedTag);
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 	const [showAssets, setShowAssets] = useState(false);
 	const [showApps, setShowApps] = useState(false);
@@ -549,7 +557,7 @@ export default function Index({
 							name={key}
 							icon={<AdbIcon />}
 							checkedIcon={<AdbIcon />}
-							// label="test"
+						// label="test"
 						/>
 						<div className={styles.layout_title}>{key}</div>{' '}
 					</div>
@@ -575,10 +583,139 @@ export default function Index({
 		}
 		//mutate();
 	};
-	console.log('check meta data--->', uploadedFiles);
 
 	// onClick={handleShowMetaSection} className={showMetaSection ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`
+	const [word, setWord] = useState("")
+	const [dictionaryResult, setDictionaryResult] = useState({})
 
+	const handleChange = async (searchKey) => {
+		console.log("test search word--->", searchKey)
+		setWord(searchKey)
+	};
+
+	const search = async () => {
+		let result = await axios.get(`/api/dictionary/${word}`);
+		setDictionaryResult(result.data);
+		console.log("Check result---> 3", result.data)
+		setWord("")
+	}
+
+	const [imgGalleryType, setImgGalleryType] = useState("local");
+	const handleImageGallery = (data) => {
+		console.log("check the type---->", data)
+		setImgGalleryType(data)
+	}
+
+	let page = 1;
+	let accesskey = 'xEgxLpBbjc6QDigyUa6pNU7dWdaA2HoQTE8bIGVSnkI'
+	let size = 30
+	const searchImage = async () => {
+		console.log("check search key--->", word)
+		let resp = await axios.get(`https://api.unsplash.com/collections?page=${page}&per_page=${size}&query=${word}&client_id=${accesskey}`)
+		// let resp = await axios.get(`https://api.unsplash.com/photos?page=${page}&per_page=${size}&query=${word}&client_id=${accesskey}`)
+		setUnsplashImage(resp.data)
+		setWord("")
+
+	}
+	const unsplashGallery = () => {
+		return (
+			<div>
+				<div style={{ padding: "1rem" }}>
+					<FormControl fullWidth >
+						<Input
+							type='text'
+							placeholder='Search Image'
+							fullWidth
+							margin='dense'
+							name='search'
+							onChange={(event) => {
+								handleChange(event.target.value);
+							}}
+							endAdornment={
+								<InputAdornment position='start'>
+									<IconButton onClick={() => searchImage()}>
+										<SearchIcon />
+									</IconButton>
+								</InputAdornment>
+							}
+						/>
+					</FormControl>
+				</div>
+				<div className={styles.no_image}>
+					{unsplashImage.length > 0 && (
+						<>
+							<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: '1fr 1fr', margin: 'auto auto' }}>
+								{unsplashImage.map((file, index) => (
+									<div key={file.id} className={styles.image_item}>
+										<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
+											<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
+										</div>
+
+										<Image
+											src={file?.urls?.small === undefined ? file.preview_photos[0].urls.small : file.urls.small}
+											width='100'
+											height='100'
+											crop='scale'
+										/>
+
+									</div>
+								))}
+							</div>
+						</>
+					)}
+				</div>
+			</div>
+		)
+	}
+
+	const mediaGallery = () => {
+		return (
+			<div>
+				<div className={styles.drop_zone}>
+					<div {...getRootProps()} className={`${styles_drop_zone.drop_zone} ${isDragActive ? styles_drop_zone.active : null}`}>
+						<input {...getInputProps()} />
+						{`Drag'n'drop files, or click to select files`}
+					</div>
+				</div>
+				<div className={styles.no_image}>
+					{uploadedFiles.length === 0 && (
+						<>
+							<div>No Images</div>
+						</>
+					)}
+
+					{uploadedFiles.length > 0 && (
+						<>
+							<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: '1fr 1fr', margin: 'auto auto' }}>
+								{uploadedFiles.map((file, index) => (
+									<div key={file.public_id} className={styles.image_item}>
+										<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
+											<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
+										</div>
+
+										<Image
+											cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+											publicId={file.public_id}
+											width='100'
+											height='100'
+											crop='scale'
+										/>
+										<div>
+											{`${file.original_filename === undefined ? 'image ' + (index + 1) : file.original_filename}.${
+												file.format
+												} ${file.width}x${file.height}`}
+										</div>
+									</div>
+								))}
+							</div>
+						</>
+					)}
+				</div>
+
+
+			</div>
+		)
+	}
 	return (
 		<>
 			<div className={styles.main_menu}>
@@ -604,52 +741,50 @@ export default function Index({
 			</div>
 			<div className={styles.main_bg}>
 				<div className={showAssets ? `${styles.assets} ${styles.show_assets}` : `${styles.assets}`}>
-					<div className={styles.drop_zone}>
-						<div {...getRootProps()} className={`${styles_drop_zone.drop_zone} ${isDragActive ? styles_drop_zone.active : null}`}>
-							<input {...getInputProps()} />
-							{`Drag'n'drop files, or click to select files`}
-						</div>
-						{/* {uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
-						 */}
+					<div className={styles.flex_center} style={{ padding: "5px" }}>
+						<div><Button color='primary' onClick={() => handleImageGallery('local')} >Local</Button></div>
+						<div> <Button color='primary' onClick={() => handleImageGallery('unsplash')} >Unsplash</Button></div>
 					</div>
-
-					<div className={styles.no_image}>
-						{uploadedFiles.length === 0 && (
-							<>
-								<div>No Images</div>
-							</>
-						)}
-
-						{uploadedFiles.length > 0 && (
-							<>
-								<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: '1fr 1fr', margin: 'auto auto' }}>
-									{uploadedFiles.map((file, index) => (
-										<div key={file.public_id} className={styles.image_item}>
-											<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
-												<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
-											</div>
-
-											<Image
-												cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
-												publicId={file.public_id}
-												width='100'
-												height='100'
-												crop='scale'
-											/>
-											<div>
-												{`${file.original_filename === undefined ? 'image ' + (index + 1) : file.original_filename}.${
-													file.format
-												} ${file.width}x${file.height}`}
-											</div>
-										</div>
-									))}
-								</div>
-							</>
-						)}
-					</div>
+					{imgGalleryType === "local" ? mediaGallery() : unsplashGallery()}
 				</div>
 				<div className={showApps ? `${styles.apps} ${styles.show_apps}` : `${styles.apps}`}>
-					<div className={styles.drop_zone}></div>
+					<div>
+						<div style={{ padding: "1rem" }}>
+							<FormControl fullWidth >
+								<Input
+									type='text'
+									placeholder='Search word'
+									fullWidth
+									margin='dense'
+									name='search'
+									onChange={(event) => {
+										handleChange(event.target.value);
+									}}
+									endAdornment={
+										<InputAdornment position='start'>
+											<IconButton aria-label='toggle password visibility' onClick={() => search()}>
+												<SearchIcon />
+											</IconButton>
+										</InputAdornment>
+									}
+								/>
+							</FormControl>
+							{dictionaryResult?.title != null ? (<div style={errorStyle}>{dictionaryResult.title}</div>) :
+								(<div>
+									{Object.keys(dictionaryResult).length > 0 && <div>
+										<div><h4>{dictionaryResult[0].word}</h4></div>
+										<div>{dictionaryResult[0]?.meanings[0]?.definitions[0]?.definition}</div>
+										<hr />
+										<div>{dictionaryResult[0]?.meanings[0]?.definitions[0]?.example}</div>
+										<hr />
+										<div>{dictionaryResult[0].origin}</div>
+									</div>
+									}
+								</div>)}
+
+
+						</div>
+					</div>
 				</div>
 				<div className={styles.blog_wrap}>
 					<form onSubmit={handleSubmit(onSubmit)}>
