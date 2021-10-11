@@ -17,7 +17,6 @@ export const createCompnay = async (data) => {
 				name: name,
 				status: status,
 				is_delete: is_delete,
-				createddate: new Date(),
 			},
 		});
 	} catch (error) {
@@ -71,7 +70,7 @@ export const getByNano = async (id) => {
 				company_id: id,
 			},
 		});
-		console.log("check data--->", result)
+		console.log('check data--->', result);
 	} catch (error) {
 		console.log('getByNano error::' + error.message);
 	}
@@ -93,7 +92,7 @@ export const getByNanoWithAssociation = async (id) => {
 				},
 			},
 		});
-		console.log("check data--->", result)
+		console.log('check data--->', result);
 	} catch (error) {
 		console.log('getByNano error::' + error.message);
 	}
@@ -148,7 +147,7 @@ export const updateBlogFormat = async (id, data) => {
 			},
 			data: {
 				blog_home_format: data,
-			}
+			},
 		});
 	} catch (error) {
 		console.log('update blog format error::' + error.message);

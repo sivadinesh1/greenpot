@@ -325,6 +325,11 @@ export default function Index({
 		setShowLayout(false);
 	};
 
+	const handleCloseLeftBar = () => {
+		setShowAssets(false);
+		setShowApps(false);
+	};
+
 	const handleClick = (event, item) => {
 		setAnchorEl(event.currentTarget);
 		setImageFile(item);
@@ -578,11 +583,24 @@ export default function Index({
 		<>
 			<div className={styles.main_menu}>
 				<div onClick={handleShowAssets} className={showAssets ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
-					<Image src='/static/images/gallery.svg' alt='gallery' width='32px' height='32px' />
+					<div className={styles.menu_label}>
+						<Image src='/static/images/gallery.svg' alt='gallery' width='32px' height='32px' />
+						<div className={styles.menu_label_text}>Media</div>
+					</div>
 				</div>
 				<div onClick={handleShowApps} className={showApps ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
-					<Image src='/static/images/apps.svg' alt='apps' width='32px' height='32px' />
+					<div className={styles.menu_label}>
+						<Image src='/static/images/apps.svg' alt='apps' width='32px' height='32px' />
+						<div className={styles.menu_label_text}>Apps</div>
+					</div>
 				</div>
+				{(showAssets || showApps) && (
+					<>
+						<div onClick={handleCloseLeftBar} className={styles.menu_item} style={{ marginTop: 'auto' }}>
+							<Image src='/static/images/left_arrow.svg' alt='edit' width='30px' height='30px' />
+						</div>
+					</>
+				)}
 			</div>
 			<div className={styles.main_bg}>
 				<div className={showAssets ? `${styles.assets} ${styles.show_assets}` : `${styles.assets}`}>
@@ -755,7 +773,7 @@ export default function Index({
 								getOptionLabel={(option) => option.name}
 								value={selectedCategorys}
 								renderInput={(params) => (
-									<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+									<TextField {...params} variant='standard' placeholder='Select Categories' margin='normal' fullWidth />
 								)}
 							/>
 							{selectedCategorys.length > maxCat && <div style={errorStyle}>Select maximum {maxCat} categories</div>}
@@ -772,7 +790,7 @@ export default function Index({
 								getOptionLabel={(option) => option.name}
 								value={selectedTags}
 								renderInput={(params) => (
-									<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
+									<TextField {...params} variant='standard' placeholder='Choose #Tags' margin='normal' fullWidth />
 								)}
 							/>
 							{selectedTags.length > maxTag && <p style={errorStyle}>Select maximum {maxTag} Tags</p>}
@@ -857,10 +875,16 @@ export default function Index({
 			</div>
 			<div className={showMetaSection || showLayout ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
 				<div onClick={handleShowMetaSection} className={showMetaSection ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
-					<Image src='/static/images/form.svg' alt='edit' width='30px' height='30px' />
+					<div className={styles.menu_label}>
+						<Image src='/static/images/form.svg' alt='edit' width='30px' height='30px' />
+						<div className={styles.menu_label_text}>SEO</div>
+					</div>
 				</div>
 				<div onClick={handleShowLayout} className={showLayout ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
-					<Image src='/static/images/layout.svg' alt='edit' width='30px' height='30px' />
+					<div className={styles.menu_label}>
+						<Image src='/static/images/layout.svg' alt='edit' width='30px' height='30px' />
+						<div className={styles.menu_label_text}>Layout</div>
+					</div>
 				</div>
 				{(showMetaSection || showLayout) && (
 					<>

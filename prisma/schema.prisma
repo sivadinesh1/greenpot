@@ -77,8 +77,8 @@ model company {
   is_delete     String?   @db.VarChar(5)
   created_by    BigInt?
   updated_by    BigInt?
-  createddate   DateTime? @db.Timestamp(6)
-  updateddate   DateTime? @db.Timestamp(6)
+  createdAt     DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime? @updatedAt
   blog_home_format     String?   @db.VarChar(50)
 
   

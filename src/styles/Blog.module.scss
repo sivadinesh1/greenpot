@@ -291,7 +291,7 @@
 .menu_item {
 	display: flex;
 	justify-content: center;
-	padding: 10px 0px;
+	padding: 5px 0px;
 	cursor: pointer;
 }
 
@@ -536,4 +536,14 @@
 
 .preview_wrap {
 	padding-top: 50px;
+}
+
+.menu_label {
+	display: grid;
+}
+
+.menu_label_text {
+	font-size: 11px;
+	text-align: center;
+	padding: 0.4rem 0;
 }
