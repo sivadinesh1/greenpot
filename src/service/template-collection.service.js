@@ -21,7 +21,7 @@ export const create = async (body) => {
 				status: status,
 				description: description,
 				is_delete: is_delete,
-				created_date: date,
+				createdAt: date,
 				template_collection: {
 					create: tempList === undefined ? [] : tempList,
 					// create: tempList
@@ -61,7 +61,7 @@ export const updateTemplateCollection = async (body) => {
 				name: name,
 				status: status,
 				description: description,
-				updated_date: date,
+				updatedAt: date,
 				template_collection: {
 					create: tempList === undefined ? [] : tempList,
 				},

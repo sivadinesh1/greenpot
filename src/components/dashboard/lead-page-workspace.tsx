@@ -14,18 +14,29 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
 import DeleteDialog from '../elements/ui/Dialog/DeleteDialog';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import ViewListIcon from '@mui/icons-material/ViewList';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
 
 const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
-	const handleNewArticle = async (event) => {
-		event.stopPropagation();
-		const blog = await axios.get(`/api/blog/new/${selectedRepo.id}`);
-		Router.push(`/admin/blog-edit/${blog.data.blog_id}`);
+	console.log("check selected repo--->", selectedRepo)
+	const [view, setView] = React.useState('list');
+	const [leadPage, setLeadPage] = useState({})
+
+	const handleChange = (event, nextView) => {
+		setView(nextView);
 	};
 
-	const handleOpenTemplate = () => {
-		// setTemplateDialog(true);
+	const handleOpenTemplate = async (event) => {
+		event.stopPropagation();
 		Router.push(`/template/${selectedRepo.repo_id}`);
 	};
+
+	// const handleOpenTemplate = () => {
+	// 	// setTemplateDialog(true);
+	// 	Router.push(`/template/${selectedRepo.repo_id}`);
+	// };
 
 	const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -34,8 +45,8 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 	};
 
 	const handleClick = (event, item) => {
-		// setAnchorEl(event.currentTarget);
-		// setBlogItem(item);
+		setAnchorEl(event.currentTarget);
+		setLeadPage(item);
 	};
 
 	const [openDialog, setOpenDialog] = useState(false);
@@ -51,7 +62,7 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 	const [templateDialog, setTemplateDialog] = useState(false);
 
 	const editCusTemp = (ctempId) => {
-		//	Router.push(`/custom-template/${ctempId}`);
+		Router.push(`/lead-page/${ctempId}`);
 	};
 
 	const handleCloseTemplate = () => {
@@ -60,18 +71,36 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 
 	return (
 		<>
-			<div className={styles.page_header}>{selectedRepo?.repo_name}</div>
-			<div className={styles.repo_list}>
-				<div className={styles.repo_creator}>
-					{selectedRepo?.repo_type === 'T' && (
-						<div className={styles.left} onClick={(event) => handleOpenTemplate()}>
-							<div>Landing Page</div>
-							<div style={{ placeSelf: 'center' }}>
-								<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
-							</div>
-						</div>
-					)}
+			{/* <div className={styles.page_header}>{selectedRepo?.repo_name}</div> */}
+			<div className={styles.page_header}>
+				<div className={styles.title_header}>{selectedRepo?.repo_name}</div>
+
+				<div className={styles.page_header_right}>
+					<div>
+						<ToggleButtonGroup orientation='horizontal' value={view} exclusive onChange={handleChange}>
+							<ToggleButton value='list' aria-label='list'>
+								<ViewListIcon />
+							</ToggleButton>
+							<ToggleButton value='module' aria-label='module'>
+								<ViewModuleIcon />
+							</ToggleButton>
+						</ToggleButtonGroup>
+					</div>
+					<div onClick={(event) => handleOpenTemplate(event)}>
+						<span className={styles.plus}>+ New Lead</span>
+					</div>
 				</div>
+			</div>
+			<div className={styles.repo_list}>
+				{/* <div className={styles.repo_creator}>
+
+					<div className={styles.left} onClick={(event) => handleOpenTemplate()}>
+						<div>Landing Page</div>
+						<div style={{ placeSelf: 'center' }}>
+							<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
+						</div>
+					</div>
+				</div> */}
 
 				{selectedRepo?.repo_type === 'T' &&
 					lead_pages &&
@@ -80,7 +109,7 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 						return (
 							<div key={index} className={styles.list_blogs}>
 								<div className={styles.blog_title} style={{ background: "#c5e0dc" }} onClick={() => editCusTemp(item.lead_page_id)}>
-									{item.name}
+									{item.lead_page_name}
 								</div>
 								<div className={styles.footer}>
 									<div>&nbsp;</div>
@@ -95,8 +124,8 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 			</div>
 
 			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
-				<MenuItem onClick={handleClose}>Profile</MenuItem>
-				<MenuItem onClick={handleClose}>My account</MenuItem>
+				<MenuItem onClick={handleClose}>view</MenuItem>
+				<MenuItem onClick={handleClose}>edit</MenuItem>
 				<Divider />
 				<MenuItem>
 					<span style={{ color: 'red', fontSize: '12px' }}>Delete</span>

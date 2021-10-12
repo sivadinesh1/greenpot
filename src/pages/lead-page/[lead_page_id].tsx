@@ -84,10 +84,10 @@ const Collection = ({ isError, collection }) => {
 	const [currentField, setCurrentField] = useState("");
 	const [availableImages, setAvailableImages] = useState([]);
 
-	const [schedule, setSchedule] = useState([]);
-	const [loads, setLoads] = useState([]);
-	const [undo, setUndo] = useState([]);
-	const [redo, setRedo] = useState([]);
+	// const [schedule, setSchedule] = useState([]);
+	// const [loads, setLoads] = useState([]);
+	// const [undo, setUndo] = useState([]);
+	// const [redo, setRedo] = useState([]);
 	let initialValTest = {};
 
 	const {
@@ -100,32 +100,26 @@ const Collection = ({ isError, collection }) => {
 
 	const onSubmit = async (formData) => console.log('form submit data test ---->', formData);
 
-	const handleUpdate = () => {
-		let oldObj = currentSection;
-		// console.log('check current section data--->', oldObj);
-		// oldObj["blocks"][0].value = watch('company', oldObj.blocks[0].value.toString());
-		// oldObj["blocks"][1].value = watch('blocks', oldObj.blocks[1].value.toString());
-		// // oldObj["blocks"][0].value = watch('company');
-		// // oldObj["blocks"][1].value = watch('blocks');
-		// setLoads(loads.length > 0 ? [...loads, oldObj] : [oldObj]);
-		// setUndo([...undo, oldObj]);
-		// console.log(' check handle value --->', oldObj);
-		// console.log(' check handle value 1--->', loads);
-		// console.log(' check handle value 2--->', undo);
+	// const handleUpdate = () => {
+	// 	let oldObj = currentSection;
+	// 	oldObj["blocks"][0].value = watch('company', oldObj.blocks[0].value.toString());
+	// 	oldObj["blocks"][1].value = watch('blocks', oldObj.blocks[1].value.toString());
+	// 	// oldObj["blocks"][0].value = watch('company');
+	// 	// oldObj["blocks"][1].value = watch('blocks');
+	// 	setLoads(loads.length > 0 ? [...loads, oldObj] : [oldObj]);
+	// 	setUndo([...undo, oldObj]);
+	// };
 
-	};
-
-	const undoChanges = () => {
-		const lastElement = undo[undo.length - 1];
-		console.log('check undo operation--->1', lastElement);
-		// Update redo to be able to rollback
-		setRedo([...undo]);
-		// Remove the last element from undo
-		undo.pop();
-		setCurrentSection(undo[undo.length - 1]);
-		console.log('check undo operation--->2', currentSection);
-		// setUndo([...lastElement]);
-	};
+	// const undoChanges = () => {
+	// 	const lastElement = undo[undo.length - 1];
+	// 	console.log('check undo operation--->1', lastElement);
+	// 	// Update redo to be able to rollback
+	// 	setRedo([...undo]);
+	// 	// Remove the last element from undo
+	// 	undo.pop();
+	// 	setCurrentSection(undo[undo.length - 1]);
+	// 	// setUndo([...lastElement]);
+	// };
 
 	const [openDialog, setOpenDialog] = useState(false);
 	const handleOpenDialog = () => {
@@ -178,7 +172,6 @@ const Collection = ({ isError, collection }) => {
 	};
 
 	const handleImage = async (name) => {
-		console.log('test handle image method call', name);
 		setCurrentField(name);
 		handleOpenUpload();
 		handleCloseDialog();
@@ -207,8 +200,10 @@ const Collection = ({ isError, collection }) => {
 				body: formData,
 			});
 			const data = await response.json();
-			console.log('check data --->', currentField);
 			// setValue(currentField, data.secure_url);
+			setValue('background', data.secure_url);
+			console.log('check data --->', data);
+			handleCloseUpload();
 		});
 	}, []);
 
@@ -220,42 +215,38 @@ const Collection = ({ isError, collection }) => {
 	});
 
 	const edit = () => {
-		// switch (currentKey) {
-		// 	case 'Header':
-		// 		if (currentSection?.status === 'Active')
-		// 			return (
-		// 				<Header
-		// 					// blocks={watch('blocks', currentSection.blocks[1].value)}
-		// 					// company={watch('company', currentSection.blocks[0].value)}
-		// 					// imageUrl={watch('image', currentSection.blocks[2].value)}
-		// 					// backgroundImage={watch('background', currentSection.blocks[3].value)}
-		// 					blocks={watch('blocks', false)}
-		// 					company={watch('company', false)}
-		// 					imageUrl={watch('image', false)}
-		// 					backgroundImage={watch('background', false)}
-		// 				/>
-		// 			);
-		// 	case 'Footer':
-		// 		if (currentSection?.status === 'Active') return <Footer data={watch('footer', currentSection.blocks[0].value)} />;
-		// }
+		switch (currentKey) {
+			case 'Header':
+				if (currentSection?.status === 'Active')
+					return (
+						<Header
+							company={watch('company', currentSection.blocks[0].value)}
+							content={watch('content', currentSection.blocks[1].value)}
+							imageUrl={watch('image', currentSection.blocks[2].value)}
+							backgroundImage={watch('background', currentSection.blocks[3].value)}
+						/>
+					);
+			case 'Footer':
+				if (currentSection?.status === 'Active') return <Footer data={watch('footer', currentSection.blocks[0].value)} />;
+		}
 	};
 
 	return (
 		<>
 			<div className={styles.header_card}>
 				{/* , justifyblocks: 'center' */}
-				<div style={{ display: 'flex', alignItems: 'center' }}>{`${collection.repo.name} / ${collection.name}`}</div>
+				<div style={{ display: 'flex', alignItems: 'center' }}>{`${collection.repo.repo_name} / ${collection.lead_page_name}`}</div>
 				<div style={{ display: 'flex', alignItems: 'center' }}>Customize</div>
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-						<div>
-							<div style={{ float: 'left', cursor: 'pointer', paddingRight: '5px' }}>
+						<div>&emsp;
+							{/* <div style={{ float: 'left', cursor: 'pointer', paddingRight: '5px' }}>
 								<Image src='/static/images/undo.svg' alt='edit' width='16px' height='16px' onClick={() => undoChanges()} />
 							</div>
 							<div style={{ float: 'left', padding: '0 10px' }}> | </div>
 							<div style={{ float: 'left', cursor: 'pointer', paddingLeft: '5px' }}>
 								<Image src='/static/images/redo.svg' alt='edit' width='16px' height='16px' onClick={() => undoChanges()} />
-							</div>
+							</div> */}
 						</div>
 						<div>
 							{' '}
@@ -280,6 +271,7 @@ const Collection = ({ isError, collection }) => {
 									})}
 							</div>
 						</div>
+
 						<Divider style={{ background: '#000000' }} />
 						<div className={styles.bottom}>
 							<div>
@@ -287,8 +279,8 @@ const Collection = ({ isError, collection }) => {
 									{fields?.map((row, index) => {
 										if (row.type === 'text') {
 											return (
-												<div className={styles.formGap} key={index} onChange={() => handleUpdate()}>
-													{/* <Controller
+												<div className={styles.formGap} key={index} >
+													<Controller
 														name={row.name as any}
 														key={index}
 														control={control}
@@ -296,13 +288,13 @@ const Collection = ({ isError, collection }) => {
 														render={({ field }) => (
 															<TextField type='text' label={row.label} margin='dense' variant='standard' size='small' fullWidth {...field} />
 														)}
-													/> */}
+													/>
 												</div>
 											);
 										} else if (row.type === 'text-area') {
 											return (
-												<div className={styles.formGap} key={index} onChange={() => handleUpdate()}>
-													{/* <Controller
+												<div className={styles.formGap} key={index} >
+													<Controller
 														name={row.name}
 														key={index}
 														control={control}
@@ -320,7 +312,7 @@ const Collection = ({ isError, collection }) => {
 																{...field}
 															/>
 														)}
-													/> */}
+													/>
 												</div>
 											);
 										}

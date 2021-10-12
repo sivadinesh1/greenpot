@@ -1,5 +1,6 @@
 import nc from 'next-connect';
-import { create, updateTemplateById, getCollection } from '../../../service/template-collection.service';
+import { updateTemplateById, getCollection } from '../../../service/template-collection.service';
+import { create } from "../../../service/lead-page.service";
 import { getById } from '../../../service/template.service';
 
 const handler = nc()

@@ -1,10 +1,10 @@
 import React, { Fragment } from 'react';
 
 const Footer = (props) => {
-    const {data}=props
+	const { data, key } = props
 	return (
 		<>
-			<div>{data}</div>
+			<div key={key}>{data}</div>
 		</>
 	);
 };

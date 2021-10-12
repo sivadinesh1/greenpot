@@ -115,7 +115,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 		handleOpenDialog();
 	};
 
-	const handleCustomTemplate = (nanoId) => Router.push(`/custom-template/${nanoId}`);
+	const handleCustomTemplate = (nanoId) => Router.push(`/lead-page/${nanoId}`);
 
 	const onSubmit = async (formData, event) => {
 		const values = {
@@ -123,11 +123,11 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 			repoId: repoId,
 			name: formData.name,
 		};
-
+		console.log("check lead page submit value--->", values)
 		setServerErrors([]);
 		setError(false);
 
-		const response = await axios.post(`/api/collection`, values);
+		const response = await axios.post(`/api/lead-page`, values);
 		console.log('check response--->', response);
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);

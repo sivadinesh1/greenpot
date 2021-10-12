@@ -22,9 +22,9 @@ export const create = async (body) => {
 				blocks: blocks,
 				is_delete: is_delete,
 				repo_id: repo_id,
-				created_date: date,
-				tpl_type: type,
-				name: name,
+				createdAt: date,
+				template_type: type,
+				lead_page_name: name,
 			},
 		});
 	} catch (error) {
@@ -47,8 +47,8 @@ export const updateTemplateById = async (updateBody) => {
 				template_id: template_id,
 				status: status,
 				blocks: blocks,
-				updated_date: date,
-				name: name,
+				updatedAt: date,
+				lead_page_name: name,
 			},
 			include: {
 				repo: true,

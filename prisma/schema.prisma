@@ -183,9 +183,9 @@ model lead_page{
     repo_id         BigInt
     template_type   String    @db.VarChar(5)
     blocks_clone    Json?
-    company_id      BigInt
-    created_by      BigInt
-    updated_by      BigInt
+    company_id      BigInt?
+    created_by      BigInt?
+    updated_by      BigInt?
     createdAt       DateTime? @db.Timestamp(6)
     updatedAt       DateTime? @db.Timestamp(6)
     
