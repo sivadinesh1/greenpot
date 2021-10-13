@@ -18,7 +18,7 @@ const Content = styled.div`
 
 const HeaderCom = (props) => {
   // const [data,setData]=useState(props.data)
-  const { company, content, imageUrl, backgroundImage, key } = props;
+  const { company, blocks, imageUrl, backgroundImage, key } = props;
   let defaultUrl = "https://res.cloudinary.com/sanjayaalam/image/upload/v1623824061/bei5qfeikwisuvmi4t3c.jpg"
 
   return (
@@ -32,7 +32,7 @@ const HeaderCom = (props) => {
       }}
         key={key}>
 
-        <Content>{content}</Content>
+        <Content>{blocks}</Content>
       </div>
       <div id="image">
         <Image

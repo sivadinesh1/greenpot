@@ -18,7 +18,7 @@ const BuilderComponent = ({ keySet, data, mode }) => {
 							return (
 								<Header
 									company={obj.blocks[0].value}
-									content={obj.blocks[1].value}
+									blocks={obj.blocks[1].value}
 									imageUrl={obj.blocks[2].value}
 									backgroundImage={obj.blocks[3].value}
 									key={index}

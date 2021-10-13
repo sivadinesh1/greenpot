@@ -7,64 +7,63 @@ INSERT INTO "template" (template_name,status,template_id,is_delete,blocks,templa
 ;
 
 
--- {
--- 	"Footer": {
--- 		"blocks": [
--- 			{
--- 				"value": "Copyrights Squapl digital media technologies1",
--- 				"formDetail": {
--- 					"name": "footer",
--- 					"type": "text",
--- 					"label": "Footer"
--- 				}
--- 			}
--- 		],
--- 		"status": "Active"
--- 	},
--- 	"Header": {
--- 		"blocks": [
--- 			{
--- 				"type": "Head",
--- 				"style": {
--- 					"color": "blue",
--- 					"alignment": "center"
--- 				},
--- 				"value": "Aalam Info Solution",
--- 				"formDetail": {
--- 					"name": "company",
--- 					"type": "text",
--- 					"label": "Company"
--- 				}
--- 			},
--- 			{
--- 				"type": "Content",
--- 				"value": "styled-components utilises tagged template literals to style your components.It removes the mapping between components and styles. This means that when your defining your styles, your actually creating a normal React component, that has your styles attached to it.",
--- 				"formDetail": {
--- 					"name": "content",
--- 					"type": "text-area",
--- 					"label": "Content"
--- 				}
--- 			},
--- 			{
--- 				"type": "Content",
--- 				"value": "https://res.cloudinary.com/sanjayaalam/image/upload/v1623844291/u1jyrnzzcitxj1jynh33.jpg",
--- 				"formDetail": {
--- 					"name": "image",
--- 					"type": "image",
--- 					"label": "Image"
--- 				}
--- 			},
--- 			{
--- 				"type": "Content",
--- 				"value": "https://res.cloudinary.com/sanjayaalam/image/upload/v1623820202/ivlnvdazgtls0nimhxmp.jpg",
--- 				"formDetail": {
--- 					"name": "background",
--- 					"type": "image",
--- 					"label": "BackGround"
--- 				}
--- 			}
--- 		],
--- 		"status": "Active",
--- 		"section": "Header"
--- 	}
--- }
+
+
+update template  set blocks = '{"Footer":{"blocks":[{"value":"Copyrights Squapl digital media technologies1","formDetail":{"name":"footer","type":"text","label":"Footer"}}],"status":"Active"},"Header":{"blocks":[{"style":{"color":"blue","alignment":"center"},"value":"Aalam Info Solution","formDetail":{"name":"company","type":"text","label":"Company"}},{"value":"styled-components utilises tagged template literals to style your components.It removes the mapping between components and styles. This means that when your defining your styles, your actually creating a normal React component, that has your styles attached to it.","formDetail":{"name":"content","type":"text-area","label":"Content"}},{"value":"https://res.cloudinary.com/sanjayaalam/image/upload/v1623844291/u1jyrnzzcitxj1jynh33.jpg","formDetail":{"name":"image","type":"image","label":"Image"}},{"value":"https://res.cloudinary.com/sanjayaalam/image/upload/v1623820202/ivlnvdazgtls0nimhxmp.jpg","formDetail":{"name":"background","type":"image","label":"BackGround"}}],"status":"Active"}}';
+
+{
+	"Footer": {
+		"blocks": [
+			{
+				"value": "Copyrights Squapl digital media technologies1",
+				"formDetail": {
+					"name": "footer",
+					"type": "text",
+					"label": "Footer"
+				}
+			}
+		],
+		"status": "Active"
+	},
+	"Header": {
+		"blocks": [
+			{
+				"style": {
+					"color": "blue",
+					"alignment": "center"
+				},
+				"value": "Aalam Info Solution",
+				"formDetail": {
+					"name": "company",
+					"type": "text",
+					"label": "Company"
+				}
+			},
+			{
+				"value": "styled-components utilises tagged template literals to style your components.It removes the mapping between components and styles. This means that when your defining your styles, your actually creating a normal React component, that has your styles attached to it.",
+				"formDetail": {
+					"name": "content",
+					"type": "text-area",
+					"label": "Content"
+				}
+			},
+			{
+				"value": "https://res.cloudinary.com/sanjayaalam/image/upload/v1623844291/u1jyrnzzcitxj1jynh33.jpg",
+				"formDetail": {
+					"name": "image",
+					"type": "image",
+					"label": "Image"
+				}
+			},
+			{
+				"value": "https://res.cloudinary.com/sanjayaalam/image/upload/v1623820202/ivlnvdazgtls0nimhxmp.jpg",
+				"formDetail": {
+					"name": "background",
+					"type": "image",
+					"label": "BackGround"
+				}
+			}
+		],
+		"status": "Active",
+	}
+}

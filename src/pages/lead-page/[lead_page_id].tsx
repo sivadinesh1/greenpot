@@ -88,6 +88,8 @@ const Collection = ({ isError, collection }) => {
 	// const [loads, setLoads] = useState([]);
 	// const [undo, setUndo] = useState([]);
 	// const [redo, setRedo] = useState([]);
+
+	//dynamically load initial value 
 	let initialValTest = {};
 
 	const {
@@ -143,6 +145,7 @@ const Collection = ({ isError, collection }) => {
 		setMode(mode);
 	};
 
+	//segregate the image fields in blocks array
 	const getFields = async (blocks) => {
 		fields.length = 0;
 		availableImages.length = 0;
@@ -155,7 +158,7 @@ const Collection = ({ isError, collection }) => {
 			}),
 		);
 	};
-
+	//grouping field and value in array
 	const handleAvailableImg = (field, value) => {
 		let obj = {
 			...field,
@@ -163,6 +166,7 @@ const Collection = ({ isError, collection }) => {
 		};
 		availableImages.push(obj);
 	};
+
 	const handleSection = async (key) => {
 		let obj = data[key];
 		setCurrentSection(obj);
@@ -221,7 +225,7 @@ const Collection = ({ isError, collection }) => {
 					return (
 						<Header
 							company={watch('company', currentSection.blocks[0].value)}
-							content={watch('content', currentSection.blocks[1].value)}
+							blocks={watch('content', currentSection.blocks[1].value)}
 							imageUrl={watch('image', currentSection.blocks[2].value)}
 							backgroundImage={watch('background', currentSection.blocks[3].value)}
 						/>
