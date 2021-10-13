@@ -6,7 +6,7 @@ import { bigIntToString } from '../db-config/utils';
 
 export const create = async (body) => {
 	console.log('create custom templte method call----->', body);
-	const { template_id, repo_id, blocks, name } = body;
+	const { template_id, repo_id, blocks, name, company_id } = body;
 	let status = `A`;
 	let is_delete = `N`;
 	let date = new Date();
@@ -22,6 +22,7 @@ export const create = async (body) => {
 				blocks: blocks,
 				is_delete: is_delete,
 				repo_id: repo_id,
+				company_id: company_id,
 				createdAt: date,
 				template_type: type,
 				lead_page_name: name,
@@ -169,6 +170,7 @@ export const getCountLeadPageByRepo = async (company_id) => {
 				is_delete: 'N',
 			},
 		});
+		console.log("check repo summery--->", result)
 	} catch (error) {
 		console.log('getCountLeadPageByRepo error::' + error.message);
 	}

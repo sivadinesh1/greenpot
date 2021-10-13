@@ -5,7 +5,7 @@ import { getById } from '../../../service/template.service';
 
 const handler = nc()
 	.post(async (req, res) => {
-		const { templateId, repoId, name } = req.body;
+		const { templateId, repoId, name, company_id } = req.body;
 		const template = await getById(templateId);
 
 		if (template != null) {
@@ -14,6 +14,7 @@ const handler = nc()
 				repo_id: BigInt(repoId),
 				blocks: template.blocks,
 				name: name,
+				company_id: BigInt(company_id)
 			};
 
 			const result = await create(request);

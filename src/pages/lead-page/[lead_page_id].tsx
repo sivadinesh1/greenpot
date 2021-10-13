@@ -92,6 +92,15 @@ const Collection = ({ isError, collection }) => {
 	//dynamically load initial value 
 	let initialValTest = {};
 
+	const setDefaultValue = async () => {
+		await Promise.all(objKeys.map((key) => {
+			data[key].blocks.map((data) => initialValTest[data.formDetail.name] = data.value)
+		}))
+		return initialValTest;
+	}
+
+
+
 	const {
 		control,
 		setValue,
@@ -152,13 +161,14 @@ const Collection = ({ isError, collection }) => {
 		await Promise.all(
 			blocks.map((data) => {
 				fields.push(data.formDetail);
-				initialValTest[data.formDetail.name] = data.value;
+				// initialValTest[data.formDetail.name] = data.value;
 
 				if (data.formDetail.type === 'image') handleAvailableImg(data.formDetail, data.value);
 			}),
 		);
 	};
-	//grouping field and value in array
+
+	//grouping image field and value in single object
 	const handleAvailableImg = (field, value) => {
 		let obj = {
 			...field,
@@ -169,6 +179,9 @@ const Collection = ({ isError, collection }) => {
 
 	const handleSection = async (key) => {
 		let obj = data[key];
+		console.log("check intermediate ---->", Object.keys(initialValTest).length)
+		if (Object.keys(initialValTest).length === 0)
+			setDefaultValue()
 		setCurrentSection(obj);
 		setCurrentKey(key);
 		await getFields(obj.blocks);

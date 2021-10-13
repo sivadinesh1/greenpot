@@ -41,6 +41,7 @@ export const getServerSideProps = async (context) => {
 	let tempId = null;
 	let repoNano = null;
 	let repoId = null;
+	let company_id = null;
 
 	try {
 		cookie = context?.req?.headers.cookie;
@@ -59,13 +60,14 @@ export const getServerSideProps = async (context) => {
 		//get repo by nano
 		let repo = await getRepoByNano(repoNano);
 		repoId = repo.id;
+		company_id = repo.company_id
 	} catch (error) {
 		console.log(`error in template preview ${error}`);
 		isError = true;
 	}
 
 	return {
-		props: { isError, template, repoId, repoNano },
+		props: { isError, template, repoId, repoNano, company_id },
 	};
 };
 
@@ -73,7 +75,7 @@ interface FormData {
 	name: string;
 }
 
-const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
+const TemplatePreview = ({ isError, template, repoId, repoNano, company_id }) => {
 	const [temp, setTemp] = useState(template);
 	useEffect(() => {
 		if (isError) {
@@ -122,6 +124,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 			templateId: temp.id,
 			repoId: repoId,
 			name: formData.name,
+			company_id: company_id
 		};
 		console.log("check lead page submit value--->", values)
 		setServerErrors([]);
