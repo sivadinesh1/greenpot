@@ -9,6 +9,8 @@ body {
 * {
 	box-sizing: border-box;
 	font-family: 'Open Sans', sans-serif;
+	padding: 0;
+	margin: 0;
 }
 
 a:link {
@@ -355,7 +357,7 @@ Miscellaneous */
 	width: 1600px;
 	height: 60px;
 	margin: 80px 0 0 -110px;
-	background:black;
+	background: black;
 	border-radius: 6px;
 }
 
@@ -394,10 +396,10 @@ Miscellaneous */
 	border-top-width: 60px;
 	border-bottom-width: 60px;
 	border-radius: 36px;
-  }
-  
-  /* The horizontal line on the top of the device */
-  .smartphone:before {
+}
+
+/* The horizontal line on the top of the device */
+.smartphone:before {
 	content: '';
 	display: block;
 	width: 60px;
@@ -408,10 +410,10 @@ Miscellaneous */
 	transform: translate(-50%, -50%);
 	background: #333;
 	border-radius: 10px;
-  }
-  
-  /* The circle on the bottom of the device */
-  .smartphone:after {
+}
+
+/* The circle on the bottom of the device */
+.smartphone:after {
 	content: '';
 	display: block;
 	width: 35px;
@@ -422,16 +424,16 @@ Miscellaneous */
 	transform: translate(-50%, -50%);
 	background: #333;
 	border-radius: 50%;
-  }
-  
-  /* The screen (or content) of the device */
-  .smartphone .content {
+}
+
+/* The screen (or content) of the device */
+.smartphone .content {
 	width: 360px;
 	height: 640px;
 	background: white;
-  }
+}
 
-  /* The device with borders */
+/* The device with borders */
 .tablet {
 	position: relative;
 	width: 768px;
@@ -441,10 +443,10 @@ Miscellaneous */
 	border-top-width: 60px;
 	border-bottom-width: 60px;
 	border-radius: 36px;
-  }
-  
-  /* The horizontal line on the top of the device */
-  .tablet:before {
+}
+
+/* The horizontal line on the top of the device */
+.tablet:before {
 	content: '';
 	display: block;
 	width: 60px;
@@ -455,10 +457,10 @@ Miscellaneous */
 	transform: translate(-50%, -50%);
 	background: #333;
 	border-radius: 10px;
-  }
-  
-  /* The circle on the bottom of the device */
-  .tablet:after {
+}
+
+/* The circle on the bottom of the device */
+.tablet:after {
 	content: '';
 	display: block;
 	width: 35px;
@@ -469,14 +471,14 @@ Miscellaneous */
 	transform: translate(-50%, -50%);
 	background: #333;
 	border-radius: 50%;
-  }
-  
-  /* The screen (or content) of the device */
-  .tablet .content {
+}
+
+/* The screen (or content) of the device */
+.tablet .content {
 	width: 768px;
 	height: 1024px;
 	background: white;
 	margin: -1px;
-  }
-  
+}
+
 /* https://www.w3schools.com/howto/howto_css_devices.asp */

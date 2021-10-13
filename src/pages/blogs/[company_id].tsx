@@ -6,9 +6,8 @@ import { getList } from '../../service/company.service';
 import useSWR from 'swr';
 import Image from 'next/image';
 import styles from '../../styles/blog-format/format0.module.scss';
-import ModelOne from '../../components/modelOne'
-import ModelTwo from '../../components/modelTwo'
-
+import ModelOne from '../../components/modelOne';
+import ModelTwo from '../../components/modelTwo';
 
 export async function getServerSideProps(context) {
 	let company_nano = null;
@@ -36,21 +35,15 @@ export async function getServerSideProps(context) {
 		isError = true;
 	}
 	return {
-		props: { isError, company, categories, blogs }
+		props: { isError, company, categories, blogs },
 	};
 }
-
 
 const TestRerender = ({ isError, company, blogs, categories }) => {
 	return (
 		<>
-			<div className={styles.container}>
-				<br />
-				<br />
-				<div>Test static page 1</div>
-				{company.blog_home_format === 'format-0' && <ModelOne blog_format={company.blog_home_format} blogs={blogs} />}
-				{company.blog_home_format === 'format-1' && <ModelTwo blog_format={company.blog_home_format} blogs={blogs} />}
-			</div>
+			{company.blog_home_format === 'format-0' && <ModelOne blog_format={company.blog_home_format} blogs={blogs} />}
+			{company.blog_home_format === 'format-1' && <ModelTwo blog_format={company.blog_home_format} blogs={blogs} />}
 		</>
 	);
 };
