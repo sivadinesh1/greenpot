@@ -1,11 +1,16 @@
 import Header from "../components/landing/Header";
 import Footer from "../components/landing/Footer";
+import Hero from '../components/landing/Hero'
 
-const BuilderComponent = ({ keySet, data, mode }) => {
+const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 
 	console.log("test request key values--->", keySet)
 	console.log("test request values--->", data)
-	console.log("test request values--->", mode)
+
+	const onHadle = (data, position, key) => {
+		console.log("check stage ----->1", data)
+		onHandleChange(data, position, key);
+	}
 
 	return (<>
 		{mode === "view" && <div>
@@ -22,11 +27,22 @@ const BuilderComponent = ({ keySet, data, mode }) => {
 									imageUrl={obj.blocks[2].value}
 									backgroundImage={obj.blocks[3].value}
 									key={index}
+									onHadle={onHadle}
 								/>
 							);
 					case 'Footer':
 						obj = data['Footer'];
-						if (obj.status === 'Active') return <Footer data={obj.blocks[0].value} key={index} />;
+						if (obj.status === 'Active')
+							return <Footer data={obj.blocks[0].value}
+								key={index}
+								onHadle={onHadle} />;
+					case 'Hero':
+						obj = data['Hero'];
+						if (obj.status === 'Active')
+							return <Hero content={obj.blocks[0].value}
+								image={obj.blocks[1].value}
+								key={index}
+								onHadle={onHadle} />;
 				}
 			})}
 		</div>}

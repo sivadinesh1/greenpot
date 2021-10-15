@@ -7,6 +7,10 @@ const Header = styled.div`
         color:${props => props.color};
         font-size:20px;
         text-align: ${props => props.alignment};
+        &:hover{
+          outline-style: solid;
+          outline-color: #0000ff;
+        }
         `;
 
 const Content = styled.div`
@@ -14,16 +18,24 @@ const Content = styled.div`
         padding:20px;
         color:black;
         font-size:20px;
+        &:hover{
+          outline-style: solid;
+          outline-color: #0000ff;
+        }
         `;
 
 const HeaderCom = (props) => {
   // const [data,setData]=useState(props.data)
   const { company, blocks, imageUrl, backgroundImage, key } = props;
   let defaultUrl = "https://res.cloudinary.com/sanjayaalam/image/upload/v1623824061/bei5qfeikwisuvmi4t3c.jpg"
+  const handleEvent = (event, position) => {
+    console.log("check value--->", event);
+    props.onHadle(event.target.childNodes[0].data, position, "Header")
 
+  }
   return (
     <>
-      <Header color="red" alignment="center">{company}</Header>
+      <Header color="red" alignment="center" onClick={(event) => handleEvent(event, 0)}>{company}</Header>
       <div style={{
         backgroundImage: `url(${backgroundImage === undefined ? defaultUrl : backgroundImage})`,
         backgroundRepeat: "no-repeat",
@@ -32,7 +44,7 @@ const HeaderCom = (props) => {
       }}
         key={key}>
 
-        <Content>{blocks}</Content>
+        <Content onClick={(event) => handleEvent(event, 1)}>{blocks}</Content>
       </div>
       <div id="image">
         <Image

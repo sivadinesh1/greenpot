@@ -22,6 +22,9 @@ import Image from 'next/image';
 import styles1 from '../../styles/Home.module.scss';
 import Builder from '../../components/Builder';
 import { ILeadPage } from '../../model/LeadPage'
+import CustomForm from '../../components/DragTest'
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
 
 const ColorButton = withStyles(() => ({
 	root: {
@@ -248,6 +251,63 @@ const Collection = ({ isError, collection }) => {
 		}
 	};
 
+	let formConfig = {
+		id: "poster",
+		label: "Poster",
+		fields: [
+			{
+				name: "title",
+				label: "Poster Title",
+				component: "text",
+			},
+			{
+				name: "subTitle",
+				label: "Poster Sub Title",
+				component: "text",
+			},
+			{
+				name: "description",
+				label: "Description",
+				component: "text",
+			}
+			, {
+				name: "profile",
+				label: "Picture",
+				component: "image",
+			}, {
+				name: "url",
+				label: "test",
+				component: "url",
+			}
+			// , {
+			//     name: "test",
+			//     label: "Picture 2",
+			//     component: "image",
+			// }
+
+		],
+		initialValues: {
+			title: "Title Test",
+			subTitle: "Test Sub title",
+			description: "test description data ",
+			profile: "https://res.cloudinary.com/sanjayaalam/image/upload/v1623844291/u1jyrnzzcitxj1jynh33.jpg",
+			url: "https://aalamsoft.com/",
+			test: "https://res.cloudinary.com/sanjayaalam/image/upload/v1630572962/C53/B101/xtkw46iuoadoclzwoedn.jpg"
+
+		},
+		onSubmit: async (formData) => {
+			console.log("form submit data test ---->", formData);
+		},
+	};
+
+	const [anchorEl, setAnchorEl] = useState(null);
+	const handleClick = (event) => {
+		setAnchorEl(event.currentTarget);
+	};
+	const handleClose = () => {
+		setAnchorEl(null);
+	};
+
 	return (
 		<>
 			<div className={styles.header_card}>
@@ -286,6 +346,18 @@ const Collection = ({ isError, collection }) => {
 											</SectionButton>
 										);
 									})}
+								<div className={styles.flex_end}>
+									<ColorButton onClick={handleClick}>+ Add</ColorButton>
+									<div>
+										<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
+											<MenuItem >
+												{/* <Link href={`/admin/category`}> */}
+												<a>Category</a>
+												{/* </Link> */}
+											</MenuItem>
+										</Menu>
+									</div>
+								</div>
 							</div>
 						</div>
 
@@ -347,6 +419,10 @@ const Collection = ({ isError, collection }) => {
 						{mode === 'view' && <Builder keySet={objKeys} data={data} mode={mode} />}
 
 						{mode === 'edit' && edit()}
+					</div>
+					<div>
+						<CustomForm formConfig={formConfig} />
+
 					</div>
 				</div>
 				{/* style Layer */}
@@ -420,15 +496,3 @@ async function deleteOldImg(folderPath) {
 	const data = await response.json();
 	return data;
 }
-
-// function getUnique(arr, index) {
-
-//     const unique = arr
-//         .map(e => e[index])
-
-//         .map((e, i, final) => final.indexOf(e) === i && i)
-
-//         .filter(e => arr[e]).map(e => arr[e]);
-
-//     return unique;
-// }

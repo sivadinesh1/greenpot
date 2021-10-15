@@ -62,7 +62,7 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 	const [templateDialog, setTemplateDialog] = useState(false);
 
 	const editCusTemp = (ctempId) => {
-		Router.push(`/lead-page/${ctempId}`);
+		Router.push(`/lead-page/research/${ctempId}`);
 	};
 
 	const handleCloseTemplate = () => {
