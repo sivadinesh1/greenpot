@@ -60,7 +60,7 @@ export const getServerSideProps = async (context) => {
 		//get repo by nano
 		let repo = await getRepoByNano(repoNano);
 		repoId = repo.id;
-		company_id = repo.company_id
+		company_id = repo.company_id;
 	} catch (error) {
 		console.log(`error in template preview ${error}`);
 		isError = true;
@@ -117,16 +117,16 @@ const TemplatePreview = ({ isError, template, repoId, repoNano, company_id }) =>
 		handleOpenDialog();
 	};
 
-	const handleCustomTemplate = (nanoId) => Router.push(`/lead-page/${nanoId}`);
+	const handleCustomTemplate = (nanoId) => Router.push(`/lead-page/research/${nanoId}`);
 
 	const onSubmit = async (formData, event) => {
 		const values = {
 			templateId: temp.id,
 			repoId: repoId,
 			name: formData.name,
-			company_id: company_id
+			company_id: company_id,
 		};
-		console.log("check lead page submit value--->", values)
+		console.log('check lead page submit value--->', values);
 		setServerErrors([]);
 		setError(false);
 

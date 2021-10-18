@@ -535,3 +535,9 @@ Miscellaneous */
 .draggable.dragging {
 	opacity: 0.5;
 }
+
+.clicked {
+	outline-style: solid;
+	outline-color: #0000ff;
+	padding: 1px;
+}
