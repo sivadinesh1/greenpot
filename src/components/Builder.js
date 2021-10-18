@@ -1,6 +1,10 @@
 import Header from "../components/landing/Header";
 import Footer from "../components/landing/Footer";
 import Hero from '../components/landing/Hero'
+import HeroPage from '../components/landing/HeroPage'
+import ContentPage from '../components/landing/Content'
+
+
 
 const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 
@@ -39,12 +43,24 @@ const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 					case 'Hero':
 						obj = data['Hero'];
 						if (obj.status === 'Active')
-							return <Hero content={obj.blocks[0].value}
-								image={obj.blocks[1].value}
+							return <HeroPage
+								title={obj.blocks[0].value}
+								content={obj.blocks[1].value}
 								key={index}
 								onHadle={onHadle} />;
+					case 'Content':
+						obj = data['Content'];
+						if (obj.status === 'Active')
+							return <ContentPage
+								title={obj.blocks[0].value}
+								content={obj.blocks[1].value}
+								key={index}
+								onHadle={onHadle} />;
+
 				}
 			})}
+			{/* <HeroPage /> */}
+			{/* <ContentPage /> */}
 		</div>}
 
 		{/* {mode === "edit" && <div>

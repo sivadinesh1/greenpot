@@ -17,13 +17,23 @@ const Footer = (props) => {
 	const { data, key } = props
 	const handleEvent = (event, position) => {
 		console.log("check value--->", event);
+		event.preventDefault();
+		const tags = document.querySelectorAll('.clicked');
+
+		for (let i of tags) {
+			i.classList.remove('clicked');
+		}
+
+		event.target.classList.add('clicked');
 		props.onHadle(event.target.childNodes[0].data, position, "Footer")
 
 	}
 
 	return (
 		<>
-			<Content key={key} onClick={(event) => handleEvent(event, 0)}>{data}</Content>
+			<Content key={key} >
+				<span onClick={(event) => handleEvent(event, 0)}>{data}</span>
+			</Content>
 		</>
 	);
 };

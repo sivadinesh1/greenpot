@@ -18,3 +18,21 @@
 		background-color:rgb(218, 205, 205);
 	}
 }
+
+
+
+.flex_end {
+	display: flex;
+    justify-content: flex-end;
+    column-gap: 3px;
+	padding: 10px;
+}
+
+.option {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 4%), 0 1px 3px rgba(0, 0, 0, 4%);
+    border-radius: 2px;
+    padding:5px;
+    background-color: #fff;
+    cursor: pointer;
+
+}

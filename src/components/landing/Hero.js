@@ -23,13 +23,23 @@ const Hero = (props) => {
 
     const handleEvent = (event, position) => {
         console.log("check value--->", event);
+        event.preventDefault();
+        const tags = document.querySelectorAll('.clicked');
+
+        for (let i of tags) {
+            i.classList.remove('clicked');
+        }
+
+        event.target.classList.add('clicked');
         props.onHadle(event.target.childNodes[0].data, position, "Hero")
 
     }
 
     return (
         <>
-            <Content key={key} onClick={(event) => handleEvent(event, 0)}>{content}</Content>
+            <Content key={key} >
+                <span onClick={(event) => handleEvent(event, 0)}>{content}</span>
+            </Content>
 
             <div id="image">
                 <Image
