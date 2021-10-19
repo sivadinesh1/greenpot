@@ -1,12 +1,15 @@
 import { proxy } from 'valtio';
 import { useSnapshot } from 'valtio';
 
-// let request = {
-//     sectionName: null,
-//     isEdit: false
-// }
+let initialValue = {
+    sectionName: null,
+    isEdit: false,
+}
 const section = proxy({
-    currentSection: null
+    currentSection: null,
+    isEdit: false,
+    mode: ""
+
 });
 
 export { section };

@@ -59,6 +59,13 @@ const Hero = (props) => {
         setMouseOver(flag);
     }
 
+    let image = {
+        backgroundImage: `url(https://images.pexels.com/photos/34153/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350)`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+    }
+
 
     const handleEvent = (event, position) => {
         console.log("check value--->", event);
@@ -85,6 +92,10 @@ const Hero = (props) => {
                 <Content key={key} >
                     <span onClick={(event) => handleEvent(event, 1)}>{content}</span>
                 </Content>
+
+                <div style={image}>
+                    test
+                </div>
 
                 <div>
                     <Button>Click</Button>

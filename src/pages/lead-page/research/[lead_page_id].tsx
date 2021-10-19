@@ -26,6 +26,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { section } from '../../../utils/section';
 import { useSnapshot } from 'valtio';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 
 
 const ColorButton = withStyles(() => ({
@@ -73,10 +75,16 @@ export const getServerSideProps = async (context) => {
     };
 };
 
+// function useForceUpdate(){
+//     const [value, setValue] = useState(0); // integer state
+//     return () => setValue(value => value + 1); // update the state to force render
+// }
+
 const LeadPage = ({ isError, collection }) => {
     const [data, setData] = useState(collection.blocks);
     let objKeys = Object.keys(data);
     console.log("check lead page name------>", data)
+    const [reload, setReload] = useState(false)
     const section_data = useSnapshot(section);
     const [currentSection, setCurrentSection] = useState<ILeadPage>();
     const [currentKey, setCurrentKey] = useState();
@@ -91,11 +99,46 @@ const LeadPage = ({ isError, collection }) => {
         watch,
         formState: { errors },
     } = useForm();
+
+
     const [content, setContent] = useState(data["Header"].blocks[0].value)
     const [key, setKey] = useState("Header")
     const [position, setPosition] = useState("0");
     const [mode, setMode] = useState(section_data.currentSection === null ? "view" : "edit")
     console.log("check mode ----->data 6", section_data.currentSection)
+
+    useEffect(() => {
+        debugger;
+        console.log("check valtio data--->", section_data)
+        if (section_data.isEdit) {
+            handleSection(section_data.currentSection.sectionName)
+        } else if (section_data.mode !== "") {
+            setMode("view")
+            if (section_data.mode === "delete")
+                handleSectionDelete()
+            else if (section_data.mode === "duplicate")
+                handleSectionDuplicate();
+        }
+    }, [section_data.currentSection, section_data.mode]);
+
+    const handleSectionDuplicate = () => {
+        debugger
+        let test = data;
+        test[`${section_data.currentSection.sectionName}-${objKeys.length}`] = test[section_data.currentSection.sectionName]
+        console.log("check dulicate data----->2", test);
+        setData(test)
+        setReload(!reload)
+    }
+
+    const handleSectionDelete = () => {
+        debugger
+        let test = data;
+        test[section_data.currentSection.sectionName].status = "InActive"
+        // useCallback(() => setData(test), []);
+        setData(test)
+        setReload(!reload)
+
+    }
 
 
     const onChangeContent = (val, pos, key) => {
@@ -112,78 +155,86 @@ const LeadPage = ({ isError, collection }) => {
         test[key].blocks[position].value = val;
         setData(test)
         console.log("check after Change--->3", test)
+        handleSaveBlock();
+
     }
 
+    const [formValues, setFormValues] = useState({});
     const getFields = async (blocks) => {
         fields.length = 0;
+        let dynamicFormValue = {};
         await Promise.all(
             blocks.map((data) => {
+                dynamicFormValue[data.formDetail.name] = data.value
                 fields.push(data.formDetail);
-
             })
         );
+        console.log("check form default value----->", dynamicFormValue)
+        setFormValues(dynamicFormValue)
+        debugger
     };
 
     const handleSection = async (key) => {
         let obj = data[key];
         setCurrentSection(obj);
         setCurrentKey(key);
-        getFields(obj.blocks);
+        await getFields(obj.blocks);
         setMode("edit")
+        debugger
     };
 
-    // const hadleSave = async () => {
-    //     let request = {
-    //         id: collection.id,
-    //         block: data
-    //     }
-    //     let result = await axios.put('/api/lead-page/updateBlock', request)
-    //     console.log("check result set--->", result)
-    // }
+    const handleSaveBlock = async () => {
+        let request = {
+            id: collection.id,
+            block: data
+        }
+        let result = await axios.put('/api/lead-page/updateBlock', request)
+        console.log("check result set--->", result)
+    }
 
-    const sectionDetail = async () => {
-        // await handleSection()
-        return (<div>
+    const handleSectionForm = (event, key, pos) => {
+        setFormValues({ ...formValues, [event.target.name]: event.target.value })
+        let test = data;
+        test[key].blocks[pos].value = event.target.value;
+        setData(test)
+        handleSaveBlock();
+    }
+
+    const sectionDetail = () => {
+        debugger
+        console.log("check mode ---->", mode);
+        console.log("check field array----->", fields);
+        return (<div style={{ paddingTop: "40px" }}>
+            <div onClick={() => setMode("view")} style={{ paddingBottom: "20px" }}><KeyboardBackspaceIcon /></div>
             {fields?.map((row, index) => {
                 if (row.type === 'text') {
                     return (
-                        <div className={styles.formGap} key={index} >
-                            <Controller
+                        <div className={styles.formGap} style={{ padding: "5px" }} key={index} >
+                            <TextField
                                 name={row.name}
-                                key={index}
-                                control={control}
-                                rules={{ required: true }}
-                                render={({ field }) => (
-                                    <TextField type='text' label={row.label} margin='dense' variant='standard' size='small' fullWidth {...field} />
-                                )}
-                            />
-                        </div>
-                    );
-                } else if (row.type === 'text-area') {
-                    return (
-                        <div className={styles.formGap} key={index} >
-                            <Controller
+                                type='text'
+                                label={row.label}
+                                id="outlined-multiline-static"
+                                onChange={(e) => handleSectionForm(e, currentKey, index)}
+                                margin='dense'
+                                variant="outlined"
+                                size='small'
+                                multiline
+                                rows={4}
+                                value={formValues[row.name]}
+                                fullWidth />
+                            {/* <TextareaAutosize
                                 name={row.name}
-                                key={index}
-                                control={control}
-                                rules={{ required: true }}
-                                render={({ field }) => (
-                                    <TextField
-                                        type='text'
-                                        label={row.label}
-                                        margin='dense'
-                                        variant='standard'
-                                        size='small'
-                                        multiline
-                                        rows={2}
-                                        fullWidth
-                                        {...field}
-                                    />
-                                )}
-                            />
+                                id="outlined-multiline-static"
+                                onChange={(e) => handleSectionForm(e, currentKey, index)}
+                                rows={4}
+                                value={formValues[row.name]}
+                                style={{ width: "100%" }} /> */}
+
                         </div>
                     );
                 }
+
             })}
         </div>)
     }
@@ -196,14 +247,15 @@ const LeadPage = ({ isError, collection }) => {
                     <Builder keySet={objKeys} data={data} mode={"view"} onHandleChange={onChangeContent} />
                 </div>
             </div>
+
             <div className={styles.right}>
-                <div style={{ paddingTop: "40px" }}>
+                {mode === "view" && <div style={{ paddingTop: "40px" }}>
                     <TextField
                         name="content"
                         type='text'
                         label="Text/Html"
                         margin='dense'
-                        variant='standard'
+                        variant="outlined"
                         size='small'
                         value={content}
                         onChange={(e) => handleChange(e.target.value)}
@@ -211,16 +263,10 @@ const LeadPage = ({ isError, collection }) => {
                         rows={5}
                         fullWidth
                     />
-
                 </div>
-                {/* {section_data.currentSection != null ? (section_data.currentSection.isEdit ? (<div>{sectionDetail()}</div>) : "") : ""} */}
+                }
+                {mode === "edit" && sectionDetail()}
 
-                {section_data.currentSection != null ? (<div>{handleSection(section_data?.currentSection?.sectionName)}</div>) : ""}
-                {/* {mode && sectionDetail()} */}
-
-                {/* <div>
-                    <SectionButton onClick={() => hadleSave()}>Save </SectionButton>
-                </div> */}
 
             </div>
         </div>

@@ -185,7 +185,7 @@ export const getCountLeadPageByRepo = async (company_id) => {
 
 
 export const updateBlock = async (id, block) => {
-
+	let result = null;
 	try {
 		result = await prisma.lead_page.update({
 			where: { id: BigInt(id) },

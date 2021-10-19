@@ -20,7 +20,8 @@ const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 		{mode === "view" && <div>
 			{keySet?.map((key, index) => {
 				let obj = null;
-				switch (key) {
+				let d = key.toString().split("-")
+				switch (d[0]) {
 					case 'Header':
 						obj = data.Header;
 						if (obj.status === 'Active')
@@ -42,6 +43,7 @@ const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 								onHadle={onHadle} />;
 					case 'Hero':
 						obj = data['Hero'];
+						console.log("check hero page status--->", obj)
 						if (obj.status === 'Active')
 							return <HeroPage
 								title={obj.blocks[0].value}
