@@ -84,11 +84,11 @@ const ContentPage = (props) => {
                 < Container >
 
                     <Header>
-                        <span onClick={(event) => handleEvent(event, 0)}>{title}</span>
+                        <span onClick={(event) => handleEvent(event, 0, "text")}>{title}</span>
                     </Header>
                     <div>
                         <Content key={key} >
-                            <span onClick={(event) => handleEvent(event, 1)}>{content}</span>
+                            <span onClick={(event) => handleEvent(event, 1, "text")}>{content}</span>
                         </Content>
                         <Button>Learn more about our services</Button>
                     </div>

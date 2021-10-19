@@ -32,7 +32,7 @@ const Footer = (props) => {
 	return (
 		<>
 			<Content key={key} >
-				<span onClick={(event) => handleEvent(event, 0)}>{data}</span>
+				<span onClick={(event) => handleEvent(event, 0, "text")}>{data}</span>
 			</Content>
 		</>
 	);

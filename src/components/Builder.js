@@ -11,9 +11,9 @@ const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 	console.log("test request key values--->", keySet)
 	console.log("test request values--->", data)
 
-	const onHadle = (data, position, key) => {
+	const onHadle = (data, position, key, type) => {
 		console.log("check stage ----->1", data)
-		onHandleChange(data, position, key);
+		onHandleChange(data, position, key, type);
 	}
 
 	return (<>
@@ -48,6 +48,7 @@ const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 							return <HeroPage
 								title={obj.blocks[0].value}
 								content={obj.blocks[1].value}
+								backgroundImage={obj.blocks[2].value}
 								key={index}
 								onHadle={onHadle} />;
 					case 'Content':

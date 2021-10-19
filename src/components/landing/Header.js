@@ -49,7 +49,7 @@ const HeaderCom = (props) => {
 	return (
 		<>
 			<Header color='red' alignment='center'>
-				<span onClick={(event) => handleEvent(event, 0)}>{company}</span>
+				<span onClick={(event) => handleEvent(event, 0, "text")}>{company}</span>
 			</Header>
 			<div
 				style={{
@@ -60,7 +60,7 @@ const HeaderCom = (props) => {
 				}}
 				key={key}>
 				<Content>
-					<span onClick={(event) => handleEvent(event, 1)}>{blocks}</span>
+					<span onClick={(event) => handleEvent(event, 1, "text")}>{blocks}</span>
 				</Content>
 			</div>
 			<div id='image'>

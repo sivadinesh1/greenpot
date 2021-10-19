@@ -1,7 +1,8 @@
 import React, { Fragment, useState } from 'react';
-import Image from 'next/image'
+// import Image from 'next/image'
 import styled from 'styled-components'
 import Option from "./option";
+// import Image from 'next/image';
 
 const Content = styled.div`
         margin-top:40px;
@@ -49,35 +50,43 @@ const Button = styled.button`
     outline-color: #0000ff;
   }
   `;
+
+const Image = styled.div`
+padding:10px;
+
+&:hover {
+    outline-style: solid;
+    outline-color: #0000ff;
+  }`;
 //   display: block;
 
 const Hero = (props) => {
     let section = "Hero";
-    const { title, content, key } = props
+    const { title, content, key, backgroundImage } = props
     const [mouseOver, setMouseOver] = useState(false)
     const handleMouseOver = (flag) => {
         setMouseOver(flag);
     }
 
     let image = {
-        backgroundImage: `url(https://images.pexels.com/photos/34153/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350)`,
+        backgroundImage: `https://images.pexels.com/photos/34153/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350`,
         backgroundPosition: 'center',
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat'
     }
 
 
-    const handleEvent = (event, position) => {
-        console.log("check value--->", event);
+    const handleEvent = (event, position, type) => {
+        console.log("check value--->34", event);
         event.preventDefault();
         const tags = document.querySelectorAll('.clicked');
-
         for (let i of tags) {
             i.classList.remove('clicked');
         }
 
         event.target.classList.add('clicked');
-        props.onHadle(event.target.childNodes[0].data, position, "Hero")
+        // props.onHadle(event.target.childNodes[0].data, position, "Hero")
+        props.onHadle(type === "image" ? event.target.currentSrc : event.target.childNodes[0].data, position, "Hero", type)
 
     }
 
@@ -87,15 +96,16 @@ const Hero = (props) => {
                 {/* {mouseOver && <Option section={section} />} */}
                 <Option sectionName={section} />
                 <Header>
-                    <span onClick={(event) => handleEvent(event, 0)}>{title}</span>
+                    <span onClick={(event) => handleEvent(event, 0, "text")}>{title}</span>
                 </Header>
                 <Content key={key} >
-                    <span onClick={(event) => handleEvent(event, 1)}>{content}</span>
+                    <span onClick={(event) => handleEvent(event, 1, "text")}>{content}</span>
                 </Content>
 
-                <div style={image}>
-                    test
-                </div>
+                <Image onClick={(event) => handleEvent(event, 2, "image")}>
+                    <img src={backgroundImage} />
+                    {/* <div style={image}></div> */}
+                </Image>
 
                 <div>
                     <Button>Click</Button>

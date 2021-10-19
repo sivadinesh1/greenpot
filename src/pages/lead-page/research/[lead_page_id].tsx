@@ -28,6 +28,7 @@ import { section } from '../../../utils/section';
 import { useSnapshot } from 'valtio';
 import TextareaAutosize from '@mui/material/TextareaAutosize';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
+import styles_drop_zone from '../../../styles/dropZone.module.css';
 
 
 const ColorButton = withStyles(() => ({
@@ -91,7 +92,6 @@ const LeadPage = ({ isError, collection }) => {
     const [fields, setFields] = useState([]);
 
 
-
     const {
         control,
         setValue,
@@ -104,6 +104,7 @@ const LeadPage = ({ isError, collection }) => {
     const [content, setContent] = useState(data["Header"].blocks[0].value)
     const [key, setKey] = useState("Header")
     const [position, setPosition] = useState("0");
+    const [contentType, setContentType] = useState("text")
     const [mode, setMode] = useState(section_data.currentSection === null ? "view" : "edit")
     console.log("check mode ----->data 6", section_data.currentSection)
 
@@ -141,22 +142,25 @@ const LeadPage = ({ isError, collection }) => {
     }
 
 
-    const onChangeContent = (val, pos, key) => {
-        console.log("check onchange method--->" + val + "  " + pos + "  " + key)
+    const onChangeContent = (val, pos, key, type) => {
+        debugger
+        console.log("check onchange method--->" + val + "  " + pos + "  " + key + "  " + type)
         setContent(val);
         setKey(key);
         setPosition(pos);
+        setContentType(type)
+
         // setData(test)
     }
 
     const handleChange = (val) => {
+        debugger
         setContent(val);
         let test = data;
         test[key].blocks[position].value = val;
         setData(test)
         console.log("check after Change--->3", test)
         handleSaveBlock();
-
     }
 
     const [formValues, setFormValues] = useState({});
@@ -199,6 +203,41 @@ const LeadPage = ({ isError, collection }) => {
         setData(test)
         handleSaveBlock();
     }
+
+    //cloudinary
+    const onDrop = useCallback(async (acceptedFiles) => {
+        let path = `L${1005}/B${10}/`;
+        const { signature, timestamp } = await getSignature(path);
+        const url = `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`;
+
+        acceptedFiles.forEach(async (acceptedFile) => {
+            //login verification
+
+            const formData = new FormData();
+            formData.append('file', acceptedFile);
+            formData.append('signature', signature);
+            formData.append('timestamp', timestamp);
+            formData.append('api_key', process.env.NEXT_PUBLIC_CLOUDINARY_KEY);
+            formData.append('folder', path);
+
+            const response = await fetch(url, {
+                method: 'post',
+                body: formData,
+            });
+            const data = await response.json();
+            debugger
+            handleChange(data.secure_url);
+        });
+    }, []);
+
+
+
+    //drop zone
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+        onDrop,
+        accept: 'image/*',
+        multiple: false
+    });
 
     const sectionDetail = () => {
         debugger
@@ -249,20 +288,30 @@ const LeadPage = ({ isError, collection }) => {
             </div>
 
             <div className={styles.right}>
-                {mode === "view" && <div style={{ paddingTop: "40px" }}>
-                    <TextField
-                        name="content"
-                        type='text'
-                        label="Text/Html"
-                        margin='dense'
-                        variant="outlined"
-                        size='small'
-                        value={content}
-                        onChange={(e) => handleChange(e.target.value)}
-                        multiline
-                        rows={5}
-                        fullWidth
-                    />
+                {mode === "view" && <div>
+                    <div style={{ paddingTop: "40px" }}>
+                        <TextField
+                            name="content"
+                            type='text'
+                            label={contentType === "image" ? "Source" : "Text/Html"}
+                            margin='dense'
+                            variant="outlined"
+                            size='small'
+                            value={content}
+                            onChange={(e) => handleChange(e.target.value)}
+                            multiline
+                            rows={5}
+                            fullWidth
+                        />
+                    </div>
+                    {contentType === "image" && <div style={{ paddingTop: "10px" }}>
+                        <div className={styles.drop_zone}>
+                            <div {...getRootProps()} className={`${styles_drop_zone.drop_zone} ${isDragActive ? styles_drop_zone.active : null}`}>
+                                <input {...getInputProps()} />
+                                {`Upload an Image`}
+                            </div>
+                        </div>
+                    </div>}
                 </div>
                 }
                 {mode === "edit" && sectionDetail()}
@@ -274,3 +323,12 @@ const LeadPage = ({ isError, collection }) => {
 }
 
 export default LeadPage;
+
+
+
+async function getSignature(folderPath) {
+    const response = await fetch(`/api/cloudinary/${folderPath}`);
+    const data = await response.json();
+    const { signature, timestamp } = data;
+    return { signature, timestamp };
+}
