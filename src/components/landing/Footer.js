@@ -14,7 +14,7 @@ const Content = styled.div`
         `;
 
 const Footer = (props) => {
-	const { data, key } = props
+	const { data, key, index } = props
 	const handleEvent = (event, position) => {
 		console.log("check value--->", event);
 		event.preventDefault();
@@ -25,7 +25,7 @@ const Footer = (props) => {
 		}
 
 		event.target.classList.add('clicked');
-		props.onHadle(event.target.childNodes[0].data, position, "Footer")
+		props.onHadle(event.target.childNodes[0].data, position, index)
 
 	}
 

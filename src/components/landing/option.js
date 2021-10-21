@@ -10,37 +10,45 @@ import { section } from "../../utils/section";
 
 
 const Option = (props) => {
-    const { sectionName } = props;
+    const { sectionName, index } = props;
     const handleEdit = async () => {
-        console.log("handle edit method calll----------->")
+        console.log("handle edit method calll----------->index id--->", index)
         let initialData = {
             sectionName: sectionName,
+            sectionIndex: index,
             isEdit: true
         }
         // section.isEdit = true;
         section["currentSection"] = initialData;
         section["isEdit"] = true;
         section["mode"] = ""
+        section["sectionIndex"] = index
     }
 
     const handleDuplicate = () => {
         let initialData = {
             sectionName: sectionName,
+            sectionIndex: index,
             isEdit: false
         }
         section["currentSection"] = initialData;
         section["mode"] = "duplicate"
         section["isEdit"] = false
+        section["sectionIndex"] = index
+
     }
 
     const handleDelete = () => {
         let initialData = {
             sectionName: sectionName,
+            sectionIndex: index,
             isEdit: false
         }
         section["currentSection"] = initialData;
         section["mode"] = "delete"
         section["isEdit"] = false
+        section["sectionIndex"] = index
+
     }
     return (
         <div className={styles.flex_end}>

@@ -62,7 +62,8 @@ padding:10px;
 
 const Hero = (props) => {
     let section = "Hero";
-    const { title, content, key, backgroundImage } = props
+    const { title, content, index, key, backgroundImage } = props
+    console.log("check index value ----->", index)
     const [mouseOver, setMouseOver] = useState(false)
     const handleMouseOver = (flag) => {
         setMouseOver(flag);
@@ -77,6 +78,7 @@ const Hero = (props) => {
 
 
     const handleEvent = (event, position, type) => {
+        debugger
         console.log("check value--->34", event);
         event.preventDefault();
         const tags = document.querySelectorAll('.clicked');
@@ -86,7 +88,7 @@ const Hero = (props) => {
 
         event.target.classList.add('clicked');
         // props.onHadle(event.target.childNodes[0].data, position, "Hero")
-        props.onHadle(type === "image" ? event.target.currentSrc : event.target.childNodes[0].data, position, "Hero", type)
+        props.onHadle(type === "image" ? event.target.currentSrc : event.target.childNodes[0].data, position, index, type)
 
     }
 
@@ -94,7 +96,7 @@ const Hero = (props) => {
         <>
             < Container onMouseOver={() => handleMouseOver(true)} onMouseOut={() => handleMouseOver(false)}>
                 {/* {mouseOver && <Option section={section} />} */}
-                <Option sectionName={section} />
+                <Option sectionName={section} index={index} />
                 <Header>
                     <span onClick={(event) => handleEvent(event, 0, "text")}>{title}</span>
                 </Header>

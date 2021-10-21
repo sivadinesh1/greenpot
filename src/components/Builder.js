@@ -11,53 +11,55 @@ const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 	console.log("test request key values--->", keySet)
 	console.log("test request values--->", data)
 
-	const onHadle = (data, position, key, type) => {
-		console.log("check stage ----->1", data)
-		onHandleChange(data, position, key, type);
+	const onHadle = (data, position, index, type) => {
+		debugger
+		console.log("check stage ----->1", index)
+		onHandleChange(data, position, index, type);
 	}
 
 	return (<>
 		{mode === "view" && <div>
-			{keySet?.map((key, index) => {
-				let obj = null;
-				let d = key.toString().split("-")
-				switch (d[0]) {
+			{data?.map((section, index) => {
+				console.log("check index value in builder component---->", index)
+				let obj = section;
+				switch (section.type) {
 					case 'Header':
-						obj = data.Header;
 						if (obj.status === 'Active')
 							return (
 								<Header
-									company={obj.blocks[0].value}
-									blocks={obj.blocks[1].value}
-									imageUrl={obj.blocks[2].value}
-									backgroundImage={obj.blocks[3].value}
+									company={obj.items[0].value}
+									blocks={obj.items[1].value}
+									imageUrl={obj.items[2].value}
+									backgroundImage={obj.items[3].value}
 									key={index}
+									index={index}
 									onHadle={onHadle}
 								/>
 							);
 					case 'Footer':
-						obj = data['Footer'];
 						if (obj.status === 'Active')
-							return <Footer data={obj.blocks[0].value}
+							return <Footer data={obj.items[0].value}
 								key={index}
-								onHadle={onHadle} />;
+								onHadle={onHadle}
+								index={index}
+							/>;
 					case 'Hero':
-						obj = data['Hero'];
 						console.log("check hero page status--->", obj)
 						if (obj.status === 'Active')
 							return <HeroPage
-								title={obj.blocks[0].value}
-								content={obj.blocks[1].value}
-								backgroundImage={obj.blocks[2].value}
+								title={obj.items[0].value}
+								content={obj.items[1].value}
+								backgroundImage={obj.items[2].value}
 								key={index}
+								index={index}
 								onHadle={onHadle} />;
 					case 'Content':
-						obj = data['Content'];
 						if (obj.status === 'Active')
 							return <ContentPage
-								title={obj.blocks[0].value}
-								content={obj.blocks[1].value}
+								title={obj.items[0].value}
+								content={obj.items[1].value}
 								key={index}
+								index={index}
 								onHadle={onHadle} />;
 
 				}

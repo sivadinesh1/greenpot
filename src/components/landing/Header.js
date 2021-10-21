@@ -26,7 +26,7 @@ const Content = styled.div`
 
 const HeaderCom = (props) => {
 	// const [data,setData]=useState(props.data)
-	const { company, blocks, imageUrl, backgroundImage, key } = props;
+	const { company, blocks, imageUrl, backgroundImage, key, index } = props;
 	let defaultUrl = 'https://res.cloudinary.com/sanjayaalam/image/upload/v1623824061/bei5qfeikwisuvmi4t3c.jpg';
 	const handleEvent = (event, position) => {
 		console.log('check value--->', event);
@@ -44,7 +44,7 @@ const HeaderCom = (props) => {
 		// event.target.style.outlineColor = '#0000ff';
 		// event.target.style.padding = '1px';
 
-		props.onHadle(event.target.childNodes[0].data, position, 'Header');
+		props.onHadle(event.target.childNodes[0].data, position, index);
 	};
 	return (
 		<>

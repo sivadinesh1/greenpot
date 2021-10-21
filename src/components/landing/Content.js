@@ -55,7 +55,7 @@ const Button = styled.button`
 
 const ContentPage = (props) => {
     let section = "Content";
-    const { content, title, key } = props
+    const { content, title, key, index } = props
     const [mouseOver, setMouseOver] = useState(false)
     const handleMouseOver = (flag) => {
         setMouseOver(flag);
@@ -71,7 +71,7 @@ const ContentPage = (props) => {
         }
 
         event.target.classList.add('clicked');
-        props.onHadle(event.target.childNodes[0].data, position, "Content")
+        props.onHadle(event.target.childNodes[0].data, position, index)
 
     }
 
@@ -79,7 +79,7 @@ const ContentPage = (props) => {
         <>
             < div onMouseOver={() => handleMouseOver(true)} onMouseOut={() => handleMouseOver(false)}>
                 {/* {mouseOver && <Option section={section} />} */}
-                <Option sectionName={section} />
+                <Option sectionName={section} index={index} />
 
                 < Container >
 
