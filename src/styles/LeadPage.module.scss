@@ -1,40 +1,45 @@
 .container {
-    display: grid;
-    grid-template-columns: 75% 25%;
-    min-height: 100vh;
-    padding: 1rem;
+	display: grid;
+	grid-template-columns: 75% 25%;
+	min-height: 100vh;
+	padding: 1rem;
 
-    .left {
-        padding: 1rem;
-        padding-top: 30px;
-        // overflow-x: ;
+	.left {
+		padding: 1rem;
+		padding-top: 30px;
+		// overflow-x: ;
 		background-color: #fff;
 	}
 
 	.right {
-        padding: 1rem;
-        overflow: hidden;
-        padding-top: 20px;
-		background-color:rgb(218, 205, 205);
+		padding: 1rem;
+		overflow: hidden;
+		padding-top: 20px;
+		background-color: rgb(218, 205, 205);
+		max-height: 100vh;
+		min-height: 100vh;
+		width: 100%;
+		overflow-x: hidden;
+		overflow-y: scroll;
+		position: sticky;
+		right: 0;
+		top: 0;
 	}
 }
 
-
-
 .flex_end {
 	display: flex;
-    justify-content: flex-end;
-    column-gap: 3px;
+	justify-content: flex-end;
+	column-gap: 3px;
 	padding: 10px;
 }
 
 .option {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 4%), 0 1px 3px rgba(0, 0, 0, 4%);
-    border-radius: 2px;
-    padding:5px;
-    background-color: #fff;
-    cursor: pointer;
-
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 4%), 0 1px 3px rgba(0, 0, 0, 4%);
+	border-radius: 2px;
+	padding: 5px;
+	background-color: #fff;
+	cursor: pointer;
 }
 
 .drop_zone {
