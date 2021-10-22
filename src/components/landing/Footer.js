@@ -14,7 +14,7 @@ const Content = styled.div`
         `;
 
 const Footer = (props) => {
-	const { data, key, index } = props
+	const { data, key, index, style } = props
 	const handleEvent = (event, position) => {
 		console.log("check value--->", event);
 		event.preventDefault();
@@ -31,9 +31,11 @@ const Footer = (props) => {
 
 	return (
 		<>
-			<Content key={key} >
-				<span onClick={(event) => handleEvent(event, 0, "text")}>{data}</span>
-			</Content>
+			<div style={style}>
+				<Content key={key} style={data.style}>
+					<span onClick={(event) => handleEvent(event, 0, "text")}>{data.value}</span>
+				</Content>
+			</div>
 		</>
 	);
 };

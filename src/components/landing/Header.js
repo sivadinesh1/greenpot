@@ -26,7 +26,7 @@ const Content = styled.div`
 
 const HeaderCom = (props) => {
 	// const [data,setData]=useState(props.data)
-	const { company, blocks, imageUrl, backgroundImage, key, index } = props;
+	const { company, blocks, imageUrl, backgroundImage, key, index, style } = props;
 	let defaultUrl = 'https://res.cloudinary.com/sanjayaalam/image/upload/v1623824061/bei5qfeikwisuvmi4t3c.jpg';
 	const handleEvent = (event, position) => {
 		console.log('check value--->', event);
@@ -39,17 +39,12 @@ const HeaderCom = (props) => {
 		}
 
 		event.target.classList.add('clicked');
-
-		// event.target.style.outlineStyle = 'solid';
-		// event.target.style.outlineColor = '#0000ff';
-		// event.target.style.padding = '1px';
-
 		props.onHadle(event.target.childNodes[0].data, position, index);
 	};
 	return (
-		<>
-			<Header color='red' alignment='center'>
-				<span onClick={(event) => handleEvent(event, 0, "text")}>{company}</span>
+		<div style={style}>
+			<Header color='red' alignment='center' style={{ ...company.style }}>
+				<span onClick={(event) => handleEvent(event, 0, "text")}>{company.value}</span>
 			</Header>
 			<div
 				style={{
@@ -59,14 +54,14 @@ const HeaderCom = (props) => {
 					//   height: "100vh",
 				}}
 				key={key}>
-				<Content>
-					<span onClick={(event) => handleEvent(event, 1, "text")}>{blocks}</span>
+				<Content style={{ ...blocks.style }}>
+					<span onClick={(event) => handleEvent(event, 1, "text")}>{blocks.value}</span>
 				</Content>
 			</div>
 			<div id='image'>
 				<Image src={imageUrl === undefined ? defaultUrl : imageUrl} alt='Picture of the author' width={300} height={300} />
 			</div>
-		</>
+		</div>
 	);
 };
 

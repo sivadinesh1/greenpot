@@ -1,8 +1,9 @@
+
 import React, { Fragment, useState } from 'react';
-// import Image from 'next/image'
 import styled from 'styled-components';
 import Option from './option';
-// import Image from 'next/image';
+import NextImage from 'next/image';
+import styles from '../../styles/components/HeroPage.module.scss'
 
 const Content = styled.div`
 	margin-top: 40px;
@@ -21,10 +22,9 @@ const Content = styled.div`
 `;
 
 const Container = styled.div`
-	padding: 2rem;
-	background-color: gray;
-	text-align: center;
-`;
+padding:2rem;
+text-align:center;`;
+
 
 const Header = styled.div`
 	padding: 10px;
@@ -64,59 +64,71 @@ const Image = styled.div`
 //   display: block;
 
 const Hero = (props) => {
-	let section = 'Hero';
-	const { title, content, index, key, backgroundImage } = props;
-	console.log('check index value ----->', index);
-	const [mouseOver, setMouseOver] = useState(false);
-	const handleMouseOver = (flag) => {
-		setMouseOver(flag);
-	};
+    let section = 'Hero';
+    const { title, content, index, key, backgroundImage, style } = props;
+    console.log('check index value ----->', index);
+    const [mouseOver, setMouseOver] = useState(false);
+    const handleMouseOver = (flag) => {
+        setMouseOver(flag);
+    };
 
-	let image = {
-		backgroundImage: `https://images.pexels.com/photos/34153/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350`,
-		backgroundPosition: 'center',
-		backgroundSize: 'cover',
-		backgroundRepeat: 'no-repeat',
-	};
+    let image = {
+        backgroundImage: `https://images.pexels.com/photos/34153/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat',
+    };
 
-	const handleEvent = (event, position, type) => {
-		console.log('check value--->34', event);
-		event.preventDefault();
-		const tags = document.querySelectorAll('.clicked');
-		for (let i of tags) {
-			i.classList.remove('clicked');
-		}
+    const handleEvent = (event, position, type) => {
+        console.log('check value--->34', event);
+        event.preventDefault();
+        const tags = document.querySelectorAll('.clicked');
+        for (let i of tags) {
+            i.classList.remove('clicked');
+        }
 
-		event.target.classList.add('clicked');
-		// props.onHadle(event.target.childNodes[0].data, position, "Hero")
-		props.onHadle(type === 'image' ? event.target.currentSrc : event.target.childNodes[0].data, position, index, type);
-	};
+        event.target.classList.add('clicked');
+        // props.onHadle(event.target.childNodes[0].data, position, "Hero")
+        props.onHadle(type === 'image' ? event.target.currentSrc : event.target.childNodes[0].data, position, index, type);
+    };
 
-	return (
-		<>
-			<Container onMouseOver={() => handleMouseOver(true)} onMouseOut={() => handleMouseOver(false)}>
-				{mouseOver && <Option section={section} index={index} />}
+    return (
+        <div className={styles.imageStack}>
+            <div className={styles.imageBottom}>
+                {/* <div className={styles.background}> */}
+                <NextImage
+                    alt="Mountains"
+                    src="https://res.cloudinary.com/sanjayaalam/image/upload/v1623820647/idy39zokhlt1m5nvrjek.jpg"
+                    layout="responsive"
+                    width={700}
+                    height={475}
+                // quality={100}
+                />
+            </div>
+            {/* <div className={styles.contentTop} > */}
+            <Container style={style} onMouseOver={() => handleMouseOver(true)} onMouseOut={() => handleMouseOver(false)}>
+                {/* {mouseOver && <Option section={section} index={index} />} */}
+                {<Option section={section} index={index} />}
+                <Header style={title.style}>
+                    <span onClick={(event) => handleEvent(event, 0, 'text')}>{title.value}</span>
+                </Header>
+                <Content key={key} style={content.style}>
+                    <span onClick={(event) => handleEvent(event, 1, 'text')}>{content.value}</span>
+                </Content>
 
-				{/* {<Option section={section} index={index} />} */}
+                <Image onClick={(event) => handleEvent(event, 2, 'image')}>
+                    <img src={backgroundImage} />
+                    {/* <div style={image}></div> */}
+                </Image>
 
-				<Header>
-					<span onClick={(event) => handleEvent(event, 0, 'text')}>{title}</span>
-				</Header>
-				<Content key={key}>
-					<span onClick={(event) => handleEvent(event, 1, 'text')}>{content}</span>
-				</Content>
+                <div>
+                    <Button>Click</Button>
+                </div>
+            </Container>
+            {/* </div> */}
 
-				<Image onClick={(event) => handleEvent(event, 2, 'image')}>
-					<img src={backgroundImage} />
-					{/* <div style={image}></div> */}
-				</Image>
-
-				<div>
-					<Button>Click</Button>
-				</div>
-			</Container>
-		</>
-	);
+        </div>
+    );
 };
 
 export default Hero;

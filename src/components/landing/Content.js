@@ -55,7 +55,7 @@ const Button = styled.button`
 
 const ContentPage = (props) => {
     let section = "Content";
-    const { content, title, key, index } = props
+    const { content, title, key, index, style } = props
     const [mouseOver, setMouseOver] = useState(false)
     const handleMouseOver = (flag) => {
         setMouseOver(flag);
@@ -81,14 +81,14 @@ const ContentPage = (props) => {
                 {/* {mouseOver && <Option section={section} />} */}
                 <Option sectionName={section} index={index} />
 
-                < Container >
+                < Container style={style}>
 
-                    <Header>
-                        <span onClick={(event) => handleEvent(event, 0, "text")}>{title}</span>
+                    <Header style={title.style}>
+                        <span onClick={(event) => handleEvent(event, 0, "text")}>{title.value}</span>
                     </Header>
                     <div>
-                        <Content key={key} >
-                            <span onClick={(event) => handleEvent(event, 1, "text")}>{content}</span>
+                        <Content key={key} style={content.style}>
+                            <span onClick={(event) => handleEvent(event, 1, "text")}>{content.value}</span>
                         </Content>
                         <Button>Learn more about our services</Button>
                     </div>

@@ -4,8 +4,7 @@ import Hero from '../components/landing/Hero';
 import HeroPage from '../components/landing/HeroPage';
 import ContentPage from '../components/landing/Content';
 
-const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
-	console.log('test request key values--->', keySet);
+const BuilderComponent = ({ data, mode, onHandleChange }) => {
 	console.log('test request values--->', data);
 
 	const onHadle = (data, position, index, type) => {
@@ -25,39 +24,49 @@ const BuilderComponent = ({ keySet, data, mode, onHandleChange }) => {
 								if (obj.status === 'Active')
 									return (
 										<Header
-											company={obj.items[0].value}
-											blocks={obj.items[1].value}
+											company={{ value: obj.items[0].value, style: obj.items[0].style }}
+											blocks={{ value: obj.items[1].value, style: obj.items[1].style }}
 											imageUrl={obj.items[2].value}
 											backgroundImage={obj.items[3].value}
 											key={index}
 											index={index}
 											onHadle={onHadle}
+											style={obj.sectionStyle}
 										/>
 									);
 							case 'Footer':
-								if (obj.status === 'Active') return <Footer data={obj.items[0].value} key={index} onHadle={onHadle} index={index} />;
+								if (obj.status === 'Active') return (<Footer
+									data={{ value: obj.items[0].value, style: obj.items[0].style }}
+									key={index}
+									onHadle={onHadle}
+									index={index}
+									style={obj.sectionStyle}
+								/>);
 							case 'Hero':
 								console.log('check hero page status--->', obj);
 								if (obj.status === 'Active')
 									return (
 										<HeroPage
-											title={obj.items[0].value}
-											content={obj.items[1].value}
+											title={{ value: obj.items[0].value, style: obj.items[0].style }}
+											content={{ value: obj.items[1].value, style: obj.items[1].style }}
 											backgroundImage={obj.items[2].value}
 											key={index}
 											index={index}
 											onHadle={onHadle}
+											style={obj.sectionStyle}
+
 										/>
 									);
 							case 'Content':
 								if (obj.status === 'Active')
 									return (
 										<ContentPage
-											title={obj.items[0].value}
-											content={obj.items[1].value}
+											title={{ value: obj.items[0].value, style: obj.items[0].style }}
+											content={{ value: obj.items[1].value, style: obj.items[1].style }}
 											key={index}
 											index={index}
 											onHadle={onHadle}
+											style={obj.sectionStyle}
 										/>
 									);
 						}
