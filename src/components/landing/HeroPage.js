@@ -95,9 +95,9 @@ const Hero = (props) => {
 	return (
 		<>
 			<Container onMouseOver={() => handleMouseOver(true)} onMouseOut={() => handleMouseOver(false)}>
-				{/* {mouseOver && <Option section={section} index={index} />} */}
+				{mouseOver && <Option section={section} index={index} />}
 
-				{<Option section={section} index={index} />}
+				{/* {<Option section={section} index={index} />} */}
 
 				<Header>
 					<span onClick={(event) => handleEvent(event, 0, 'text')}>{title}</span>
