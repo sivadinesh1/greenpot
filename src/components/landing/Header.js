@@ -2,45 +2,53 @@ import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
-const Header = styled.div`
+
+const HeaderCom = (props) => {
+	// const [data,setData]=useState(props.data)
+	const { company, blocks, imageUrl, backgroundImage, key, index, style, mode } = props;
+	let defaultUrl = 'https://res.cloudinary.com/sanjayaalam/image/upload/v1623824061/bei5qfeikwisuvmi4t3c.jpg';
+
+	if (mode === "view")
+		style["pointerEvents"] = "none"
+
+	const handleEvent = (event, position) => {
+		console.log('check value--->', event);
+		if (mode === "edit") {
+			event.preventDefault();
+
+			const tags = document.querySelectorAll('.clicked');
+
+			for (let i of tags) {
+				i.classList.remove('clicked');
+			}
+
+			event.target.classList.add('clicked');
+			props.onHandle(event.target.childNodes[0].data, position, index);
+		}
+	};
+
+	const Header = styled.div`
 	padding: 20px;
 	color: ${(props) => props.color};
 	font-size: 20px;
 	text-align: ${(props) => props.alignment};
-	&:hover {
+	${ mode === "edit" ? `&:hover {
 		outline-style: solid;
 		outline-color: #0000ff;
-	}
+	}` : ''}
 `;
 
-const Content = styled.div`
+	const Content = styled.div`
 	margin-top: 40px;
 	padding: 20px;
 	color: black;
 	font-size: 20px;
-	&:hover {
+	${ mode === "edit" ? `&:hover {
 		outline-style: solid;
 		outline-color: #0000ff;
-	}
+	}` : ''}
 `;
 
-const HeaderCom = (props) => {
-	// const [data,setData]=useState(props.data)
-	const { company, blocks, imageUrl, backgroundImage, key, index, style } = props;
-	let defaultUrl = 'https://res.cloudinary.com/sanjayaalam/image/upload/v1623824061/bei5qfeikwisuvmi4t3c.jpg';
-	const handleEvent = (event, position) => {
-		console.log('check value--->', event);
-		event.preventDefault();
-
-		const tags = document.querySelectorAll('.clicked');
-
-		for (let i of tags) {
-			i.classList.remove('clicked');
-		}
-
-		event.target.classList.add('clicked');
-		props.onHadle(event.target.childNodes[0].data, position, index);
-	};
 	return (
 		<div style={style}>
 			<Header color='red' alignment='center' style={{ ...company.style }}>

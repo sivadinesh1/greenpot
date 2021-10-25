@@ -262,14 +262,22 @@ const LeadPage = ({ isError, collection }) => {
         setCurrentIndex(index);
         setPosition(pos);
         setContentType(type);
-        setFontColor({ ...fontColor, color: data[index].items[pos]["style"]["color"] })
+        if (pos !== 111)
+            setFontColor({ ...fontColor, color: data[index].items[pos]["style"]["color"] })
     };
 
     const handleChange = (val) => {
         setContent(val);
         //let cloneData = data;
+        debugger
+        console.log("test type --->", typeof position)
         let cloneData = JSON.parse(JSON.stringify(data));
-        cloneData[currentIndex].items[position].value = val;
+
+        if (Number(position) === 111)
+            cloneData[currentIndex].sectionStyle.backgroundImage = val;
+        else
+            cloneData[currentIndex].items[position].value = val;
+
         setData(cloneData);
         console.log('check after Change--->3', cloneData);
         handleSaveBlock();
@@ -420,7 +428,7 @@ const LeadPage = ({ isError, collection }) => {
             <div className={styles.container}>
                 <div className={styles.left}>
                     <div>
-                        <Builder data={data} mode={'view'} onHandleChange={onChangeContent} />
+                        <Builder data={data} mode={'edit'} onHandleChange={onChangeContent} />
                     </div>
                 </div>
 

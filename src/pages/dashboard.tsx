@@ -16,7 +16,7 @@ export const getServerSideProps = async (context) => {
 	let isError = false;
 	let cookie = null;
 	let repos = null;
-	let blogs = [];
+	let blogs_data = [];
 	let company_id = null;
 	let repo_id = null;
 	let lead_pages = [];
@@ -43,7 +43,7 @@ export const getServerSideProps = async (context) => {
 					cookie: cookie!,
 				},
 			});
-			blogs = result1.data;
+			blogs_data = result1.data;
 
 			//fetch lead pages
 			let result2 = await axios.get(`${process.env.API_URL}/lead-page/repo/${repo_id}`, {
@@ -62,9 +62,12 @@ export const getServerSideProps = async (context) => {
 	}
 
 	return {
-		props: { repos, company_id, blogs, repo_id, isError, lead_pages },
+		props: { repos, company_id, blogs_data, repo_id, isError, lead_pages },
 	};
 };
+
+
+
 
 const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages_data }) => {
 	useEffect(() => {
@@ -78,11 +81,9 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 	const { data: repoArr, mutate: mutateRepos } = useSWR(`/api/repository/fetch-repos-summary`, {
 		initialData: repos,
 	});
-
 	const { data: blogs, mutate: mutateBlogs } = useSWR(`/api/blog/repo/${selectedRepo?.id}`, {
 		initialData: blogs_data,
 	});
-	console.log("test blog data---->", blogs)
 	const {
 		data: lead_pages,
 		mutate: mutateLeadPages,

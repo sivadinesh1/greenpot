@@ -4,17 +4,18 @@ import Hero from '../components/landing/Hero';
 import HeroPage from '../components/landing/HeroPage';
 import ContentPage from '../components/landing/Content';
 
-const BuilderComponent = ({ data, mode, onHandleChange }) => {
+const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 	console.log('test request values--->', data);
 
-	const onHadle = (data, position, index, type) => {
+	const onHandle = (data, position, index, type) => {
+		debugger
 		console.log('check stage ----->1', index);
 		onHandleChange(data, position, index, type);
 	};
 
 	return (
 		<>
-			{mode === 'view' && (
+			{mode === 'edit' && (
 				<div>
 					{data?.map((section, index) => {
 						console.log('check index value in builder component---->', index);
@@ -30,7 +31,72 @@ const BuilderComponent = ({ data, mode, onHandleChange }) => {
 											backgroundImage={obj.items[3].value}
 											key={index}
 											index={index}
-											onHadle={onHadle}
+											onHandle={onHandle}
+											style={obj.sectionStyle}
+											mode={mode}
+
+										/>
+									);
+							case 'Footer':
+								if (obj.status === 'Active') return (<Footer
+									data={{ value: obj.items[0].value, style: obj.items[0].style }}
+									key={index}
+									onHandle={onHandle}
+									index={index}
+									style={obj.sectionStyle}
+									mode={mode}
+
+								/>);
+							case 'Hero':
+								console.log('check hero page status--->', obj);
+								if (obj.status === 'Active')
+									return (
+										<HeroPage
+											title={{ value: obj.items[0].value, style: obj.items[0].style }}
+											content={{ value: obj.items[1].value, style: obj.items[1].style }}
+											backgroundImage={obj.items[2].value}
+											key={index}
+											index={index}
+											onHandle={onHandle}
+											style={obj.sectionStyle}
+											mode={mode}
+										/>
+									);
+							case 'Content':
+								if (obj.status === 'Active')
+									return (
+										<ContentPage
+											title={{ value: obj.items[0].value, style: obj.items[0].style }}
+											content={{ value: obj.items[1].value, style: obj.items[1].style }}
+											key={index}
+											index={index}
+											onHandle={onHandle}
+											style={obj.sectionStyle}
+											mode={mode}
+
+										/>
+									);
+						}
+					})}
+				</div>
+			)}
+
+			{mode === "view" &&
+				<div>
+					{data?.map((section, index) => {
+						console.log('check index value in view mode---->', index);
+						let obj = section;
+						switch (section.type) {
+							case 'Header':
+								if (obj.status === 'Active')
+									return (
+										<Header
+											company={{ value: obj.items[0].value, style: obj.items[0].style }}
+											blocks={{ value: obj.items[1].value, style: obj.items[1].style }}
+											imageUrl={obj.items[2].value}
+											backgroundImage={obj.items[3].value}
+											key={index}
+											index={index}
 											style={obj.sectionStyle}
 										/>
 									);
@@ -38,7 +104,6 @@ const BuilderComponent = ({ data, mode, onHandleChange }) => {
 								if (obj.status === 'Active') return (<Footer
 									data={{ value: obj.items[0].value, style: obj.items[0].style }}
 									key={index}
-									onHadle={onHadle}
 									index={index}
 									style={obj.sectionStyle}
 								/>);
@@ -52,9 +117,7 @@ const BuilderComponent = ({ data, mode, onHandleChange }) => {
 											backgroundImage={obj.items[2].value}
 											key={index}
 											index={index}
-											onHadle={onHadle}
 											style={obj.sectionStyle}
-
 										/>
 									);
 							case 'Content':
@@ -65,20 +128,13 @@ const BuilderComponent = ({ data, mode, onHandleChange }) => {
 											content={{ value: obj.items[1].value, style: obj.items[1].style }}
 											key={index}
 											index={index}
-											onHadle={onHadle}
 											style={obj.sectionStyle}
 										/>
 									);
 						}
 					})}
-					{/* <HeroPage /> */}
-					{/* <ContentPage /> */}
 				</div>
-			)}
-
-			{/* {mode === "edit" && <div>
-
-        </div>} */}
+			}
 		</>
 	);
 };

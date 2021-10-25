@@ -49,6 +49,11 @@ const Header = ({ username = '' }) => {
 		Router.push(`/blog-preview/${router.query.blog_id}`);
 	};
 
+	const handleLeadView = () => {
+		Router.push(`/lead-page/preview/${router.query.lead_page_id}`);
+	};
+
+
 	const handlePublish = async () => {
 		console.log('handle publish method call--->', snap.obj);
 		let requestBody = {
@@ -72,10 +77,13 @@ const Header = ({ username = '' }) => {
 			}
 		}
 	};
+	//disable header 
+	// let isDisable = router.pathname === "/lead-page/[lead_page_id]" || router.pathname === "/blog/[blog_id]" ? true : false
+	let isDisable = router.pathname === "/lead-page/[lead_page_id]" ? true : false
 
 	return (
 		<>
-			<div className={styles.toolbar__wrapper}>
+			{!isDisable && <div className={styles.toolbar__wrapper}>
 				<div>
 					<Link href={`/dashboard`}>
 						<a style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -87,10 +95,6 @@ const Header = ({ username = '' }) => {
 				<div style={{ display: 'flex', alignItems: 'center' }}>
 					{router.pathname === '/admin/blog-edit/[blog_id]' && (
 						<div style={{ display: 'flex' }}>
-							{/* <Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
-							view
-						</Button> */}
-
 							<div onClick={() => handleView()} style={{ display: 'contents', cursor: 'pointer' }}>
 								<Image src='/static/images/preview.svg' alt='gallery' width='30px' height='30px' />
 							</div>
@@ -98,16 +102,15 @@ const Header = ({ username = '' }) => {
 							<div onClick={() => handlePublish()}>
 								<span className={styles.publish}>Publish</span>
 							</div>
+						</div>
+					)}
+					{/* lead poage preview option  */}
 
-							{/* <Button
-							variant='contained'
-							onClick={() => handlePublish()}
-							color='primary'
-							disable={true}
-							id='publish'
-							style={{ marginLeft: '10px' }}>
-							Publish
-						</Button> */}
+					{router.pathname === '/lead-page/research/[lead_page_id]' && (
+						<div style={{ display: 'flex' }}>
+							<div onClick={() => handleLeadView()} style={{ display: 'contents', cursor: 'pointer' }}>
+								<Image src='/static/images/preview.svg' alt='gallery' width='30px' height='30px' />
+							</div>
 						</div>
 					)}
 					<div style={{ zIndex: '10', position: 'relative', display: 'flex', paddingLeft: '16px', cursor: 'pointer' }}>
@@ -148,7 +151,7 @@ const Header = ({ username = '' }) => {
 						</Menu>
 					</div>
 				</div>
-			</div>
+			</div>}
 			<Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
 				<MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled' severity={isError ? 'error' : 'success'}>
 					{message}

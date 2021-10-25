@@ -3,42 +3,63 @@ import Image from 'next/image'
 import styled from 'styled-components'
 import Option from "./option";
 
-const Content = styled.div`
-        margin-top:40px;
-        padding:20px;
-        color:black;
-        font-size:20px;
-        &:hover {
-          outline-style: solid;
-          outline-color: #0000ff;
+const ContentPage = (props) => {
+    let section = "Content";
+    const { content, title, key, index, style, mode } = props
+    const [mouseOver, setMouseOver] = useState(false)
+    const handleMouseOver = (flag) => {
+        setMouseOver(flag);
+    }
+
+    if (mode === "view")
+        style["pointerEvents"] = "none"
+
+    const handleEvent = (event, position) => {
+        if (mode === "edit") {
+            console.log("check value--->", event);
+            event.preventDefault();
+            const tags = document.querySelectorAll('.clicked');
+
+            for (let i of tags) {
+                i.classList.remove('clicked');
+            }
+
+            event.target.classList.add('clicked');
+            props.onHandle(event.target.childNodes[0].data, position, index)
         }
+    }
 
-        &:focus{
-            outline-style: solid;
-            outline-color: #0000ff;
-          }
-        `;
+    const Content = styled.div`
+	margin-top: 40px;
+	padding: 20px;
+	color: black;
+	font-size: 20px;
+    ${ mode === "edit" ? `&:hover {
+		outline-style: solid;
+		outline-color: #0000ff;
+	}
 
-const Container = styled.div`
-padding:2rem;
-display:grid;
-grid-template-columns: 1fr 3fr;
-text-align:center;`;
+	&:focus {
+		outline-style: solid;
+		outline-color: #0000ff;
+	}` : ''}
+`;
 
-const Header = styled.div`
+    const Header = styled.div`
 padding:10px;
 font-size: 35px;
 font-weight:bold;
 font-family: 'Layout', sans-serif;
 color: black;
 
-&:hover {
+${ mode === "edit" ? `&:hover {
     outline-style: solid;
     outline-color: #0000ff;
-  }`;
+}` : ''}
+  `;
 
-// display: inline-block;
-const Button = styled.button`
+    // display: inline-block;
+    const Button = styled.button`
   color: palevioletred;
   font-size: 1em;
   margin: 1em;
@@ -46,40 +67,22 @@ const Button = styled.button`
   border: 2px solid palevioletred;
   border-radius: 3px;
   
-  &:hover {
+  ${ mode === "edit" ? `&:hover {
     outline-style: solid;
     outline-color: #0000ff;
-  }
+}` : ''}
   `;
-//   display: block;
 
-const ContentPage = (props) => {
-    let section = "Content";
-    const { content, title, key, index, style } = props
-    const [mouseOver, setMouseOver] = useState(false)
-    const handleMouseOver = (flag) => {
-        setMouseOver(flag);
-    }
-
-    const handleEvent = (event, position) => {
-        console.log("check value--->", event);
-        event.preventDefault();
-        const tags = document.querySelectorAll('.clicked');
-
-        for (let i of tags) {
-            i.classList.remove('clicked');
-        }
-
-        event.target.classList.add('clicked');
-        props.onHadle(event.target.childNodes[0].data, position, index)
-
-    }
-
+    const Container = styled.div`
+padding:2rem;
+display:grid;
+grid-template-columns: 1fr 3fr;
+text-align:center;`;
     return (
         <>
             < div onMouseOver={() => handleMouseOver(true)} onMouseOut={() => handleMouseOver(false)}>
                 {/* {mouseOver && <Option section={section} />} */}
-                <Option sectionName={section} index={index} />
+                {mode === "edit" && <Option sectionName={section} index={index} />}
 
                 < Container style={style}>
 
