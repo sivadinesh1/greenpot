@@ -80,6 +80,7 @@
 		"react-intl": "^5.20.6",
 		"react-loading-skeleton": "^2.2.0",
 		"reactcss": "^1.2.3",
+		"rive-react": "0.0.22",
 		"sass": "^1.36.0",
 		"slugify": "^1.6.0",
 		"string-strip-html": "^8.3.0",

@@ -58,7 +58,7 @@ ${ mode === "edit" ? `&:hover {
   `;
 
     // display: inline-block;
-    const Button = styled.button`
+    const Button = styled.a`
   color: palevioletred;
   font-size: 1em;
   margin: 1em;
