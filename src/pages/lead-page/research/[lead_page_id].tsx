@@ -79,6 +79,7 @@ const LeadPage = ({ isError, collection }) => {
     // } = useForm();
 
     const [content, setContent] = useState(data[0].items[0].value);
+    const [link, setLink] = useState("#");
     const [position, setPosition] = useState('0');
     const [contentType, setContentType] = useState('text');
     const [mode, setMode] = useState(section_data.currentSection === null ? 'view' : 'edit');
@@ -130,7 +131,10 @@ const LeadPage = ({ isError, collection }) => {
         debugger
         setBackgroundColor({ ...backGroundColor, color: color.hex })
         let cloneData = JSON.parse(JSON.stringify(data));
-        cloneData[currentIndex].sectionStyle.backgroundColor = color.hex;
+        if (!section_data.isEdit)
+            cloneData[currentIndex].items[position].style["backgroundColor"] = color.hex;
+        else
+            cloneData[currentIndex].sectionStyle.backgroundColor = color.hex;
         setData(cloneData);
         handleSaveBlock();
     };
@@ -264,7 +268,20 @@ const LeadPage = ({ isError, collection }) => {
         setContentType(type);
         if (pos !== 111)
             setFontColor({ ...fontColor, color: data[index].items[pos]["style"]["color"] })
+        if (type === "hyper-link")
+            setLink(data[index].items[pos].value)
     };
+
+    const handleChangeHyperLink = (val) => {
+        setLink(val);
+        debugger
+        console.log("check hyper link data--->", val)
+        let cloneData = JSON.parse(JSON.stringify(data));
+        cloneData[currentIndex].items[position].value = val;
+        setData(cloneData);
+        console.log('test hyperLink data', cloneData);
+        handleSaveBlock();
+    }
 
     const handleChange = (val) => {
         setContent(val);
@@ -275,6 +292,8 @@ const LeadPage = ({ isError, collection }) => {
 
         if (Number(position) === 111)
             cloneData[currentIndex].sectionStyle.backgroundImage = val;
+        else if (contentType === 'hyper-link')
+            cloneData[currentIndex].items[position].formDetail.label = val;
         else
             cloneData[currentIndex].items[position].value = val;
 
@@ -470,6 +489,21 @@ const LeadPage = ({ isError, collection }) => {
                                     fullWidth
                                 />
                             </div>
+                            {contentType === 'hyper-link' && <div style={{ paddingTop: '10px' }}>
+                                <TextField
+                                    name='content'
+                                    type='text'
+                                    label={'Hyper-link'}
+                                    margin='dense'
+                                    variant='outlined'
+                                    size='small'
+                                    value={link}
+                                    onChange={(e) => handleChangeHyperLink(e.target.value)}
+                                    multiline
+                                    rows={5}
+                                    fullWidth
+                                />
+                            </div>}
                             {contentType !== 'image' && (<div>
                                 <div className={styles.flex_start}>
                                     <div>Font Color:</div>
@@ -481,6 +515,19 @@ const LeadPage = ({ isError, collection }) => {
                                         <SketchPicker color={fontColor.color} onChange={handleChangeFontColor} />
                                     </div> : null}
 
+                                </div>
+                            </div>)}
+
+                            {contentType === 'hyper-link' && (<div>
+                                <div>backGroundColor:</div>
+                                <div>
+                                    <div style={style.swatch} onClick={() => handleClickPicker("background")}>
+                                        <div style={style.color} />
+                                    </div>
+                                    {backGroundColor.displayColorPicker ? <div style={style.popover}>
+                                        <div style={style.cover} onClick={() => handleClosePicker("background")} />
+                                        <SketchPicker color={backGroundColor.color} onChange={handleChangeBGColor} />
+                                    </div> : null}
                                 </div>
                             </div>)}
 

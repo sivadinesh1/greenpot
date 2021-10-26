@@ -78,8 +78,7 @@ const Header = ({ username = '' }) => {
 		}
 	};
 	//disable header 
-	// let isDisable = router.pathname === "/lead-page/[lead_page_id]" || router.pathname === "/blog/[blog_id]" ? true : false
-	let isDisable = router.pathname === "/lead-page/[lead_page_id]" ? true : false
+	let isDisable = router.pathname === "/lead-page/[lead_page_id]" || router.pathname === "/blog/[blog_id]" ? true : false
 
 	return (
 		<>

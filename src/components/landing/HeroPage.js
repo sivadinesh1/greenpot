@@ -51,7 +51,7 @@ const Image = styled.div`
 
 const Hero = (props) => {
     let section = 'Hero';
-    const { title, content, index, key, style, backgroundImage, mode } = props;
+    const { title, content, index, key, style, backgroundImage, mode, cta_button } = props;
     console.log('check index value ----->', index);
     const [mouseOver, setMouseOver] = useState(false);
     const handleMouseOver = (flag) => {
@@ -122,7 +122,7 @@ text-align:center;`;
 	font-size: 1em;
 	margin: 1em;
 	padding: 0.25em 1em;
-	border: 2px solid palevioletred;
+	border: 2px solid;
 	border-radius: 3px;
 
 	${ mode === "edit" ? `&:hover {
@@ -171,8 +171,8 @@ text-align:center;`;
                     {/* <div style={image}></div> */}
                 </Image>
 
-                <div>
-                    <Button>Click</Button>
+                <div onClick={(event) => handleEvent(event, 3, 'hyper-link')}>
+                    <Button href={cta_button.value} style={cta_button.style}>{cta_button.label}</Button>
                 </div>
             </Container>
             {/* </div> */}

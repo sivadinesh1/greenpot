@@ -5,7 +5,7 @@ import Option from "./option";
 
 const ContentPage = (props) => {
     let section = "Content";
-    const { content, title, key, index, style, mode } = props
+    const { content, title, key, index, style, mode, cta_button } = props
     const [mouseOver, setMouseOver] = useState(false)
     const handleMouseOver = (flag) => {
         setMouseOver(flag);
@@ -14,9 +14,8 @@ const ContentPage = (props) => {
     if (mode === "view")
         style["pointerEvents"] = "none"
 
-    const handleEvent = (event, position) => {
+    const handleEvent = (event, position, type) => {
         if (mode === "edit") {
-            console.log("check value--->", event);
             event.preventDefault();
             const tags = document.querySelectorAll('.clicked');
 
@@ -25,7 +24,7 @@ const ContentPage = (props) => {
             }
 
             event.target.classList.add('clicked');
-            props.onHandle(event.target.childNodes[0].data, position, index)
+            props.onHandle(event.target.childNodes[0].data, position, index, type)
         }
     }
 
@@ -64,7 +63,7 @@ ${ mode === "edit" ? `&:hover {
   font-size: 1em;
   margin: 1em;
   padding: 0.25em 1em;
-  border: 2px solid palevioletred;
+  border: 2px solid ;
   border-radius: 3px;
   
   ${ mode === "edit" ? `&:hover {
@@ -93,7 +92,9 @@ text-align:center;`;
                         <Content key={key} style={content.style}>
                             <span onClick={(event) => handleEvent(event, 1, "text")}>{content.value}</span>
                         </Content>
-                        <Button>Learn more about our services</Button>
+                        <div onClick={(event) => handleEvent(event, 2, 'hyper-link')}>
+                            <Button href={cta_button.value} style={cta_button.style}>{cta_button.label}</Button>
+                        </div>
                     </div>
 
                 </Container>

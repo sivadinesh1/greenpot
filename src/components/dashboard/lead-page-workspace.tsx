@@ -18,11 +18,12 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import { ILeadPage } from '../../model/LeadPage'
 
-const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
+const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 	console.log("check selected repo--->", selectedRepo)
 	const [view, setView] = React.useState('list');
-	const [leadPage, setLeadPage] = useState({})
+	const [leadPage, setLeadPage] = useState<ILeadPage>();
 
 	const handleChange = (event, nextView) => {
 		setView(nextView);
@@ -32,6 +33,12 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 		event.stopPropagation();
 		Router.push(`/template/${selectedRepo.repo_id}`);
 	};
+
+	const handleViewTemplate = () => {
+		setAnchorEl(null);
+		Router.push(`http://localhost:3000/lead-page/${leadPage.lead_page_id}`)
+
+	}
 
 	// const handleOpenTemplate = () => {
 	// 	// setTemplateDialog(true);
@@ -58,6 +65,17 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 		setOpenDialog(false);
 	};
 
+	const handleLeadDelete = async () => {
+		setAnchorEl(null);
+		handleOpenDialog();
+	};
+
+	const confirmDelete = async () => {
+		let response = await axios.delete(`/api/lead-page/${leadPage.id}`);
+		reload();
+		handleCloseDialog();
+		//mutate();
+	};
 	//template dialog
 	const [templateDialog, setTemplateDialog] = useState(false);
 
@@ -124,13 +142,24 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages }) => {
 			</div>
 
 			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
-				<MenuItem onClick={handleClose}>view</MenuItem>
-				<MenuItem onClick={handleClose}>edit</MenuItem>
+				<MenuItem onClick={handleViewTemplate}>view</MenuItem>
+				<MenuItem onClick={() => editCusTemp(leadPage.lead_page_id)}>edit</MenuItem>
 				<Divider />
-				<MenuItem>
+				<MenuItem onClick={() => handleLeadDelete()}>
 					<span style={{ color: 'red', fontSize: '12px' }}>Delete</span>
 				</MenuItem>
 			</Menu>
+
+			{openDialog && (
+				<DeleteDialog
+					open={openDialog}
+					handleClose={handleCloseDialog}
+					windowTitle='Delete this lead-page?'
+					deleteMessage='It will be un-published and deleted and wont be able to recover it.'
+					title={leadPage?.lead_page_name}
+					confirmDelete={confirmDelete}
+				/>
+			)}
 
 			{/* <Dialog open={openDialog} onClose={handleCloseDialog}>
 				<DialogContent style={{ width: '500px' }}>

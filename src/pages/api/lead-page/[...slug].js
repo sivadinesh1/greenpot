@@ -1,6 +1,6 @@
 import nc from 'next-connect';
 // import { getCollection, deleteById, getAllCustomTemplates } from '../../../service/template-collection.service';
-import { getLeadPageByRepo, updateBlock } from '../../../service/lead-page.service';
+import { getLeadPageByRepo, updateBlock, deleteById } from '../../../service/lead-page.service';
 import { auth } from '../../../middleware/auth';
 
 const handler = nc()

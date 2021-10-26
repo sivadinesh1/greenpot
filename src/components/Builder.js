@@ -59,6 +59,7 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											index={index}
 											onHandle={onHandle}
 											style={obj.sectionStyle}
+											cta_button={{ label: obj.items[3].formDetail.label, value: obj.items[3].value, style: obj.items[3].style }}
 											mode={mode}
 										/>
 									);
@@ -72,7 +73,9 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											index={index}
 											onHandle={onHandle}
 											style={obj.sectionStyle}
+											cta_button={{ label: obj.items[2].formDetail.label, value: obj.items[2].value, style: obj.items[2].style }}
 											mode={mode}
+
 
 										/>
 									);
@@ -118,6 +121,8 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											key={index}
 											index={index}
 											style={obj.sectionStyle}
+											cta_button={{ label: obj.items[3].formDetail.label, value: obj.items[3].value, style: obj.items[3].style }}
+
 										/>
 									);
 							case 'Content':
@@ -129,6 +134,8 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											key={index}
 											index={index}
 											style={obj.sectionStyle}
+											cta_button={{ label: obj.items[2].formDetail.label, value: obj.items[2].value, style: obj.items[2].style }}
+
 										/>
 									);
 						}

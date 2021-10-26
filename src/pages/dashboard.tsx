@@ -98,6 +98,11 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 		mutateRepos();
 	};
 
+	const reloadLeads = async (repo) => {
+		//	setSelectedRepo(repo);
+		mutateLeadPages();
+		mutateRepos();
+	};
 	const reloadRepos = async (repo: IRepo) => {
 		setSelectedRepo(repo);
 		mutateRepos();
@@ -110,7 +115,7 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 			<div className={styles.wrapper}>
 				{repoArr && repoArr.length === 0 && <NoWorkspace />}
 				{repoArr && repoArr.length > 0 && selectedRepo.repo_type === 'T' ? (
-					<LeadPageWorkspace selectedRepo={selectedRepo} lead_pages={lead_pages} />
+					<LeadPageWorkspace selectedRepo={selectedRepo} lead_pages={lead_pages} reload={reloadLeads} />
 				) : (
 						<BlogWorkspace selectedRepo={selectedRepo} blogs={blogs} reload={reloadBlogs} />
 					)}
