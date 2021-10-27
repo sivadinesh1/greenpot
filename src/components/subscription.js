@@ -1,0 +1,168 @@
+import { Button } from '@material-ui/core';
+import { useState } from 'react';
+
+import TextField from '@material-ui/core/TextField';
+import { useForm } from 'react-hook-form';
+import styles from '../styles/Subscription.module.scss'
+import styled from 'styled-components';
+import Option from "../components/landing/option";
+import { useRive, useStateMachineInput } from 'rive-react';
+
+
+
+const Subscription = (props) => {
+    // const { company_id, lead_id } = props;
+    let section = 'Subscription';
+    const { company_id, lead_id, title, subTitle, key, index, style, mode } = props;
+
+    const handleEvent = (event, position) => {
+        console.log('check value--->', event);
+        if (mode === "edit") {
+            event.preventDefault();
+
+            const tags = document.querySelectorAll('.clicked');
+
+            for (let i of tags) {
+                i.classList.remove('clicked');
+            }
+
+            event.target.classList.add('clicked');
+            props.onHandle(event.target.childNodes[0].data, position, index);
+        }
+    };
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        reset
+    } = useForm();
+
+    const onSubmit = async (data) => {
+        console.log("test form data----->", data)
+    };
+
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [message, setMessage] = useState('')
+
+    const showSuccess = (flag, data) => {
+        setMessage(data);
+        setIsSuccess(flag);
+        setTimeout(() => {
+            setIsSuccess(false);
+        }, 5000);
+    };
+
+    let successStyle = {
+        color: 'green',
+        content: '⚠ ',
+    };
+
+    const GPTitle = styled.div`
+                font-size: large;
+                font-weight: bold;
+                padding-bottom: 1rem;
+                white-space: pre-line;
+
+                ${mode === 'edit'
+            ? `&:hover {
+                outline-style: solid;
+                outline-color: #0000ff;
+            }`
+            : ''}
+            `;
+
+    const GPSubTitle = styled.div`
+            font-size: medium;
+            padding-bottom: 1rem;
+            white-space: pre-line;
+
+            ${mode === 'edit'
+            ? `&:hover {
+            outline-style: solid;
+            outline-color: #0000ff;
+            }`
+            : ''}
+            `;
+
+    const STATE_MACHINE_NAME = 'State Machine 1';
+    const ON_HOVER_INPUT_NAME = 'Hover';
+    const ON_PRESSED_INPUT_NAME = 'Pressed';
+
+    const { RiveComponent, rive } = useRive({
+        src: './../../../logistic_box.riv',
+        stateMachines: STATE_MACHINE_NAME,
+        artboard: 'New Artboard',
+        autoplay: true,
+    });
+
+
+    const onHoverInput = useStateMachineInput(
+        rive,
+        STATE_MACHINE_NAME,
+        ON_HOVER_INPUT_NAME
+    );
+    const onPressedInput = useStateMachineInput(
+        rive,
+        STATE_MACHINE_NAME,
+        ON_PRESSED_INPUT_NAME
+    );
+
+    function onMouseEnter() {
+        onHoverInput.value = true;
+    }
+
+    function onMouseLeave() {
+        onHoverInput.value = false;
+    }
+
+    function onMouseDown() {
+        onPressedInput.value = true;
+    }
+
+    function onMouseUp() {
+        onPressedInput.value = false;
+    }
+    return (
+        <div style={{ backgroundColor: "#ffc62d" }}>
+            <div className={styles.imageStack}>
+
+                <div style={{ height: '500px', width: '500px' }} >
+                    <RiveComponent
+                    // onMouseEnter={onMouseEnter}
+                    // onMouseLeave={onMouseLeave}
+                    // onMouseDown={onMouseDown}
+                    // onMouseUp={onMouseUp}
+                    />
+                </div>
+                <div className={styles.box}>
+
+                    <form onSubmit={handleSubmit(onSubmit)}>
+                        <GPTitle style={title.style}>
+                            <span onClick={(event) => handleEvent(event, 0, "text")}>{title.value}</span>
+                        </GPTitle>
+                        <GPSubTitle style={subTitle.style}>
+                            <span onClick={(event) => handleEvent(event, 1, "text")}>{subTitle.value}</span> </GPSubTitle>
+
+
+                        <div className={styles.form_gap}>
+                            <TextField type='email' label='Email Address' variant="outlined" margin='dense' name='email' style={{ width: '100%' }} autoComplete='off' {...register('email')} />
+                        </div>
+                        {isSuccess && <p style={successStyle}>{message}</p>}
+                        <div className={styles.form_gap}>
+                            <Button type='submit' variant="contained" color='primary' style={{ width: '100%' }}>
+                                Join us!
+						</Button>
+                        </div>
+                        <div className={styles.helper_text}>We don't share email with anyone</div>
+                    </form>
+
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </div>)
+
+}
+
+export default Subscription;

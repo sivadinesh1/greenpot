@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Rive from 'rive-react'
+import SubscriptionForm from "../subscription";
 // import { useRive, Layout, Fit, Alignment } from 'rive-react';
 import { useRive, useStateMachineInput } from 'rive-react';
 
@@ -122,6 +123,9 @@ const HeaderCom = (props) => {
 					<span onClick={(event) => handleEvent(event, 1, "text")}>{blocks.value}</span>
 				</Content>
 			</div>
+			{/* <div style={{ padding: "3rem" }}>
+				<SubscriptionForm company_id={5} lead_id={15} />
+			</div> */}
 			{/* <div style={{ width: "100%", minHeight: "100vh" }}>
 				<RiveComponent
 					onClick={() => rive && rive.readyForPlaying()}
@@ -129,14 +133,14 @@ const HeaderCom = (props) => {
 				/>
 			</div> */}
 
-			<div style={{ height: '500px', width: '1000px' }}>
+			{/* <div style={{ height: '500px', width: '1000px' }}>
 				<RiveComponent
 					onMouseEnter={onMouseEnter}
 					onMouseLeave={onMouseLeave}
 					onMouseDown={onMouseDown}
 					onMouseUp={onMouseUp}
 				/>
-			</div>
+			</div> */}
 
 
 			{/* <div style={{ height: '500px', width: '500px' }}>
@@ -146,6 +150,7 @@ const HeaderCom = (props) => {
 			<div id='image'>
 				<Image src={imageUrl === undefined ? defaultUrl : imageUrl} alt='Picture of the author' width={300} height={300} />
 			</div>
+
 		</div>
 	);
 };

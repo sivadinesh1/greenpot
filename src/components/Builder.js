@@ -3,6 +3,7 @@ import Footer from '../components/landing/Footer';
 import Hero from '../components/landing/Hero';
 import HeroPage from '../components/landing/HeroPage';
 import ContentPage from '../components/landing/Content';
+import SubscriptionForm from '../components/subscription'
 
 const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 	console.log('test request values--->', data);
@@ -60,6 +61,19 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											onHandle={onHandle}
 											style={obj.sectionStyle}
 											cta_button={{ label: obj.items[3].formDetail.label, value: obj.items[3].value, style: obj.items[3].style }}
+											mode={mode}
+										/>
+									);
+							case 'Subscription':
+								if (obj.status === 'Active')
+									return (
+										<SubscriptionForm
+											title={{ value: obj.items[0].value, style: obj.items[0].style }}
+											subTitle={{ value: obj.items[1].value, style: obj.items[1].style }}
+											key={index}
+											index={index}
+											onHandle={onHandle}
+											style={obj.sectionStyle}
 											mode={mode}
 										/>
 									);
