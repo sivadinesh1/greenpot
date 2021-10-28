@@ -70,6 +70,7 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 										<SubscriptionForm
 											title={{ value: obj.items[0].value, style: obj.items[0].style }}
 											subTitle={{ value: obj.items[1].value, style: obj.items[1].style }}
+											logo={obj.items[2].value}
 											key={index}
 											index={index}
 											onHandle={onHandle}
@@ -150,6 +151,19 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											style={obj.sectionStyle}
 											cta_button={{ label: obj.items[2].formDetail.label, value: obj.items[2].value, style: obj.items[2].style }}
 
+										/>
+									);
+							case 'Subscription':
+								if (obj.status === 'Active')
+									return (
+										<SubscriptionForm
+											title={{ value: obj.items[0].value, style: obj.items[0].style }}
+											subTitle={{ value: obj.items[1].value, style: obj.items[1].style }}
+											logo={obj.items[2].value}
+											key={index}
+											index={index}
+											style={obj.sectionStyle}
+											mode={mode}
 										/>
 									);
 						}

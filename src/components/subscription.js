@@ -7,15 +7,20 @@ import styles from '../styles/Subscription.module.scss'
 import styled from 'styled-components';
 import Option from "../components/landing/option";
 import { useRive, useStateMachineInput } from 'rive-react';
+import { motion } from "framer-motion";
+import { useCycle } from "framer-motion";
+import NextImage from 'next/image';
+
 
 
 
 const Subscription = (props) => {
     // const { company_id, lead_id } = props;
     let section = 'Subscription';
-    const { company_id, lead_id, title, subTitle, key, index, style, mode } = props;
+    const { company_id, lead_id, title, subTitle, key, index, style, mode, logo } = props;
+    const [animation, cycleAnimation] = useCycle("animationOne", "animationTwo");
 
-    const handleEvent = (event, position) => {
+    const handleEvent = (event, position, type) => {
         console.log('check value--->', event);
         if (mode === "edit") {
             event.preventDefault();
@@ -27,7 +32,8 @@ const Subscription = (props) => {
             }
 
             event.target.classList.add('clicked');
-            props.onHandle(event.target.childNodes[0].data, position, index);
+            // props.onHandle(event.target.childNodes[0].data, position, index);
+            props.onHandle(type === 'image' ? event.target.currentSrc : event.target.childNodes[0].data, position, index, type);
         }
     };
     const {
@@ -84,6 +90,22 @@ const Subscription = (props) => {
             : ''}
             `;
 
+
+    const GPBox = styled.div`
+    position: relative;
+    padding-top: 150px;
+    padding-right: 200px;`;
+
+
+    const BannerVariants = {
+        animationOne: { x: -250, opacity: 1, transition: { duration: 0.5 } },
+        animationTwo: {
+            y: [0, -20],
+            opacity: 1,
+            transition: { yoyo: Infinity, ease: "easeIn" }
+        }
+    };
+
     const STATE_MACHINE_NAME = 'State Machine 1';
     const ON_HOVER_INPUT_NAME = 'Hover';
     const ON_PRESSED_INPUT_NAME = 'Pressed';
@@ -107,61 +129,58 @@ const Subscription = (props) => {
         ON_PRESSED_INPUT_NAME
     );
 
-    function onMouseEnter() {
-        onHoverInput.value = true;
-    }
 
-    function onMouseLeave() {
-        onHoverInput.value = false;
-    }
-
-    function onMouseDown() {
-        onPressedInput.value = true;
-    }
-
-    function onMouseUp() {
-        onPressedInput.value = false;
-    }
     return (
-        <div style={{ backgroundColor: "#ffc62d" }}>
-            <div className={styles.imageStack}>
-
-                <div style={{ height: '500px', width: '500px' }} >
-                    <RiveComponent
-                    // onMouseEnter={onMouseEnter}
-                    // onMouseLeave={onMouseLeave}
-                    // onMouseDown={onMouseDown}
-                    // onMouseUp={onMouseUp}
-                    />
+        <div className={styles.imageStack}>
+            <div className={styles.subcontainer}>
+                <div style={{ paddingLeft: '15px', paddingTop: '20px' }}>
+                    <div onClick={(event) => handleEvent(event, 2, 'image')}>
+                        <NextImage src={logo} height='50px' width='50px' />
+                    </div>
                 </div>
-                <div className={styles.box}>
-
-                    <form onSubmit={handleSubmit(onSubmit)}>
+                <div className={styles.rive}>
+                    <RiveComponent />
+                </div>
+            </div>
+            <GPBox>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <motion.h1
+                        initial={{ y: -1000 }}
+                        animate={{ y: 0 }}
+                        transition={{
+                            type: "tween",
+                            duration: "1",
+                            delay: "1"
+                        }}
+                    >
                         <GPTitle style={title.style}>
                             <span onClick={(event) => handleEvent(event, 0, "text")}>{title.value}</span>
                         </GPTitle>
-                        <GPSubTitle style={subTitle.style}>
-                            <span onClick={(event) => handleEvent(event, 1, "text")}>{subTitle.value}</span> </GPSubTitle>
+                    </motion.h1>
+
+                    <GPSubTitle style={subTitle.style}>
+                        <span onClick={(event) => handleEvent(event, 1, "text")}>{subTitle.value}</span> </GPSubTitle>
 
 
-                        <div className={styles.form_gap}>
-                            <TextField type='email' label='Email Address' variant="outlined" margin='dense' name='email' style={{ width: '100%' }} autoComplete='off' {...register('email')} />
-                        </div>
-                        {isSuccess && <p style={successStyle}>{message}</p>}
-                        <div className={styles.form_gap}>
-                            <Button type='submit' variant="contained" color='primary' style={{ width: '100%' }}>
-                                Join us!
+                    <div className={styles.form_gap}>
+                        <TextField type='email' label='Email Address' variant="outlined" margin='dense' name='email' style={{ width: '100%' }} autoComplete='off' {...register('email')} />
+                    </div>
+                    {isSuccess && <p style={successStyle}>{message}</p>}
+                    <div className={styles.form_gap}>
+                        <Button type='submit' variant="contained" color='primary' style={{ width: '100%' }}>
+                            Join us!
 						</Button>
-                        </div>
-                        <div className={styles.helper_text}>We don't share email with anyone</div>
-                    </form>
+                    </div>
+                    <div className={styles.helper_text}>We don't share email with anyone</div>
+                </form>
+            </GPBox>
+            <div>
 
-                </div>
-                <div>
-
-                </div>
             </div>
-        </div>)
+            {/* </Container> */}
+        </div>
+
+    )
 
 }
 
