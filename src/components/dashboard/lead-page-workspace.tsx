@@ -19,6 +19,8 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import ViewListIcon from '@mui/icons-material/ViewList';
 import ViewModuleIcon from '@mui/icons-material/ViewModule';
 import { ILeadPage } from '../../model/LeadPage'
+import { formatDistance } from 'date-fns';
+
 
 const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 	console.log("check selected repo--->", selectedRepo)
@@ -61,6 +63,9 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 		setOpenDialog(true);
 	};
 
+	const dateAgo = (date) => {
+		return formatDistance(new Date(date), new Date(), { addSuffix: true });
+	};
 	const handleCloseDialog = () => {
 		setOpenDialog(false);
 	};
@@ -109,37 +114,97 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 					</div>
 				</div>
 			</div>
-			<div className={styles.repo_list}>
-				{/* <div className={styles.repo_creator}>
 
-					<div className={styles.left} onClick={(event) => handleOpenTemplate()}>
-						<div>Landing Page</div>
-						<div style={{ placeSelf: 'center' }}>
-							<Image src='/static/images/more.svg' alt='edit' width='36px' height='36px' />
-						</div>
-					</div>
-				</div> */}
-
-				{selectedRepo?.repo_type === 'T' &&
-					lead_pages &&
-					lead_pages?.map((item, index) => {
-						console.log('check lead_pages id data---->', item);
-						return (
-							<div key={index} className={styles.list_blogs}>
-								<div className={styles.blog_title} style={{ background: "#c5e0dc" }} onClick={() => editCusTemp(item.lead_page_id)}>
-									{item.lead_page_name}
-								</div>
-								<div className={styles.footer}>
-									<div>&nbsp;</div>
-
-									<div onClick={(event) => handleClick(event, item)}>
-										<Image src='/static/images/three-dots.svg' alt='edit' width='24px' height='24px' />
+			{view === 'module' ? (
+				<div className={styles.repo_list}>
+					{selectedRepo?.repo_type === 'T' &&
+						lead_pages &&
+						lead_pages?.map((item, index) => {
+							console.log('check lead_pages id data---->', item);
+							return (
+								<div key={index} className={styles.list_blogs}>
+									<div className={styles.thumbnail} onClick={() => editCusTemp(item.lead_page_id)}>
+										<Image
+											key={index}
+											src={item.thumbnail}
+											height={176}
+											width={280}
+											layout='responsive'
+											objectFit='cover'
+											objectPosition='top center'
+										/>
+									</div>
+									<div className={styles.footer}>
+										<div>
+											<div className={styles.footer_header}>{item.lead_page_name}</div>
+											<div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px' }}>
+												<div className={styles.footer_subheader}>{dateAgo(item.createdAt)}</div>
+												<div className={styles.footer_subheader}>
+													{item.status === 'A' && (
+														<div className={styles.published}>
+															<span style={{ padding: '0.5rem' }}>Active</span>
+														</div>
+													)}
+													{item.status === 'I' && (
+														<div className={styles.in_active}>
+															<span style={{ padding: '0.5rem' }}>InActive</span>
+														</div>
+													)}
+												</div>
+											</div>
+										</div>
+										<div onClick={(event) => handleClick(event, item)}>
+											<Image src='/static/images/three-dots.svg' alt='edit' width='24px' height='24px' />
+										</div>
 									</div>
 								</div>
-							</div>
-						);
-					})}
-			</div>
+								// <div key={index} className={styles.list_blogs}>
+								// 	<div className={styles.blog_title} style={{ background: "#c5e0dc" }} onClick={() => editCusTemp(item.lead_page_id)}>
+								// 		{item.lead_page_name}
+								// 	</div>
+								// 	<div className={styles.footer}>
+								// 		<div>&nbsp;</div>
+
+								// 		<div onClick={(event) => handleClick(event, item)}>
+								// 			<Image src='/static/images/three-dots.svg' alt='edit' width='24px' height='24px' />
+								// 		</div>
+								// 	</div>
+								// </div>
+							);
+						})}
+				</div>
+			) : (
+					<div className={styles.table}>
+						<div className={styles.table_header}>
+							<div>#</div>
+							<div>Name</div>
+							<div style={{ paddingLeft: "10px" }}>Type</div>
+							<div>Created Date</div>
+							<div style={{ paddingLeft: "15px" }}>Status</div>
+							<div>&nbsp;</div>
+						</div>
+
+						{lead_pages &&
+							lead_pages?.map((item, index) => {
+								return (
+									<div key={index} className={styles.table_row} onClick={() => editCusTemp(item.lead_page_id)}>
+										<div>{index + 1}</div>
+										<div>{item.lead_page_name}</div>
+										{item.template_type === 'B' && <div>Blog</div>}
+										{item.template_type === 'L' && <div>Landing Page</div>}
+										<div>{dateAgo(item.createdAt)}</div>
+
+										{item.status === 'A' && <div className={styles.draft}>Active</div>}
+										{item.status === 'I' && <div className={styles.published}>InActive</div>}
+										<div className={styles.actions} onClick={(event) => handleClick(event, item)}>
+											<Image src='/static/images/vertical-three-dots.svg' alt='edit' width='24px' height='24px' />
+										</div>
+									</div>
+								);
+							})}
+					</div>
+				)}
+
 
 			<Menu id='simple-menu' anchorEl={anchorEl} keepMounted open={Boolean(anchorEl)} elevation={2} onClose={handleClose}>
 				<MenuItem onClick={handleViewTemplate}>view</MenuItem>
@@ -161,44 +226,6 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 				/>
 			)}
 
-			{/* <Dialog open={openDialog} onClose={handleCloseDialog}>
-				<DialogContent style={{ width: '500px' }}>
-					<div className='dialog_pop'>
-						<div style={{ fontSize: '20px' }}>Delete this article?</div>
-						<div style={{ cursor: 'pointer' }}>
-							<Image src='/static/images/close.svg' alt='edit' width='16px' height='16px' onClick={handleCloseDialog} />
-						</div>
-					</div>
-
-					<div className={styles.formGap}>
-						<p>
-							You are about to delete <b>{blogItem?.title}</b>.
-						</p>
-						<p>It will be unpublised and deleted and wont be able to revover it.</p>
-					</div>
-
-					<div className='action_btns'>
-						<Button
-							onClick={handleCloseDialog}
-							disableFocusRipple
-							disableElevation
-							className={styles.cancel_button}
-							style={{ margin: '6px 10px' }}>
-							Cancel
-						</Button>
-						<Button
-							variant='contained'
-							style={{ margin: '6px 10px', backgroundColor: '#af0404', color: '#fff' }}
-							// onClick={confirmBlogDelete}
-							type='button'
-							className={styles.submit_button}
-							disableFocusRipple
-							disableElevation>
-							Yes, delete it
-						</Button>
-					</div>
-				</DialogContent>
-			</Dialog> */}
 			<div>
 				<Dialog fullScreen open={templateDialog} onClose={handleCloseTemplate}>
 					{/* <TemplateList onHandleClose={handleCloseTemplate} /> */}

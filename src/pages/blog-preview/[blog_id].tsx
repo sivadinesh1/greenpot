@@ -26,7 +26,6 @@ export async function getStaticPaths() {
 }
 
 const Blog = ({ blog }) => {
-	console.log('check data --->', blog);
 	const router = useRouter();
 	const { blog_id } = router.query;
 	const [value, setValue] = React.useState('laptop');

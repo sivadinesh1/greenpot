@@ -158,12 +158,11 @@ model template{
     is_delete         String?   @db.VarChar(5)
     blocks            Json?
     template_type     String?    @db.VarChar(5)
+    thumbnail         String?    @db.VarChar(500)
     created_by        BigInt?
     updated_by        BigInt?
     createdAt         DateTime? @db.Timestamp(6)
     updatedAt         DateTime? @db.Timestamp(6)
-    
-    
     template_collection template_collection[]
     @@unique([template_name], name: "template_name_unique")
     @@unique([template_id], name: "template_id_unique")
@@ -182,6 +181,7 @@ model lead_page{
     template_type   String    @db.VarChar(5)
     blocks_clone    Json?
     company_id      BigInt?
+    thumbnail       String?    @db.VarChar(500)
     created_by      BigInt?
     updated_by      BigInt?
     createdAt       DateTime? @db.Timestamp(6)

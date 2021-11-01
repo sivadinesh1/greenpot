@@ -199,3 +199,12 @@ update lead_page set blocks='[{"type":"Header","isDelete":false,"status":"Active
 
 
 update lead_page set blocks='[{"type":"Subscription","isDelete":false,"status":"Active","sectionStyle":{"backgroundColor":"#c8cabb","backgroundImage":null},"items":[{"value":"SPEAK LOUDLY \n SPEAK VISUALLY","formDetail":{"name":"title","type":"text","label":"Title"},"style":{"color":"black"}},{"value":"Receive practical tips on how to \n communicate visually, right in you \n inbox.","formDetail":{"name":"subTitle","type":"text","label":"SubTitle"},"style":{"color":"black"}}]}]' where id=10;
+
+
+----thumbnail 
+alter table lead_page add column thumbnail varchar(500);
+update lead_page set thumbnail ='https://res.cloudinary.com/sanjayaalam/image/upload/v1633349662/C1/B1/gieglefcwr3iu1xzjkoo.png';
+
+alter table template add column thumbnail varchar(500);
+update template set thumbnail ='https://res.cloudinary.com/sanjayaalam/image/upload/v1633349662/C1/B1/gieglefcwr3iu1xzjkoo.png';
+

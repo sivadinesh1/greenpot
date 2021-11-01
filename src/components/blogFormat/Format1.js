@@ -2,8 +2,6 @@ import styles from "../../styles/blog-format/format1.module.scss";
 import Image from 'next/image';
 
 const Format1 = ({ blog_format, blogs }) => {
-    console.log("check data in component--->", blog_format)
-    console.log("check data in component--->2", blogs)
 
     return (
         <div className={styles.container}>

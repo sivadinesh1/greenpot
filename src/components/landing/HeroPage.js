@@ -19,26 +19,15 @@ const Hero = (props) => {
         setMouseOver(flag);
     };
 
-    // if (mode === 'view') style['pointerEvents'] = 'none';
-
-    let image = {
-        backgroundImage: `https://images.pexels.com/photos/34153/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350`,
-        backgroundPosition: 'center',
-        backgroundSize: 'cover',
-        backgroundRepeat: 'no-repeat',
-    };
-
     const handleEvent = (event, position, type) => {
         debugger;
         if (mode === 'edit') {
-            console.log('check value--->34', event.target);
             event.preventDefault();
             const tags = document.querySelectorAll('.clicked');
             for (let i of tags) {
                 i.classList.remove('clicked');
             }
             event.target.classList.add('clicked');
-            // props.onHadle(event.target.childNodes[0].data, position, "Hero")
             props.onHandle(type === 'image' ? event.target.currentSrc : event.target.childNodes[0].data, position, index, type);
         }
     };
@@ -117,7 +106,7 @@ const Hero = (props) => {
                     </Content>
 
                     <Image onClick={(event) => handleEvent(event, 2, 'image')}>
-                        <img src={backgroundImage} />
+                        <NextImage src={backgroundImage} width={300} height={400} />
                     </Image>
 
                     <div onClick={(event) => handleEvent(event, 3, 'hyper-link')}>

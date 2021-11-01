@@ -21,7 +21,6 @@ const Subscription = (props) => {
     const [animation, cycleAnimation] = useCycle("animationOne", "animationTwo");
 
     const handleEvent = (event, position, type) => {
-        console.log('check value--->', event);
         if (mode === "edit") {
             event.preventDefault();
 
@@ -32,7 +31,6 @@ const Subscription = (props) => {
             }
 
             event.target.classList.add('clicked');
-            // props.onHandle(event.target.childNodes[0].data, position, index);
             props.onHandle(type === 'image' ? event.target.currentSrc : event.target.childNodes[0].data, position, index, type);
         }
     };
@@ -117,19 +115,6 @@ const Subscription = (props) => {
         autoplay: true,
     });
 
-
-    const onHoverInput = useStateMachineInput(
-        rive,
-        STATE_MACHINE_NAME,
-        ON_HOVER_INPUT_NAME
-    );
-    const onPressedInput = useStateMachineInput(
-        rive,
-        STATE_MACHINE_NAME,
-        ON_PRESSED_INPUT_NAME
-    );
-
-
     return (
         <div className={styles.imageStack}>
             <div className={styles.subcontainer}>
@@ -171,13 +156,12 @@ const Subscription = (props) => {
                             Join us!
 						</Button>
                     </div>
-                    <div className={styles.helper_text}>We don't share email with anyone</div>
+                    <div className={styles.helper_text}>{`We don't share email with anyone`}</div>
                 </form>
             </GPBox>
             <div>
 
             </div>
-            {/* </Container> */}
         </div>
 
     )

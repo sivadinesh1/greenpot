@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { getCustomTempByNano } from '../../service/lead-page.service';
+import { getLeadPageByNano } from '../../service/lead-page.service';
 import Builder from '../../components/Builder'
 
 export const getServerSideProps = async (context) => {
@@ -11,7 +11,7 @@ export const getServerSideProps = async (context) => {
 	try {
 		cTempNano = context.params.lead_page_id;
 		cookie = context?.req?.headers.cookie;
-		leadData = await getCustomTempByNano(cTempNano);
+		leadData = await getLeadPageByNano(cTempNano);
 	} catch (error) {
 		console.log(`error in custom template ${error}`);
 		isError = true;

@@ -9,7 +9,7 @@ import { useForm } from 'react-hook-form';
 import { useSnapshot } from 'valtio';
 import Builder from '../../../components/Builder';
 import { ILeadPage } from '../../../model/LeadPage';
-import { getCustomTempByNano } from '../../../service/lead-page.service';
+import { getLeadPageByNano } from '../../../service/lead-page.service';
 import styles_drop_zone from '../../../styles/dropZone.module.css';
 import styles from '../../../styles/LeadPage.module.scss';
 import { section } from '../../../utils/section';
@@ -41,7 +41,7 @@ export const getServerSideProps = async (context) => {
     try {
         cTempNano = context.params.lead_page_id;
         cookie = context?.req?.headers.cookie;
-        collection = await getCustomTempByNano(cTempNano);
+        collection = await getLeadPageByNano(cTempNano);
     } catch (error) {
         console.log(`error in custom template ${error}`);
         isError = true;
@@ -467,7 +467,7 @@ const LeadPage = ({ isError, collection }) => {
                                             onClose={handleClose}>
                                             {/* {Array.from(new Set(inActiveSection)).map((d, index) => { */}
                                             {inActiveSection.map((d, index) => {
-                                                return <MenuItem onClick={() => handleUpdateDeletedSection(d, index)}>{d} </MenuItem>;
+                                                return <MenuItem key={index} onClick={() => handleUpdateDeletedSection(d, index)}>{d} </MenuItem>;
                                             })}
                                         </Menu>
                                     </div>

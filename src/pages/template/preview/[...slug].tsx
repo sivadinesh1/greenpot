@@ -185,29 +185,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano, company_id }) =>
 					</div>
 
 					<div className={styles.body}>
-						{/* {structure} */}
-						<Builder keySet={objKeys} data={data} mode={'view'} />
-
-						{/* {objKeys.map((key) => {
-								 <Builder keySet={objKeys} data={data} />
-							let obj = null;
-							switch (key) {
-								case 'Header':
-									obj = data.Header;
-									if (obj.status === 'Active')
-										return (
-											<Header
-												company={obj.blocks[0].value}
-												blocks={obj.blocks[1].value}
-												imageUrl={obj.blocks[2].value}
-												backgroundImage={obj.blocks[3].value}
-											/>
-										);
-								case 'Footer':
-									obj = data['Footer'];
-									if (obj.status === 'Active') return <Footer data={obj.blocks[0].value} />;
-							}
-						})} */}
+						<Builder data={data} mode='view' />
 					</div>
 				</div>
 			</div>

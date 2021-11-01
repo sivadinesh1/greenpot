@@ -54,7 +54,6 @@ export const getServerSideProps = async (context) => {
 				cookie: cookie!,
 			},
 		});
-		console.log('object>>>>>>>' + JSON.stringify(result2.data));
 		templates = result2.data.template_collection.map((t) => {
 			return t.template;
 		});
@@ -167,9 +166,24 @@ const ListTemplate = ({ isError, collections, templates, repoId }) => {
 					<div className={styles.body} style={{ padding: '1rem 4rem' }}>
 						{tempArr.map((temp, index) => {
 							return (
-								<div key={index} className={styles.list_temp} onClick={() => handleTemplate(temp.template_id)}>
-									<div className={styles.temp_image}></div>
-									<div className={styles.temp_title}>{temp.template_name}</div>
+								<div key={index} className={styles.list_template}>
+									<div className={styles.thumbnail} onClick={(event) => handleTemplate(temp.template_id)}>
+										<Image
+											key={index}
+											src={temp.thumbnail}
+											height={176}
+											width={280}
+											layout='responsive'
+											objectFit='cover'
+											objectPosition='top center'
+										/>
+									</div>
+									<div className={styles.footer}>
+										<div>
+											<div className={styles.footer_header}>{temp.template_name}</div>
+										</div>
+
+									</div>
 								</div>
 							);
 						})}

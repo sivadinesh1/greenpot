@@ -4,7 +4,6 @@ import { getTemplateCollectionById, deleteById } from '../../../service/template
 const handler = nc()
 	.get(async (req, res) => {
 		const { slug } = req.query;
-		console.log('test query data', slug);
 		if (slug[0] === 'getById') {
 			const result = await getTemplateCollectionById(slug[1]);
 			res.status(200).json(result);

@@ -220,8 +220,8 @@ const CustomForm = ({ formConfig }) => {
                     </form>
 
                     <div className='container'>
-                        {myArrayNew.map((name) => (
-                            <p className='draggable' draggable='true'>
+                        {myArrayNew.map((name, index) => (
+                            <p className='draggable' key={index} draggable='true'>
                                 {name}
                             </p>
                         ))}
@@ -231,8 +231,8 @@ const CustomForm = ({ formConfig }) => {
                     <div>MENU</div>
                     <br />
                     <div>
-                        {menu.map((name) => (
-                            <span style={{ padding: '0 16px' }}>{name}</span>
+                        {menu.map((name, index) => (
+                            <span key={index} style={{ padding: '0 16px' }}>{name}</span>
                         ))}
                         <span onClick={handleAddMenu}>+ Add</span>
                     </div>
@@ -269,16 +269,16 @@ const CustomForm = ({ formConfig }) => {
                     <button onClick={onButtonClick}>Click to download</button>
                     <h1>Final Space Characters</h1>
                     <div>
-                        {state.map((name) => (
-                            <p>{name}</p>
+                        {state.map((name, index) => (
+                            <p key={index}>{name}</p>
                         ))}
                     </div>
                     <br />
                     <div>MENU</div>
                     <br />
                     <div>
-                        {menu.map((name) => (
-                            <span style={{ padding: '0 16px' }}>{name}</span>
+                        {menu.map((name, index) => (
+                            <span key={index} style={{ padding: '0 16px' }}>{name}</span>
                         ))}
                     </div>
                 </div>

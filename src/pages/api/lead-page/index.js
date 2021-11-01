@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-import { updateTemplateById, getCollection } from '../../../service/template-collection.service';
+import { updateLeadPageById, getCollection } from '../../../service/lead-page.service';
 import { create } from "../../../service/lead-page.service";
 import { getById } from '../../../service/template.service';
 
@@ -13,6 +13,7 @@ const handler = nc()
 				template_id: BigInt(templateId),
 				repo_id: BigInt(repoId),
 				blocks: template.blocks,
+				thumbnail: template.thumbnail,
 				name: name,
 				company_id: BigInt(company_id)
 			};
@@ -44,7 +45,7 @@ const handler = nc()
 		}
 
 		if (template != null || collection != null) {
-			const result = await updateTemplateById(request);
+			const result = await updateLeadPageById(request);
 			res.status(200).send(result);
 		} else {
 			res.status(200).json({ message: 'template not found' });

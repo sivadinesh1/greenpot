@@ -19,7 +19,7 @@ export const getServerSideProps = async (context) => {
 	let blogs_data = [];
 	let company_id = null;
 	let repo_id = null;
-	let lead_pages = [];
+	let lead_pages_data = [];
 
 	try {
 		cookie = context?.req?.headers.cookie;
@@ -51,7 +51,7 @@ export const getServerSideProps = async (context) => {
 					cookie: cookie!,
 				},
 			});
-			lead_pages = result2.data;
+			lead_pages_data = result2.data;
 		}
 	} catch (error) {
 		console.log(`error in dashboard@! ${error.message}`);
@@ -62,7 +62,7 @@ export const getServerSideProps = async (context) => {
 	}
 
 	return {
-		props: { repos, company_id, blogs_data, repo_id, isError, lead_pages },
+		props: { repos, company_id, blogs_data, repo_id, isError, lead_pages_data },
 	};
 };
 

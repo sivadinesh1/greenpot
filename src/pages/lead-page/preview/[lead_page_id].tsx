@@ -1,4 +1,4 @@
-import { getCustomTempByNano, getAllCustomTemplates } from '../../../service/lead-page.service';
+import { getLeadPageByNano, getAllLeadPages } from '../../../service/lead-page.service';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
@@ -9,14 +9,14 @@ import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
 import Image from 'next/image';
 
 export async function getStaticProps(context) {
-    let leads = await getCustomTempByNano(context.params.lead_page_id);
+    let leads = await getLeadPageByNano(context.params.lead_page_id);
     return {
         props: { leads },
     };
 } 0
 
 export async function getStaticPaths() {
-    let leads = await getAllCustomTemplates();
+    let leads = await getAllLeadPages();
 
     const paths = leads.map((lead) => ({
         params: { lead_page_id: lead.lead_page_id.toString() },
@@ -25,7 +25,6 @@ export async function getStaticPaths() {
 }
 
 const LeadPage = ({ leads }) => {
-    console.log('check data --->', leads);
     const router = useRouter();
     const { lead_page_id } = router.query;
     const [value, setValue] = React.useState('laptop');

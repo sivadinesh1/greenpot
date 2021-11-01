@@ -120,6 +120,24 @@ export const getTemplateCollectionById = async (id) => {
 	return resp;
 };
 
+export const getCollection = async (id) => {
+	var resp = null;
+	try {
+		const result = await prisma.collection.findUnique({
+			where: {
+				id: BigInt(id),
+				is_delete: 'N'
+			}
+		});
+		resp = bigIntToString(result);
+		return resp;
+	} catch (error) {
+		console.log('test deleteById error :: --->', error.message);
+	}
+	return resp;
+};
+
+
 export const deleteById = async (id) => {
 	var resp = null;
 	try {

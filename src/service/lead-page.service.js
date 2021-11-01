@@ -5,8 +5,7 @@ import prisma from '../db-config/prisma';
 import { bigIntToString } from '../db-config/utils';
 
 export const create = async (body) => {
-	console.log('create custom templte method call----->', body);
-	const { template_id, repo_id, blocks, name, company_id } = body;
+	const { template_id, repo_id, blocks, name, company_id, thumbnail } = body;
 	let status = `A`;
 	let is_delete = `N`;
 	let date = new Date();
@@ -26,17 +25,17 @@ export const create = async (body) => {
 				createdAt: date,
 				template_type: type,
 				lead_page_name: name,
+				thumbnail: thumbnail
 			},
 		});
 	} catch (error) {
 		console.log('lead-page create error::' + error.message);
 	}
-	console.log('test custom temp', result);
 
 	return bigIntToString(result);
 };
 
-export const updateTemplateById = async (updateBody) => {
+export const updateLeadPageById = async (updateBody) => {
 	const { id, template_id, blocks, status, name } = updateBody;
 	let date = new Date();
 
@@ -56,7 +55,7 @@ export const updateTemplateById = async (updateBody) => {
 			},
 		});
 	} catch (error) {
-		console.log('updateTemplateById error::' + error.message);
+		console.log('updateLeadPageById error::' + error.message);
 	}
 	return bigIntToString(result);
 };
@@ -84,7 +83,7 @@ export const getCollection = async (id) => {
 	return bigIntToString(result.length > 0 ? result[0] : []);
 };
 
-export const getAllCustomTemplates = async () => {
+export const getAllLeadPages = async () => {
 	let result = null;
 	try {
 		result = await prisma.lead_page.findMany({
@@ -99,7 +98,7 @@ export const getAllCustomTemplates = async () => {
 			},
 		});
 	} catch (error) {
-		console.log('getAllCustomTemplates error::' + error.message);
+		console.log('getAllLeadPages error::' + error.message);
 	}
 	return bigIntToString(result);
 };
@@ -120,7 +119,7 @@ export const deleteById = async (id) => {
 	return bigIntToString(result);
 };
 
-export const getCustomTempByNano = async (nanoid) => {
+export const getLeadPageByNano = async (nanoid) => {
 	var response = null;
 	try {
 		const result = await prisma.lead_page.findMany({
@@ -134,7 +133,7 @@ export const getCustomTempByNano = async (nanoid) => {
 		});
 		response = bigIntToString(result.length > 0 ? result[0] : []);
 	} catch (error) {
-		console.log('getCustomTempByNano :: ', error.message);
+		console.log('getLeadPageByNano :: ', error.message);
 	}
 	return response;
 };
@@ -146,6 +145,9 @@ export const getLeadPageByRepo = async (id) => {
 			where: {
 				repo_id: BigInt(id),
 				is_delete: 'N',
+			},
+			orderBy: {
+				id: 'desc',
 			},
 		});
 		response = bigIntToString(result);

@@ -1,10 +1,8 @@
 import Image from 'next/image';
+import Link from 'next/link'
 import styles from '../styles/blog-format/format0.module.scss';
 
 const Model = ({ blog_format, blogs }) => {
-	// console.log('check data in component--->', blog_format);
-	console.log('check data in component--->2', blogs);
-
 	return (
 		<>
 			<div className={styles.container}>
@@ -13,34 +11,46 @@ const Model = ({ blog_format, blogs }) => {
 						<div className={styles.title}>Blogs</div>
 						<ul className={styles.list}>
 							<li className={styles.list_items}>
-								<a href='/' className={styles.list_links}>
-									New
-								</a>
+								<div className={styles.list_links}>
+									<Link href='/' >
+										New
+											</Link>
+								</div>
 							</li>
 							<li className={styles.list_items}>
-								<a href='/' className={styles.list_links}>
-									Popular
-								</a>
+								<div className={styles.list_links}>
+									<Link href='/' >
+										Popular
+									</Link>
+								</div>
 							</li>
 							<li className={styles.list_items}>
-								<a href='/' className={styles.list_links}>
-									Ebooks
-								</a>
+								<div className={styles.list_links}>
+									<Link href='/'>
+										Ebooks
+									</Link>
+								</div>
 							</li>
 							<li className={styles.list_items}>
-								<a href='/' className={styles.list_links}>
-									Reading Lists
-								</a>
+								<div className={styles.list_links}>
+									<Link href='/'>
+										Reading Lists
+										</Link>
+								</div>
 							</li>
 							<li className={styles.list_items}>
-								<a href='/' className={styles.list_links}>
-									Topics
-								</a>
+								<div className={styles.list_links}>
+									<Link href='/' >
+										Topics
+										</Link>
+								</div>
 							</li>
 							<li className={styles.list_items}>
-								<a href='/' className={styles.list_links}>
-									Featured
-								</a>
+								<div className={styles.list_links}>
+									<Link href='/' >
+										Featured
+									</Link>
+								</div>
 							</li>
 						</ul>
 						<div className={styles.search}>
@@ -50,9 +60,11 @@ const Model = ({ blog_format, blogs }) => {
 					</div>
 					<div className={styles.links}>
 						<div className={styles.btn}>
-							<a href='/' style={{ color: 'white' }}>
-								Get started now
-							</a>
+							<div style={{ color: 'white' }}>
+								<Link href='/'>
+									Get started now
+								</Link>
+							</div>
 						</div>
 						<div className={styles.links_icons}>
 							<div className={styles.twitter_link}>
@@ -106,7 +118,7 @@ const Model = ({ blog_format, blogs }) => {
 					<div className={styles.getStarted_wrapper}>
 						<div className={styles.get_started}>
 							<div className={styles.getStarted_btn}>
-								<span style={{ fontWeight: 400 }}>Get started</span> - it's free
+								<span style={{ fontWeight: 400 }}>Get started</span>{`- it's free`}
 							</div>
 						</div>
 					</div>

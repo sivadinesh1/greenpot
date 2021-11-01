@@ -156,6 +156,7 @@ interface FormData {
 	thumbnail: string;
 	is_author: boolean;
 	is_publish_date: boolean;
+	slug: string;
 }
 
 type ErrorSummaryProps<T> = {
@@ -769,7 +770,7 @@ export default function Index({
 									}
 								/>
 							</FormControl>
-							{dictionaryResult?.title != null ? (<div style={errorStyle}>{dictionaryResult.title}</div>) :
+							{dictionaryResult["title"] != null ? (<div style={errorStyle}>{dictionaryResult["title"]}</div>) :
 								(<div>
 									{Object.keys(dictionaryResult).length > 0 && <div>
 										<div><h4>{dictionaryResult[0].word}</h4></div>

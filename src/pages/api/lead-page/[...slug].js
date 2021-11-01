@@ -1,5 +1,5 @@
 import nc from 'next-connect';
-// import { getCollection, deleteById, getAllCustomTemplates } from '../../../service/template-collection.service';
+// import { getCollection, deleteById, getAllLeadPages } from '../../../service/template-collection.service';
 import { getLeadPageByRepo, updateBlock, deleteById } from '../../../service/lead-page.service';
 import { auth } from '../../../middleware/auth';
 
@@ -11,7 +11,7 @@ const handler = nc()
 			const result = await getCollection(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'getAll') {
-			const result = await getAllCustomTemplates();
+			const result = await getAllLeadPages();
 			res.status(200).json(result);
 		} else if (slug[0] === 'repo') {
 			const result = await getLeadPageByRepo(slug[1]);

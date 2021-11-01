@@ -3,9 +3,6 @@ import styles from '../../styles/blog-format/format0.module.scss';
 import Image from 'next/image';
 
 const Format = ({ blog_format, blogs }) => {
-	// console.log('check data in component--->', blog_format);
-	// console.log('check data in component--->2', blogs);
-
 	return (
 		<div>
 			<div style={{ display: 'grid', gridTemplateColumns: '300px 1fr', backgroundColor: 'red' }}>

@@ -1,10 +1,9 @@
 import styles from '../styles/blog-format/format1.module.scss';
 import Image from 'next/image';
+import Link from "next/link";
 import { useState } from 'react';
 
 const Format1 = ({ blog_format, blogs }) => {
-	console.log('check data in component--->', blog_format);
-	console.log('check data in component--->2', blogs);
 	const [isClicked, setisClicked] = useState(false);
 
 	return (
@@ -27,9 +26,9 @@ const Format1 = ({ blog_format, blogs }) => {
 									setisClicked(!isClicked);
 									e.preventDefault();
 								}}>
-								<a href='/'>
+								<Link href='/'>
 									<Image src='https://img.icons8.com/material-outlined/24/000000/menu--v1.png' width='36px' height='36px' />
-								</a>
+								</Link>
 							</div>
 							{isClicked == true && (
 								<div className={styles.menu}>
