@@ -2,12 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { Button } from '@material-ui/core';
 import { getBlogsByCategory, getBlogsByCompnay } from '../../../service/blog.service';
-import { getList } from '../../../service/company.service'
+import { getList, getByNanoWithAssociation } from '../../../service/company.service'
 import useSWR from 'swr';
 import Image from 'next/image';
 import styles from '../../../styles/blog-format/format0.module.scss';
 import Format from "../../../components/blogFormat/format";
 import Format1 from "../../../components/blogFormat/format1";
+
 
 export async function getStaticProps(context) {
     let company_nano = null;
@@ -20,8 +21,10 @@ export async function getStaticProps(context) {
     try {
         company_nano = context.params.company_id;
         //fetch company detail based on nanoid
-        let result = await axios.get(`${process.env.API_URL}/company/getByNanoWithAssociation/${company_nano}`);
-        company = result.data;
+        // let result = await axios.get(`${process.env.API_URL}/company/getByNanoWithAssociation/${company_nano}`);
+        let result = await getByNanoWithAssociation(company_nano)
+
+        company = result;
         company_id = company.id;
 
         //fetch company related categories

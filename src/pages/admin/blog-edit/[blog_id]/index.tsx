@@ -92,7 +92,6 @@ export const getServerSideProps = async (context) => {
 	let images = null;
 
 	try {
-		console.log('test routing information ----->', context.props);
 		cookie = context?.req?.headers.cookie;
 		blog_id = context.params.blog_id as string;
 		user = await axios.get(`${process.env.API_URL}/auth/user`, {

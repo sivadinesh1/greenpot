@@ -70,7 +70,6 @@ export const getByNano = async (id) => {
 				company_id: id,
 			},
 		});
-		console.log('check data--->', result);
 	} catch (error) {
 		console.log('getByNano error::' + error.message);
 	}
@@ -92,7 +91,6 @@ export const getByNanoWithAssociation = async (id) => {
 				},
 			},
 		});
-		console.log('check data--->', result);
 	} catch (error) {
 		console.log('getByNano error::' + error.message);
 	}

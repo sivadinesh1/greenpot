@@ -65,7 +65,6 @@ const Header = ({ username = '' }) => {
 		let resp = await axios.put(`/api/blog/publish`, requestBody);
 		if (resp.status === 200) {
 			// Router.push('/dashboard')
-			console.log('check data--->', resp.data);
 			if (resp.data.isError) {
 				setSnack(true);
 				setMessage(`Fill the mandatory fields ${resp.data.error} `);

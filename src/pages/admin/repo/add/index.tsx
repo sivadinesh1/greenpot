@@ -44,7 +44,7 @@ interface FormData {
 	name: string;
 }
 
-export default function Index() {
+const Index = () => {
 	const [snack, setSnack] = useState(false);
 	const [message, setMessage] = useState('');
 	//let categorysList: Category[] = data;
@@ -161,3 +161,5 @@ export default function Index() {
 		</>
 	);
 }
+
+export default Index;

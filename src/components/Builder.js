@@ -6,11 +6,9 @@ import ContentPage from '../components/landing/Content';
 import SubscriptionForm from '../components/subscription'
 
 const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
-	console.log('test request values--->', data);
 
 	const onHandle = (data, position, index, type) => {
 		debugger
-		console.log('check stage ----->1', index);
 		onHandleChange(data, position, index, type);
 	};
 
@@ -19,7 +17,6 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 			{mode === 'edit' && (
 				<div>
 					{data?.map((section, index) => {
-						console.log('check index value in builder component---->', index);
 						let obj = section;
 						switch (section.type) {
 							case 'Header':
@@ -49,7 +46,6 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 
 								/>);
 							case 'Hero':
-								console.log('check hero page status--->', obj);
 								if (obj.status === 'Active')
 									return (
 										<HeroPage
@@ -102,7 +98,6 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 			{mode === "view" &&
 				<div>
 					{data?.map((section, index) => {
-						console.log('check index value in view mode---->', index);
 						let obj = section;
 						switch (section.type) {
 							case 'Header':
@@ -126,7 +121,6 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 									style={obj.sectionStyle}
 								/>);
 							case 'Hero':
-								console.log('check hero page status--->', obj);
 								if (obj.status === 'Active')
 									return (
 										<HeroPage

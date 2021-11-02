@@ -338,14 +338,12 @@ export const publishBlog = async (body) => {
 			request["publish_content"] = content
 		}
 
-		console.log("test request data---->", request)
 		result = await prisma.blog.update({
 			where: {
 				blog_id: blog_id,
 			},
 			data: request
 		});
-		console.log("test response in publish--->", result)
 	} catch (error) {
 		console.log('blog publish error::' + error.message);
 	}
@@ -514,3 +512,23 @@ export const getBlogsByCompnay = async (company_id) => {
 	}
 	return response;
 }
+
+
+export const deleteBlogById = async (id) => {
+	let result = null;
+	try {
+		let blogId = Number(id);
+
+		result = await prisma.blog.update({
+			where: {
+				id: blogId,
+			},
+			data: {
+				is_delete: 'Y',
+			},
+		});
+	} catch (error) {
+		console.log('content update error::' + error.message);
+	}
+	return bigIntToString(result);
+};

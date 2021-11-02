@@ -8,6 +8,7 @@ import Image from 'next/image';
 import styles from '../../styles/blog-format/format0.module.scss';
 import ModelOne from '../../components/modelOne';
 import ModelTwo from '../../components/modelTwo';
+import { getByNanoWithAssociation } from '../../service/company.service'
 
 export async function getServerSideProps(context) {
 	let company_nano = null;
@@ -19,8 +20,9 @@ export async function getServerSideProps(context) {
 	try {
 		company_nano = context.params.company_id;
 		//fetch company detail based on nanoid
-		let result = await axios.get(`${process.env.API_URL}/company/getByNanoWithAssociation/${company_nano}`);
-		company = result.data;
+		// let result = await axios.get(`${process.env.API_URL}/company/getByNanoWithAssociation/${company_nano}`);
+		let result = await getByNanoWithAssociation(company_nano)
+		company = result;
 		company_id = company.id;
 
 		//fetch company related categories

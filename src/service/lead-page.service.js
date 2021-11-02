@@ -172,7 +172,6 @@ export const getCountLeadPageByRepo = async (company_id) => {
 				is_delete: 'N',
 			},
 		});
-		console.log("check repo summery--->", result)
 	} catch (error) {
 		console.log('getCountLeadPageByRepo error::' + error.message);
 	}

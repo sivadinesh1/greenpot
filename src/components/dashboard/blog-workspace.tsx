@@ -153,36 +153,36 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 						})}
 				</div>
 			) : (
-				<div className={styles.table}>
-					<div className={styles.table_header}>
-						<div>#</div>
-						<div>Title</div>
-						<div>Author</div>
-						<div>Created Date</div>
-						<div>Status</div>
-						<div>&nbsp;</div>
-					</div>
+					<div className={styles.table}>
+						<div className={styles.table_header}>
+							<div>#</div>
+							<div>Title</div>
+							<div>Author</div>
+							<div>Created Date</div>
+							<div>Status</div>
+							<div>&nbsp;</div>
+						</div>
 
-					{blogs &&
-						blogs?.map((item, index) => {
-							return (
-								<div key={index} className={styles.table_row} onClick={() => editBlog(item)}>
-									<div>{index + 1}</div>
-									<div>{item.title}</div>
-									<div>{item.author}</div>
+						{blogs &&
+							blogs?.map((item, index) => {
+								return (
+									<div key={index} className={styles.table_row} >
+										<div onClick={() => editBlog(item)}>{index + 1}</div>
+										<div onClick={() => editBlog(item)}>{item.title}</div>
+										<div onClick={() => editBlog(item)}>{item.author}</div>
 
-									<div>{dateAgo(item.blog_date)}</div>
+										<div onClick={() => editBlog(item)}>{dateAgo(item.blog_date)}</div>
 
-									{item.status === 'D' && <div className={styles.draft}>Draft</div>}
-									{item.status === 'P' && <div className={styles.published}>Published</div>}
-									<div className={styles.actions} onClick={(event) => handleClick(event, item)}>
-										<Image src='/static/images/vertical-three-dots.svg' alt='edit' width='24px' height='24px' />
+										{item.status === 'D' && <div className={styles.draft} onClick={() => editBlog(item)}>Draft</div>}
+										{item.status === 'P' && <div className={styles.published} onClick={() => editBlog(item)}>Published</div>}
+										<div className={styles.actions} onClick={(event) => handleClick(event, item)}>
+											<Image src='/static/images/vertical-three-dots.svg' alt='edit' width='24px' height='24px' />
+										</div>
 									</div>
-								</div>
-							);
-						})}
-				</div>
-			)}
+								);
+							})}
+					</div>
+				)}
 
 			{openDialog && (
 				<DeleteDialog

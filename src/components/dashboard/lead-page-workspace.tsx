@@ -23,7 +23,6 @@ import { formatDistance } from 'date-fns';
 
 
 const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
-	console.log("check selected repo--->", selectedRepo)
 	const [view, setView] = React.useState('list');
 	const [leadPage, setLeadPage] = useState<ILeadPage>();
 
@@ -187,15 +186,15 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 						{lead_pages &&
 							lead_pages?.map((item, index) => {
 								return (
-									<div key={index} className={styles.table_row} onClick={() => editCusTemp(item.lead_page_id)}>
-										<div>{index + 1}</div>
-										<div>{item.lead_page_name}</div>
-										{item.template_type === 'B' && <div>Blog</div>}
-										{item.template_type === 'L' && <div>Landing Page</div>}
-										<div>{dateAgo(item.createdAt)}</div>
+									<div key={index} className={styles.table_row} >
+										<div onClick={() => editCusTemp(item.lead_page_id)}>{index + 1}</div>
+										<div onClick={() => editCusTemp(item.lead_page_id)}>{item.lead_page_name}</div>
+										{item.template_type === 'B' && <div onClick={() => editCusTemp(item.lead_page_id)}>Blog</div>}
+										{item.template_type === 'L' && <div onClick={() => editCusTemp(item.lead_page_id)}>Landing Page</div>}
+										<div onClick={() => editCusTemp(item.lead_page_id)}>{dateAgo(item.createdAt)}</div>
 
-										{item.status === 'A' && <div className={styles.draft}>Active</div>}
-										{item.status === 'I' && <div className={styles.published}>InActive</div>}
+										{item.status === 'A' && <div className={styles.draft} onClick={() => editCusTemp(item.lead_page_id)}>Active</div>}
+										{item.status === 'I' && <div className={styles.published} onClick={() => editCusTemp(item.lead_page_id)}>InActive</div>}
 										<div className={styles.actions} onClick={(event) => handleClick(event, item)}>
 											<Image src='/static/images/vertical-three-dots.svg' alt='edit' width='24px' height='24px' />
 										</div>
