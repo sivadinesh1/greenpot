@@ -6,8 +6,8 @@ import { getList, getByNanoWithAssociation } from '../../../service/company.serv
 import useSWR from 'swr';
 import Image from 'next/image';
 import styles from '../../../styles/blog-format/format0.module.scss';
-import Format from "../../../components/blogFormat/format";
-import Format1 from "../../../components/blogFormat/format1";
+import Format from "../../../components/blogFormat/Format";
+import Format1 from "../../../components/blogFormat/Format1";
 
 
 export async function getStaticProps(context) {
