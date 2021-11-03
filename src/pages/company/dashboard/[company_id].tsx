@@ -27,10 +27,6 @@ export async function getStaticProps(context) {
         company = result;
         company_id = company.id;
 
-        //fetch company related categories
-        // let result2 = await axios.get(`${process.env.API_URL}/category/${company_id}`);
-        // categories = result2.data;
-
         //fetch category related blog
         let result3 = await getBlogsByCompnay(company_id);
         blogs = result3;

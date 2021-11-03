@@ -11,6 +11,7 @@ import RepoSidebar from '../components/RepoSidebar';
 import TemplateList from '../components/template/ListTemplates';
 import { IRepo } from '../model/Repo';
 import styles from '../styles/dashboard.module.scss';
+import { getById } from '../service/company.service'
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
@@ -20,6 +21,7 @@ export const getServerSideProps = async (context) => {
 	let company_id = null;
 	let repo_id = null;
 	let lead_pages_data = [];
+	let company_nano = null;
 
 	try {
 		cookie = context?.req?.headers.cookie;
@@ -37,6 +39,7 @@ export const getServerSideProps = async (context) => {
 		} else {
 			repo_id = repos[0].id;
 			company_id = repos[0].company_id;
+			company_nano = repos[0].company.company_id;
 			// fetch blogs
 			let result1 = await axios.get(`${process.env.API_URL}/blog/repo/${repo_id}`, {
 				headers: {
@@ -62,14 +65,14 @@ export const getServerSideProps = async (context) => {
 	}
 
 	return {
-		props: { repos, company_id, blogs_data, repo_id, isError, lead_pages_data },
+		props: { repos, company_id, blogs_data, repo_id, isError, lead_pages_data, company_nano },
 	};
 };
 
 
 
 
-const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages_data }) => {
+const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages_data, company_nano }) => {
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();
@@ -110,7 +113,7 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 
 	return (
 		<>
-			<RepoSidebar repos={repoArr} reloadRepos={reloadRepos} company_id={company_id} />
+			<RepoSidebar repos={repoArr} reloadRepos={reloadRepos} company_id={company_id} company_nano={company_nano} />
 
 			<div className={styles.wrapper}>
 				{repoArr && repoArr.length === 0 && <NoWorkspace />}

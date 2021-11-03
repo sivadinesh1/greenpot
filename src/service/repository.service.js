@@ -103,6 +103,9 @@ export const getRepos = async (company_id) => {
 			orderBy: {
 				repo_name: 'asc',
 			},
+			include: {
+				company: true,
+			},
 		});
 	} catch (error) {
 		console.log('getRepos error::' + error.message);

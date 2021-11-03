@@ -137,6 +137,7 @@ export const deleteById = async (id) => {
 };
 
 export const updateBlogFormat = async (id, data) => {
+	debugger
 	let result = null;
 	try {
 		result = await prisma.company.update({

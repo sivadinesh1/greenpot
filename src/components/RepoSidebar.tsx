@@ -25,7 +25,7 @@ interface IFormData {
 
 
 
-const RepoSidebar = ({ repos, reloadRepos, company_id }) => {
+const RepoSidebar = ({ repos, reloadRepos, company_id, company_nano }) => {
 	const [currentRepo, setCurrentRepo] = useState(repos[0]);
 	const defaultValues = {
 		name: '',
@@ -60,7 +60,7 @@ const RepoSidebar = ({ repos, reloadRepos, company_id }) => {
 
 	const handleBlogHomeFormat = () => {
 		// Router.push(`/company/dashboard/${company_id}`)
-		Router.push(`/blogs/uPgPdRz0w94`)
+		Router.push(`/blogs/${company_nano}`)
 
 	}
 

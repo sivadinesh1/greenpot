@@ -219,7 +219,6 @@ const LeadPage = ({ isError, collection }) => {
         cloneData.splice(index + 1, 0, newSection);
         setData(cloneData);
         setReload(!reload);
-        console.log('cross check in duplicate----->', cloneData);
         setSnack(true);
         setMessage('Section Cloned successfully');
         // handleSaveBlock();
@@ -230,7 +229,6 @@ const LeadPage = ({ isError, collection }) => {
         let index = section_data.currentSection.sectionIndex;
 
         let cloneData = JSON.parse(JSON.stringify(data));
-        console.log('cross check test 1----->', cloneData);
         if (!cloneData[section_data.currentSection.sectionIndex].isDelete) {
             cloneData[index].status = 'InActive';
             if (!inActiveSection.includes(cloneData[section_data.currentSection.sectionIndex].type))
@@ -238,7 +236,6 @@ const LeadPage = ({ isError, collection }) => {
         } else {
             cloneData.splice(index, 1);
         }
-        console.log('cross check test 2----->', cloneData);
 
         setData(cloneData);
         setReload(!reload);
