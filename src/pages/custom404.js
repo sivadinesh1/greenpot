@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
 
-function NotFound() {
+function Custom404() {
 	const router = useRouter();
 	useEffect(() => {
 		setTimeout(() => {
@@ -23,4 +23,4 @@ function NotFound() {
 		</div>
 	);
 }
-export default NotFound;
+export default Custom404;

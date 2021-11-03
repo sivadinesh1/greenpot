@@ -9,6 +9,8 @@ body {
 * {
 	box-sizing: border-box;
 	font-family: 'Open Sans', sans-serif;
+	padding: 0;
+	margin: 0;
 }
 
 a:link {
@@ -355,7 +357,7 @@ Miscellaneous */
 	width: 1600px;
 	height: 60px;
 	margin: 80px 0 0 -110px;
-	background:black;
+	background: black;
 	border-radius: 6px;
 }
 
@@ -394,10 +396,10 @@ Miscellaneous */
 	border-top-width: 60px;
 	border-bottom-width: 60px;
 	border-radius: 36px;
-  }
-  
-  /* The horizontal line on the top of the device */
-  .smartphone:before {
+}
+
+/* The horizontal line on the top of the device */
+.smartphone:before {
 	content: '';
 	display: block;
 	width: 60px;
@@ -408,10 +410,10 @@ Miscellaneous */
 	transform: translate(-50%, -50%);
 	background: #333;
 	border-radius: 10px;
-  }
-  
-  /* The circle on the bottom of the device */
-  .smartphone:after {
+}
+
+/* The circle on the bottom of the device */
+.smartphone:after {
 	content: '';
 	display: block;
 	width: 35px;
@@ -422,16 +424,16 @@ Miscellaneous */
 	transform: translate(-50%, -50%);
 	background: #333;
 	border-radius: 50%;
-  }
-  
-  /* The screen (or content) of the device */
-  .smartphone .content {
+}
+
+/* The screen (or content) of the device */
+.smartphone .content {
 	width: 360px;
 	height: 640px;
 	background: white;
-  }
+}
 
-  /* The device with borders */
+/* The device with borders */
 .tablet {
 	position: relative;
 	width: 768px;
@@ -441,10 +443,10 @@ Miscellaneous */
 	border-top-width: 60px;
 	border-bottom-width: 60px;
 	border-radius: 36px;
-  }
-  
-  /* The horizontal line on the top of the device */
-  .tablet:before {
+}
+
+/* The horizontal line on the top of the device */
+.tablet:before {
 	content: '';
 	display: block;
 	width: 60px;
@@ -455,10 +457,10 @@ Miscellaneous */
 	transform: translate(-50%, -50%);
 	background: #333;
 	border-radius: 10px;
-  }
-  
-  /* The circle on the bottom of the device */
-  .tablet:after {
+}
+
+/* The circle on the bottom of the device */
+.tablet:after {
 	content: '';
 	display: block;
 	width: 35px;
@@ -469,14 +471,73 @@ Miscellaneous */
 	transform: translate(-50%, -50%);
 	background: #333;
 	border-radius: 50%;
-  }
-  
-  /* The screen (or content) of the device */
-  .tablet .content {
+}
+
+/* The screen (or content) of the device */
+.tablet .content {
 	width: 768px;
 	height: 1024px;
 	background: white;
 	margin: -1px;
-  }
-  
+}
+
 /* https://www.w3schools.com/howto/howto_css_devices.asp */
+
+.characters {
+	list-style: none;
+	padding-left: 0;
+}
+
+.characters li {
+	display: flex;
+	align-items: center;
+	border: solid 2px #d0d0d0;
+	border-radius: 0.2em;
+	padding: 0.5em 0.8em 0.5em 0.5em;
+	margin-bottom: 1em;
+}
+
+.characters p {
+	max-width: none;
+	font-weight: bold;
+	margin: 0;
+}
+
+.characters-thumb {
+	overflow: hidden;
+	flex-shrink: 0;
+	width: 2em;
+	height: 2em;
+	background-color: #e8e8e8;
+	padding: 0.5em;
+	margin-right: 0.5em;
+}
+
+.characters-thumb img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.container {
+	background-color: #333;
+	padding: 1rem;
+	margin-top: 1rem;
+}
+
+.draggable {
+	padding: 1rem;
+	background-color: white;
+	border: 1px solid black;
+	cursor: move;
+}
+
+.draggable.dragging {
+	opacity: 0.5;
+}
+
+.clicked {
+	outline-style: solid;
+	outline-color: #0000ff;
+	padding: 1px;
+}

@@ -23,7 +23,6 @@ export default function BlogView({ blog, html, isEmpty, view }) {
 	// const stringData: string = crosscheck.reduce((result, item) => {
 	// 	return `${result}${item}`
 	// }, "")
-	console.log('check convertion data---->', html);
 
 	return (
 		<div>

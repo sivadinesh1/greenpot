@@ -17,7 +17,6 @@ export const createCompnay = async (data) => {
 				name: name,
 				status: status,
 				is_delete: is_delete,
-				createddate: new Date(),
 			},
 		});
 	} catch (error) {
@@ -77,6 +76,27 @@ export const getByNano = async (id) => {
 	return bigIntToString(result);
 };
 
+export const getByNanoWithAssociation = async (id) => {
+	let result = null;
+	try {
+		result = await prisma.company.findUnique({
+			where: {
+				company_id: id,
+			},
+			include: {
+				repo: {
+					include: {
+						blog: true,
+					},
+				},
+			},
+		});
+	} catch (error) {
+		console.log('getByNano error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
 export const getList = async () => {
 	let result = null;
 	try {
@@ -114,4 +134,22 @@ export const deleteById = async (id) => {
 	const [deleteCompany, upadateRepo] = await prisma.$transaction([query1, query2]);
 	console.log('test result ---->', upadateRepo);
 	return bigIntToString(deleteCompany);
+};
+
+export const updateBlogFormat = async (id, data) => {
+	debugger
+	let result = null;
+	try {
+		result = await prisma.company.update({
+			where: {
+				id: Number(id),
+			},
+			data: {
+				blog_home_format: data,
+			},
+		});
+	} catch (error) {
+		console.log('update blog format error::' + error.message);
+	}
+	return bigIntToString(result);
 };

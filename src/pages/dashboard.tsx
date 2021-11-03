@@ -11,15 +11,17 @@ import RepoSidebar from '../components/RepoSidebar';
 import TemplateList from '../components/template/ListTemplates';
 import { IRepo } from '../model/Repo';
 import styles from '../styles/dashboard.module.scss';
+import { getById } from '../service/company.service'
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
 	let cookie = null;
 	let repos = null;
-	let blogs = [];
+	let blogs_data = [];
 	let company_id = null;
 	let repo_id = null;
-	let lead_pages = [];
+	let lead_pages_data = [];
+	let company_nano = null;
 
 	try {
 		cookie = context?.req?.headers.cookie;
@@ -36,14 +38,15 @@ export const getServerSideProps = async (context) => {
 		if (repos.length === 0) {
 		} else {
 			repo_id = repos[0].id;
-
+			company_id = repos[0].company_id;
+			company_nano = repos[0].company.company_id;
 			// fetch blogs
 			let result1 = await axios.get(`${process.env.API_URL}/blog/repo/${repo_id}`, {
 				headers: {
 					cookie: cookie!,
 				},
 			});
-			blogs = result1.data;
+			blogs_data = result1.data;
 
 			//fetch lead pages
 			let result2 = await axios.get(`${process.env.API_URL}/lead-page/repo/${repo_id}`, {
@@ -51,7 +54,7 @@ export const getServerSideProps = async (context) => {
 					cookie: cookie!,
 				},
 			});
-			lead_pages = result2.data;
+			lead_pages_data = result2.data;
 		}
 	} catch (error) {
 		console.log(`error in dashboard@! ${error.message}`);
@@ -62,11 +65,14 @@ export const getServerSideProps = async (context) => {
 	}
 
 	return {
-		props: { repos, company_id, blogs, repo_id, isError, lead_pages },
+		props: { repos, company_id, blogs_data, repo_id, isError, lead_pages_data, company_nano },
 	};
 };
 
-const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages_data }) => {
+
+
+
+const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages_data, company_nano }) => {
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();
@@ -78,11 +84,9 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 	const { data: repoArr, mutate: mutateRepos } = useSWR(`/api/repository/fetch-repos-summary`, {
 		initialData: repos,
 	});
-
 	const { data: blogs, mutate: mutateBlogs } = useSWR(`/api/blog/repo/${selectedRepo?.id}`, {
 		initialData: blogs_data,
 	});
-	console.log("test blog data---->", blogs)
 	const {
 		data: lead_pages,
 		mutate: mutateLeadPages,
@@ -97,6 +101,11 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 		mutateRepos();
 	};
 
+	const reloadLeads = async (repo) => {
+		//	setSelectedRepo(repo);
+		mutateLeadPages();
+		mutateRepos();
+	};
 	const reloadRepos = async (repo: IRepo) => {
 		setSelectedRepo(repo);
 		mutateRepos();
@@ -104,12 +113,12 @@ const Dashboard = ({ repos, company_id, blogs_data, repo_id, isError, lead_pages
 
 	return (
 		<>
-			<RepoSidebar repos={repoArr} reloadRepos={reloadRepos} />
+			<RepoSidebar repos={repoArr} reloadRepos={reloadRepos} company_id={company_id} company_nano={company_nano} />
 
 			<div className={styles.wrapper}>
 				{repoArr && repoArr.length === 0 && <NoWorkspace />}
 				{repoArr && repoArr.length > 0 && selectedRepo.repo_type === 'T' ? (
-					<LeadPageWorkspace selectedRepo={selectedRepo} lead_pages={lead_pages} />
+					<LeadPageWorkspace selectedRepo={selectedRepo} lead_pages={lead_pages} reload={reloadLeads} />
 				) : (
 						<BlogWorkspace selectedRepo={selectedRepo} blogs={blogs} reload={reloadBlogs} />
 					)}

@@ -1,14 +1,15 @@
 import React, { useRef, useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
+import { useRouter } from 'next/router';
 import axios from 'axios';
-import { useForm, Controller, FieldErrors } from 'react-hook-form';
+import { useForm, Controller, FieldErrors, useWatch } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dynamic from 'next/dynamic';
 import { makeStyles } from '@material-ui/core/styles';
 
 import TextField from '@material-ui/core/TextField';
-import { Button, Divider, Menu, MenuItem, withWidth } from '@material-ui/core';
+import { Button, Divider, Menu, MenuItem, withWidth, FormControl, Input } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -59,6 +60,9 @@ import AdUnitsIcon from '@mui/icons-material/AdUnits';
 import AdbIcon from '@mui/icons-material/Adb';
 import DeleteDialog from '../../../../components/elements/ui/Dialog/DeleteDialog';
 import DeleteIcon from '@mui/icons-material/Delete';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import IconButton from '@material-ui/core/IconButton';
+import SearchIcon from '@material-ui/icons/Search';
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -85,6 +89,7 @@ export const getServerSideProps = async (context) => {
 	let company_id = null;
 	let tags = null;
 	let selectedImages = null;
+	let images = null;
 
 	try {
 		cookie = context?.req?.headers.cookie;
@@ -126,12 +131,16 @@ export const getServerSideProps = async (context) => {
 		//fetch uploaded images
 		path = `C${user?.data?.company_id}/B${blog.id}`;
 		selectedImages = await getImages(path);
+
+		//fetch unsplash images
+		let unsplashRes = await axios.get(`https://api.unsplash.com/photos/?client_id=xEgxLpBbjc6QDigyUa6pNU7dWdaA2HoQTE8bIGVSnkI`)
+		images = unsplashRes.data
 	} catch (error) {
 		console.log(`error in blog edit ${error}`);
 		isError = true;
 	}
 	return {
-		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors, isError },
+		props: { blog, categories, tags, company_id, selectedTag, selectedCat, selectedImages, repo_nano, accessRights, authors, isError, images },
 	};
 };
 
@@ -146,6 +155,7 @@ interface FormData {
 	thumbnail: string;
 	is_author: boolean;
 	is_publish_date: boolean;
+	slug: string;
 }
 
 type ErrorSummaryProps<T> = {
@@ -181,17 +191,19 @@ export default function Index({
 	accessRights,
 	authors,
 	isError,
+	images
 }) {
 	useEffect(() => {
 		if (isError) {
 			return forceLogout();
 		}
 	}, []);
-
 	const [anchorEl, setAnchorEl] = React.useState(null);
 	const [imageFile, setImageFile] = useState<any>();
 	const [currentBlog, setCurrentBlog] = useState<any>(blog);
-
+	const [unsplashImage, setUnsplashImage] = useState(images)
+	let maxCat = 3;
+	let maxTag = 15;
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
@@ -227,7 +239,6 @@ export default function Index({
 	const [uploadedFiles, setUploadedFiles] = useState(selectedImages?.length > 0 ? selectedImages : []);
 
 	const [selectedTags, setSelectedTags] = useState([...selectedTag]);
-	console.log('test pre selected values--->', selectedTag);
 	const [selectedCategorys, setSelectedCategorys] = useState([...selectedCat]);
 	const [showAssets, setShowAssets] = useState(false);
 	const [showApps, setShowApps] = useState(false);
@@ -268,9 +279,15 @@ export default function Index({
 	const [selectedDate, setSelectedDate] = React.useState(format(parseISO(blog.blog_date), 'yyyy-MM-dd'));
 	const [formattedDate, setFormattedDate] = React.useState(format(parseISO(blog.blog_date), 'MMM dd, yyyy'));
 
-	const handleDateChange = (date) => {
+	const handleDateChange = async (date) => {
 		setSelectedDate(date);
 		setFormattedDate(format(date, 'MMM dd, yyyy'));
+		console.log('Test date value -->', parseISO(selectedDate));
+		let request = {
+			id: currentBlog.id,
+			blogDate: parseISO(selectedDate),
+		};
+		let resp = await axios.put(`/api/blog/autoSaveBlogDate`, request);
 	};
 
 	//error style
@@ -316,6 +333,11 @@ export default function Index({
 		setShowLayout(false);
 	};
 
+	const handleCloseLeftBar = () => {
+		setShowAssets(false);
+		setShowApps(false);
+	};
+
 	const handleClick = (event, item) => {
 		setAnchorEl(event.currentTarget);
 		setImageFile(item);
@@ -325,10 +347,6 @@ export default function Index({
 		setOpenDialog(false);
 	};
 	const snap = useSnapshot(content);
-
-	const handleView = () => {
-		Router.push(`/admin/blog/${blog.blog_id}`);
-	};
 
 	const onSubmit = async (formData, event) => {
 		console.log('check form data ---->', formData);
@@ -429,11 +447,6 @@ export default function Index({
 		disabled: uploadedFiles.length === uploadLimit ? true : false,
 	});
 
-	const options = [
-		{ label: 'Classic', value: 'classic' },
-		{ label: 'Classic pro', value: 'classic pro' },
-	];
-
 	var layoutarray = [
 		{
 			label: 'classic',
@@ -447,17 +460,6 @@ export default function Index({
 			label: 'layout3',
 			icon: AdbIcon,
 		},
-		// {
-		// 	label: "layout4",
-		// 	icon: AdbIcon
-		// }, {
-		// 	label: "layout5",
-		// 	icon: AdbIcon
-		// },
-		// {
-		// 	label: "layout6",
-		// 	icon: AdbIcon
-		// }
 	];
 
 	const initialArray = (data) => {
@@ -486,6 +488,62 @@ export default function Index({
 		}
 	};
 
+	const handleAutoSaveTitle = async (event) => {
+		setValue('title', event.target.value);
+		let request = {
+			id: currentBlog.id,
+			title: event.target.value,
+		};
+		await axios.put(`/api/blog/autoSaveTitle`, request);
+	};
+
+	const handleAutoSaveSlug = async (event) => {
+		setValue('slug', event.target.value);
+		let request = {
+			id: currentBlog.id,
+			slug: event.target.value,
+		};
+		await axios.put(`/api/blog/autoSaveSlug`, request);
+	};
+	const handleAutoSaveDescription = async (event) => {
+		setValue('description', event.target.value);
+		let request = {
+			id: currentBlog.id,
+			description: event.target.value,
+		};
+		await axios.put(`/api/blog/autoSaveDescription`, request);
+	};
+	const handleAutoSaveAuthor = async (event) => {
+		console.log('test author info data --->', event.target.value);
+		setValue('author', event.target.value);
+		let request = {
+			id: currentBlog.id,
+			author: event.target.value,
+		};
+		await axios.put(`/api/blog/autoSaveAuthor`, request);
+	};
+
+	const handleAutoSaveCategory = async (value) => {
+		setSelectedCategorys(value);
+		let tempCatIds = value.map((o) => Number(o.id));
+		let uniqCategorys = Array.from(new Set(tempCatIds));
+		let request = {
+			id: currentBlog.id,
+			category: uniqCategorys,
+		};
+		if (value.length <= maxCat) await axios.put(`/api/blog/autoSaveCategory`, request);
+	};
+
+	const handleAutoSaveTag = async (value) => {
+		setSelectedTags(value);
+		let tempTagIds = value.map((o) => Number(o.id));
+		let uniqTag = Array.from(new Set(tempTagIds));
+		let request = {
+			id: currentBlog.id,
+			tag: uniqTag,
+		};
+		if (value.length <= maxTag) await axios.put(`/api/blog/autoSaveTag`, request);
+	};
 	//layout option
 	const chooseLayout = () => {
 		return (
@@ -525,81 +583,213 @@ export default function Index({
 		}
 		//mutate();
 	};
+
+	// onClick={handleShowMetaSection} className={showMetaSection ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`
+	const [word, setWord] = useState("")
+	const [dictionaryResult, setDictionaryResult] = useState({})
+
+	const handleChange = async (searchKey) => {
+		console.log("test search word--->", searchKey)
+		setWord(searchKey)
+	};
+
+	const search = async () => {
+		let result = await axios.get(`/api/dictionary/${word}`);
+		setDictionaryResult(result.data);
+		console.log("Check result---> 3", result.data)
+		setWord("")
+	}
+
+	const [imgGalleryType, setImgGalleryType] = useState("local");
+	const handleImageGallery = (data) => {
+		console.log("check the type---->", data)
+		setImgGalleryType(data)
+	}
+
+	let page = 1;
+	let accesskey = 'xEgxLpBbjc6QDigyUa6pNU7dWdaA2HoQTE8bIGVSnkI'
+	let size = 30
+	const searchImage = async () => {
+		console.log("check search key--->", word)
+		let resp = await axios.get(`https://api.unsplash.com/collections?page=${page}&per_page=${size}&query=${word}&client_id=${accesskey}`)
+		// let resp = await axios.get(`https://api.unsplash.com/photos?page=${page}&per_page=${size}&query=${word}&client_id=${accesskey}`)
+		setUnsplashImage(resp.data)
+		setWord("")
+
+	}
+	const unsplashGallery = () => {
+		return (
+			<div>
+				<div style={{ padding: "1rem" }}>
+					<FormControl fullWidth >
+						<Input
+							type='text'
+							placeholder='Search Image'
+							fullWidth
+							margin='dense'
+							name='search'
+							onChange={(event) => {
+								handleChange(event.target.value);
+							}}
+							endAdornment={
+								<InputAdornment position='start'>
+									<IconButton onClick={() => searchImage()}>
+										<SearchIcon />
+									</IconButton>
+								</InputAdornment>
+							}
+						/>
+					</FormControl>
+				</div>
+				<div className={styles.no_image}>
+					{unsplashImage.length > 0 && (
+						<>
+							<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: '1fr 1fr', margin: 'auto auto' }}>
+								{unsplashImage.map((file, index) => (
+									<div key={file.id} className={styles.image_item}>
+										<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
+											<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
+										</div>
+
+										<Image
+											src={file?.urls?.small === undefined ? file.preview_photos[0].urls.small : file.urls.small}
+											width='100'
+											height='100'
+											crop='scale'
+										/>
+
+									</div>
+								))}
+							</div>
+						</>
+					)}
+				</div>
+			</div>
+		)
+	}
+
+	const mediaGallery = () => {
+		return (
+			<div>
+				<div className={styles.drop_zone}>
+					<div {...getRootProps()} className={`${styles_drop_zone.drop_zone} ${isDragActive ? styles_drop_zone.active : null}`}>
+						<input {...getInputProps()} />
+						{`Drag'n'drop files, or click to select files`}
+					</div>
+				</div>
+				<div className={styles.no_image}>
+					{uploadedFiles.length === 0 && (
+						<>
+							<div>No Images</div>
+						</>
+					)}
+
+					{uploadedFiles.length > 0 && (
+						<>
+							<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: '1fr 1fr', margin: 'auto auto' }}>
+								{uploadedFiles.map((file, index) => (
+									<div key={file.public_id} className={styles.image_item}>
+										<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
+											<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
+										</div>
+
+										<Image
+											cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
+											publicId={file.public_id}
+											width='100'
+											height='100'
+											crop='scale'
+										/>
+										<div>
+											{`${file.original_filename === undefined ? 'image ' + (index + 1) : file.original_filename}.${
+												file.format
+												} ${file.width}x${file.height}`}
+										</div>
+									</div>
+								))}
+							</div>
+						</>
+					)}
+				</div>
+
+
+			</div>
+		)
+	}
 	return (
 		<>
 			<div className={styles.main_menu}>
-				<div onClick={handleShowAssets} className={styles.menu_item}>
-					<Image src='/static/images/gallery.svg' alt='gallery' width='32px' height='32px' />
+				<div onClick={handleShowAssets} className={showAssets ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
+					<div className={styles.menu_label}>
+						<Image src='/static/images/gallery.svg' alt='gallery' width='32px' height='32px' />
+						<div className={styles.menu_label_text}>Media</div>
+					</div>
 				</div>
-				<div onClick={handleShowApps} className={styles.menu_item}>
-					<Image src='/static/images/apps.svg' alt='apps' width='32px' height='32px' />
+				<div onClick={handleShowApps} className={showApps ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
+					<div className={styles.menu_label}>
+						<Image src='/static/images/apps.svg' alt='apps' width='32px' height='32px' />
+						<div className={styles.menu_label_text}>Apps</div>
+					</div>
 				</div>
+				{(showAssets || showApps) && (
+					<>
+						<div onClick={handleCloseLeftBar} className={styles.menu_item} style={{ marginTop: 'auto' }}>
+							<Image src='/static/images/left_arrow.svg' alt='edit' width='30px' height='30px' />
+						</div>
+					</>
+				)}
 			</div>
 			<div className={styles.main_bg}>
 				<div className={showAssets ? `${styles.assets} ${styles.show_assets}` : `${styles.assets}`}>
-					<div className={styles.drop_zone}>
-						<div {...getRootProps()} className={`${styles_drop_zone.drop_zone} ${isDragActive ? styles_drop_zone.active : null}`}>
-							<input {...getInputProps()} />
-							{`Drag'n'drop files, or click to select files`}
-						</div>
-						{/* {uploadedFiles.length === uploadLimit && <p style={errorStyle}>upload Limit {uploadLimit}</p>}
-						 */}
+					<div className={styles.flex_center} style={{ padding: "5px" }}>
+						<div><Button color='primary' onClick={() => handleImageGallery('local')} >Local</Button></div>
+						<div> <Button color='primary' onClick={() => handleImageGallery('unsplash')} >Unsplash</Button></div>
 					</div>
-
-					<div className={styles.no_image}>
-						{uploadedFiles.length === 0 && (
-							<>
-								<div>No Images</div>
-							</>
-						)}
-
-						{uploadedFiles.length > 0 && (
-							<>
-								<div style={{ display: 'grid', padding: '6px 6px', gridTemplateColumns: '1fr 1fr', margin: 'auto auto' }}>
-									{uploadedFiles.map((file) => (
-										<div key={file.public_id} className={styles.image_item}>
-											<div className={styles.item_dots} onClick={(event) => handleClick(event, file)}>
-												<Image src='/static/images/down-arrow.svg' alt='edit' width='12px' height='12px' />
-											</div>
-
-											<Image
-												cloudName={process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}
-												publicId={file.public_id}
-												width='100'
-												height='100'
-												crop='scale'
-											/>
-										</div>
-									))}
-								</div>
-							</>
-						)}
-					</div>
+					{imgGalleryType === "local" ? mediaGallery() : unsplashGallery()}
 				</div>
 				<div className={showApps ? `${styles.apps} ${styles.show_apps}` : `${styles.apps}`}>
-					<div className={styles.drop_zone}>Apps !!!!!!!</div>
+					<div>
+						<div style={{ padding: "1rem" }}>
+							<FormControl fullWidth >
+								<Input
+									type='text'
+									placeholder='Search word'
+									fullWidth
+									margin='dense'
+									name='search'
+									onChange={(event) => {
+										handleChange(event.target.value);
+									}}
+									endAdornment={
+										<InputAdornment position='start'>
+											<IconButton aria-label='toggle password visibility' onClick={() => search()}>
+												<SearchIcon />
+											</IconButton>
+										</InputAdornment>
+									}
+								/>
+							</FormControl>
+							{dictionaryResult["title"] != null ? (<div style={errorStyle}>{dictionaryResult["title"]}</div>) :
+								(<div>
+									{Object.keys(dictionaryResult).length > 0 && <div>
+										<div><h4>{dictionaryResult[0].word}</h4></div>
+										<div>{dictionaryResult[0]?.meanings[0]?.definitions[0]?.definition}</div>
+										<hr />
+										<div>{dictionaryResult[0]?.meanings[0]?.definitions[0]?.example}</div>
+										<hr />
+										<div>{dictionaryResult[0].origin}</div>
+									</div>
+									}
+								</div>)}
+
+
+						</div>
+					</div>
 				</div>
 				<div className={styles.blog_wrap}>
 					<form onSubmit={handleSubmit(onSubmit)}>
-						<div className={styles.action_bar}>
-							<div className={styles.filler}>&nbsp;</div>
-							<Button onClick={() => handleView()} variant='contained' color='primary' style={{ marginLeft: '10px' }}>
-								view
-							</Button>
-							<Button variant='contained' color='primary' style={{ marginLeft: '10px' }}>
-								clear
-							</Button>
-							{accessRights != 'W' && (
-								<Button variant='contained' color='primary' type='submit' id='publish' style={{ marginLeft: '10px' }}>
-									Publish
-								</Button>
-							)}
-						</div>
 						<div>
-							<div>
-								{MyEditor && <MyEditor data={blog.content == null ? undefined : blog.content} blogId={blog.id} />}
-								{/* </form> */}
-							</div>
+							<div>{MyEditor && <MyEditor data={blog.content == null ? undefined : blog.content} blogId={blog.id} />}</div>
 
 							<div>
 								<Dialog maxWidth='xl' open={openDialog} onClose={handleCloseDialog} aria-labelledby='max-width-dialog-title'>
@@ -664,16 +854,34 @@ export default function Index({
 					</form>
 				</div>
 				<div className={showMetaSection ? `${styles.meta} ${styles.show_meta}` : `${styles.meta}`}>
-					<div>META DATA</div>
+					&nbsp;
 					<form onSubmit={handleSubmit(onSubmit)}>
 						<div className={styles.rowGap}>
-							<FormInputText name='title' control={control} label='SEO Blog Title' variant='standard' />
+							<FormInputText
+								name='title'
+								control={control}
+								onCustomChange={(e) => handleAutoSaveTitle(e)}
+								label='SEO Blog Title'
+								variant='standard'
+							/>
 						</div>
 						<div className={styles.rowGap}>
-							<FormInputText name='slug' control={control} label='Slug' variant='standard' />
+							<FormInputText
+								name='slug'
+								control={control}
+								onCustomChange={(e) => handleAutoSaveSlug(e)}
+								label='Slug'
+								variant='standard'
+							/>
 						</div>
 						<div className={styles.rowGap}>
-							<FormInputText name='description' control={control} label='SEO Blog Description' variant='standard' />
+							<FormInputText
+								name='description'
+								control={control}
+								onCustomChange={(e) => handleAutoSaveDescription(e)}
+								label='SEO Blog Description'
+								variant='standard'
+							/>
 						</div>
 						<div className={styles.rowGap}>
 							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>Feature Image</InputLabel>
@@ -696,14 +904,14 @@ export default function Index({
 								filterSelectedOptions
 								fullWidth
 								options={categories}
-								onChange={(e, newValue) => setSelectedCategorys(newValue)}
+								onChange={(e, newValue) => handleAutoSaveCategory(newValue)}
 								getOptionLabel={(option) => option.name}
 								value={selectedCategorys}
 								renderInput={(params) => (
-									<TextField {...params} variant='standard' placeholder='Select Relevant Categories' margin='normal' fullWidth />
+									<TextField {...params} variant='standard' placeholder='Select Categories' margin='normal' fullWidth />
 								)}
 							/>
-							{!selectedCategorys.length && isError1 && <div style={errorStyle}>Select at least 1 category</div>}
+							{selectedCategorys.length > maxCat && <div style={errorStyle}>Select maximum {maxCat} categories</div>}
 						</div>
 						<div className={styles.rowGap}>
 							<Autocomplete
@@ -713,14 +921,14 @@ export default function Index({
 								filterSelectedOptions
 								fullWidth
 								options={tags}
-								onChange={(e, newValue) => setSelectedTags(newValue)}
+								onChange={(e, newValue) => handleAutoSaveTag(newValue)}
 								getOptionLabel={(option) => option.name}
 								value={selectedTags}
 								renderInput={(params) => (
-									<TextField {...params} variant='standard' placeholder='Select Relevant Tags' margin='normal' fullWidth />
+									<TextField {...params} variant='standard' placeholder='Choose #Tags' margin='normal' fullWidth />
 								)}
 							/>
-							{!selectedTags.length && isError1 && <p style={errorStyle}>Select at least 1 Tag</p>}
+							{selectedTags.length > maxTag && <p style={errorStyle}>Select maximum {maxTag} Tags</p>}
 						</div>
 						<div className={styles.rowGap}>
 							<MuiPickersUtilsProvider utils={DateFnsUtils}>
@@ -745,7 +953,8 @@ export default function Index({
 								control={control}
 								width={'100%'}
 								defaultValue={{ label: '', value: '' }}
-								label='Select Author'>
+								label='Select Author'
+								onCustomChange={(e) => handleAutoSaveAuthor(e)}>
 								{authors.map((author, index) => (
 									<MenuItem key={index} value={author.first_name}>
 										{author.first_name}
@@ -768,17 +977,7 @@ export default function Index({
 							</FormInputDropdown>
 						</div> */}
 						<div className={styles.rowGap}>
-							<InputLabel style={{ fontSize: '12px', marginBottom: '5px' }}>By Line</InputLabel>
 							<div className={styles.blog_switch}>
-								{/* <div>
-									<FormControlLabel
-										value="end"
-										control={<Switch color="primary" />}
-										label="Date Edited"
-										labelPlacement="end"
-									/>
-								</div> */}
-
 								<div>
 									<div className={styles.flex_center}>
 										<div>
@@ -795,34 +994,32 @@ export default function Index({
 										<div style={{ paddingTop: '5px' }}>Date published </div>
 									</div>
 								</div>
-								{/* <div>
-									<div className={styles.flex_center}>
-										<div>
-											<Controller control={control} name='someName' render={({ field }) => <Switch disabled {...field} />} />
-										</div>
-										<div style={{ paddingTop: '5px' }}>Date edited </div>
-									</div>
-								</div> */}
 							</div>
 						</div>
-						<div className={styles.flex_center}>
+						{/* <div className={styles.flex_center}>
 							<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
 								Save
 							</Button>
-						</div>
+						</div> */}
 					</form>
 					<div onClick={() => handleOpenDeleteDialog()} className={styles.blog_delete}>
-						<DeleteIcon /> Move to Trash
+						<DeleteIcon /> Delete Article
 					</div>
 				</div>
 				<div className={showLayout ? `${styles.layout} ${styles.show_layout}` : `${styles.layout}`}>{chooseLayout()}</div>
 			</div>
 			<div className={showMetaSection || showLayout ? `${styles.right_side_menu_expand}` : `${styles.right_side_menu}`}>
-				<div onClick={handleShowMetaSection} className={styles.menu_item}>
-					<Image src='/static/images/form.svg' alt='edit' width='30px' height='30px' />
+				<div onClick={handleShowMetaSection} className={showMetaSection ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
+					<div className={styles.menu_label}>
+						<Image src='/static/images/form.svg' alt='edit' width='30px' height='30px' />
+						<div className={styles.menu_label_text}>SEO</div>
+					</div>
 				</div>
-				<div onClick={handleShowLayout} className={styles.menu_item}>
-					<Image src='/static/images/layout.svg' alt='edit' width='30px' height='30px' />
+				<div onClick={handleShowLayout} className={showLayout ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`}>
+					<div className={styles.menu_label}>
+						<Image src='/static/images/layout.svg' alt='edit' width='30px' height='30px' />
+						<div className={styles.menu_label_text}>Layout</div>
+					</div>
 				</div>
 				{(showMetaSection || showLayout) && (
 					<>

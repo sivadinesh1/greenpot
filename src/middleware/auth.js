@@ -27,7 +27,8 @@ const signAccessToken = (id, company_id, role) => {
 	return new Promise((resolve, reject) => {
 		const payload = { id: id, company_id: company_id, role };
 		const secret = process.env.ACCESS_TOKEN_SECRET;
-		const options = { expiresIn: '1d' };
+		debugger
+		const options = { expiresIn: '20d' };
 
 		JWT.sign(payload, secret, options, (err, token) => {
 			if (err) return reject(err);
@@ -51,19 +52,19 @@ const signRefreshToken = (id, company_id, role) => {
 
 export const auth =
 	(...requiredRights) =>
-	async (req, res, next) => {
-		let cCookie = cookie.parse(req ? req.headers.cookie || '' : document.cookie);
-		if (!isEmpty(cCookie)) {
-			try {
-				let user = JWT.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
-				req.user = user;
+		async (req, res, next) => {
+			let cCookie = cookie.parse(req ? req.headers.cookie || '' : document.cookie);
+			if (!isEmpty(cCookie)) {
+				try {
+					let user = JWT.verify(cCookie['authToken'], process.env.ACCESS_TOKEN_SECRET);
+					req.user = user;
 
-				next();
-			} catch (error) {
-				throw new Error('Authorization Failed');
+					next();
+				} catch (error) {
+					throw new Error('Authorization Failed');
+				}
 			}
-		}
-	};
+		};
 
 export const parseCookies = async (req) => {
 	let cCookie = cookie.parse(req ? req.headers.cookie || '' : document.cookie);

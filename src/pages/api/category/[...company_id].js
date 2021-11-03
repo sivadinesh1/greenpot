@@ -1,5 +1,6 @@
 import nc from 'next-connect';
-import { getAllCategories, deleteCategory, getCategoryWithTemplate, filter } from '../../../service/category.service';
+// import { getAllCategories, deleteCategory, getCategoryWithTemplate, filter } from '../../../service/category.service';
+import { getAllCategories, deleteCategory, getCategoryWithTemplate } from '../../../service/category.service';
 
 import { auth } from '../../../middleware/auth';
 
@@ -11,9 +12,11 @@ const handler = nc()
 		let returnValue = null;
 		if (company_id[0] === 'getCatWithTemp') {
 			returnValue = await getCategoryWithTemplate();
-		} else if (company_id[0] === 'search') {
-			returnValue = await filter(company_id[1]);
-		} else {
+		}
+		// else if (company_id[0] === 'search') {
+		// 	returnValue = await filter(company_id[1]);
+		// }
+		else {
 			returnValue = await getAllCategories(company_id[0]);
 		}
 		res.status(200).json(returnValue);

@@ -21,7 +21,7 @@ export const create = async (body) => {
 				status: status,
 				description: description,
 				is_delete: is_delete,
-				created_date: date,
+				createdAt: date,
 				template_collection: {
 					create: tempList === undefined ? [] : tempList,
 					// create: tempList
@@ -61,7 +61,7 @@ export const updateTemplateCollection = async (body) => {
 				name: name,
 				status: status,
 				description: description,
-				updated_date: date,
+				updatedAt: date,
 				template_collection: {
 					create: tempList === undefined ? [] : tempList,
 				},
@@ -119,6 +119,24 @@ export const getTemplateCollectionById = async (id) => {
 	}
 	return resp;
 };
+
+export const getCollection = async (id) => {
+	var resp = null;
+	try {
+		const result = await prisma.collection.findUnique({
+			where: {
+				id: BigInt(id),
+				is_delete: 'N'
+			}
+		});
+		resp = bigIntToString(result);
+		return resp;
+	} catch (error) {
+		console.log('test deleteById error :: --->', error.message);
+	}
+	return resp;
+};
+
 
 export const deleteById = async (id) => {
 	var resp = null;

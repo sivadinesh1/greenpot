@@ -9,7 +9,6 @@ import { auth } from '../../../middleware/auth';
 const handler = nc()
 	.get(auth('getUsers'), async (req, res) => {
 		const { slug } = req.query;
-
 		try {
 			let company_id = req.user.company_id;
 

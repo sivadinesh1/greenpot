@@ -5,31 +5,33 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import Image from 'next/image';
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { FormInputDropdown } from '../components/forms/FormInputDropdown';
 import { FormInputText } from '../components/forms/FormInputText';
 import { IRepo } from '../model/Repo';
 import styles from '../styles/RepoSidebar.module.scss';
 import { MenuItem } from '@material-ui/core';
+import { useForm, Controller } from 'react-hook-form';
 
 
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Router from 'next/router';
 
 interface IFormData {
 	name: string;
 	repo_type: string;
 }
 
-const defaultValues = {
-	name: '',
-	repo_type: '',
-};
 
-const RepoSidebar = ({ repos, reloadRepos }) => {
+
+const RepoSidebar = ({ repos, reloadRepos, company_id, company_nano }) => {
 	const [currentRepo, setCurrentRepo] = useState(repos[0]);
-
+	const defaultValues = {
+		name: '',
+		repo_type: '',
+		// blog_home_format: "format-0"
+	};
 	let schema = yup.object().shape({
 		name: yup.string().required().max(70),
 		repo_type: yup.string().required(),
@@ -55,6 +57,12 @@ const RepoSidebar = ({ repos, reloadRepos }) => {
 		reset();
 		setOpenDialog(false);
 	};
+
+	const handleBlogHomeFormat = () => {
+		// Router.push(`/company/dashboard/${company_id}`)
+		Router.push(`/blogs/${company_nano}`)
+
+	}
 
 	const onSubmit = async (formData: IFormData) => {
 		console.log('Test current data --->', formData);
@@ -100,6 +108,29 @@ const RepoSidebar = ({ repos, reloadRepos }) => {
 		setSnack(true);
 		setMessage(message);
 	};
+	let blog_formats = [
+		{
+			label: "Format-0",
+			value: "format-0"
+		},
+		{
+			label: "Format-1",
+			value: "format-1"
+		},
+		{
+			label: "Format-2",
+			value: "format-2"
+		}
+	];
+	const handleBlogFormat = async (event) => {
+		console.log("check current blog format value--->", event.target.value);
+		const request = {
+			id: company_id,
+			blogFormat: event.target.value,
+		};
+
+		await axios.put(`/api/company/updateBlogFormat`, request);
+	}
 
 	return (
 		<>
@@ -139,6 +170,31 @@ const RepoSidebar = ({ repos, reloadRepos }) => {
 				)}
 
 				<div className={styles.last}>
+					<li className={styles.ul}>
+						{/* <a className={styles.a} href='http://startific.com'>
+							<Image src='/static/images/edit.svg' alt='edit' width='24px' height='24px' />
+							<span className={styles.nav_text}>Settings</span>
+						</a> */}
+						<FormInputDropdown
+							name='blog_home_format'
+							control={control}
+							width={'100%'}
+							defaultValue={{ label: '', value: '' }}
+							label='Select Blog Format'
+							onCustomChange={(e) => handleBlogFormat(e)}
+						>
+							{blog_formats.map((format, index) => (
+								<MenuItem key={index} value={format.value}>
+									{format.label}
+								</MenuItem>
+							))}
+						</FormInputDropdown>
+					</li>
+					<li className={styles.ul}>
+						<a className={styles.a} onClick={() => handleBlogHomeFormat()}>
+							<span className={styles.nav_text}>View Blog Home</span>
+						</a>
+					</li>
 					<li className={styles.ul}>
 						<a className={styles.a} href='http://startific.com'>
 							<Image src='/static/images/edit.svg' alt='edit' width='24px' height='24px' />

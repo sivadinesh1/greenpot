@@ -41,6 +41,7 @@ export const getServerSideProps = async (context) => {
 	let tempId = null;
 	let repoNano = null;
 	let repoId = null;
+	let company_id = null;
 
 	try {
 		cookie = context?.req?.headers.cookie;
@@ -59,13 +60,14 @@ export const getServerSideProps = async (context) => {
 		//get repo by nano
 		let repo = await getRepoByNano(repoNano);
 		repoId = repo.id;
+		company_id = repo.company_id;
 	} catch (error) {
 		console.log(`error in template preview ${error}`);
 		isError = true;
 	}
 
 	return {
-		props: { isError, template, repoId, repoNano },
+		props: { isError, template, repoId, repoNano, company_id },
 	};
 };
 
@@ -73,7 +75,7 @@ interface FormData {
 	name: string;
 }
 
-const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
+const TemplatePreview = ({ isError, template, repoId, repoNano, company_id }) => {
 	const [temp, setTemp] = useState(template);
 	useEffect(() => {
 		if (isError) {
@@ -115,19 +117,20 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 		handleOpenDialog();
 	};
 
-	const handleCustomTemplate = (nanoId) => Router.push(`/custom-template/${nanoId}`);
+	const handleCustomTemplate = (nanoId) => Router.push(`/lead-page/research/${nanoId}`);
 
 	const onSubmit = async (formData, event) => {
 		const values = {
 			templateId: temp.id,
 			repoId: repoId,
 			name: formData.name,
+			company_id: company_id,
 		};
-
+		console.log('check lead page submit value--->', values);
 		setServerErrors([]);
 		setError(false);
 
-		const response = await axios.post(`/api/collection`, values);
+		const response = await axios.post(`/api/lead-page`, values);
 		console.log('check response--->', response);
 		if (response.data.errors) {
 			setServerErrors(response.data.errors);
@@ -182,29 +185,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano }) => {
 					</div>
 
 					<div className={styles.body}>
-						{/* {structure} */}
-						<Builder keySet={objKeys} data={data} mode={'view'} />
-
-						{/* {objKeys.map((key) => {
-								 <Builder keySet={objKeys} data={data} />
-							let obj = null;
-							switch (key) {
-								case 'Header':
-									obj = data.Header;
-									if (obj.status === 'Active')
-										return (
-											<Header
-												company={obj.blocks[0].value}
-												blocks={obj.blocks[1].value}
-												imageUrl={obj.blocks[2].value}
-												backgroundImage={obj.blocks[3].value}
-											/>
-										);
-								case 'Footer':
-									obj = data['Footer'];
-									if (obj.status === 'Active') return <Footer data={obj.blocks[0].value} />;
-							}
-						})} */}
+						<Builder data={data} mode='view' />
 					</div>
 				</div>
 			</div>

@@ -1,10 +1,11 @@
 import nc from 'next-connect';
-import { create, updateTemplateById, getCollection } from '../../../service/template-collection.service';
+import { updateLeadPageById, getCollection } from '../../../service/lead-page.service';
+import { create } from "../../../service/lead-page.service";
 import { getById } from '../../../service/template.service';
 
 const handler = nc()
 	.post(async (req, res) => {
-		const { templateId, repoId, name } = req.body;
+		const { templateId, repoId, name, company_id } = req.body;
 		const template = await getById(templateId);
 
 		if (template != null) {
@@ -12,7 +13,9 @@ const handler = nc()
 				template_id: BigInt(templateId),
 				repo_id: BigInt(repoId),
 				blocks: template.blocks,
+				thumbnail: template.thumbnail,
 				name: name,
+				company_id: BigInt(company_id)
 			};
 
 			const result = await create(request);
@@ -42,7 +45,7 @@ const handler = nc()
 		}
 
 		if (template != null || collection != null) {
-			const result = await updateTemplateById(request);
+			const result = await updateLeadPageById(request);
 			res.status(200).send(result);
 		} else {
 			res.status(200).json({ message: 'template not found' });

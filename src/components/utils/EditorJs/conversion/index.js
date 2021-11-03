@@ -51,6 +51,9 @@ async function convertDataToHtml(blocks, layout) {
             case "image":
                 convertedHtml += `<img class="${layout}_blog_post_image" src="${block.data.file.url}" title="${block.data.caption}" /><br /><em>${block.data.caption}</em>`;
                 break;
+            case "simpleImage":
+                convertedHtml += `<img class="${layout}_blog_post_image" src="${block.data.url}" title="${block.data.caption}" /><br /><em>${block.data.caption}</em>`;
+                break;
             case "list":
                 convertedHtml += "<ul>";
                 block.data.items.forEach(function (li) {

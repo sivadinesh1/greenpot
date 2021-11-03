@@ -1,8 +1,8 @@
 module.exports = {
 	reactStrictMode: false,
 	images: {
-		domains: ['res.cloudinary.com'],
-	  },
+		domains: ['res.cloudinary.com', 'img.icons8.com', 'picsum.photos', 'crazyegg.com', 'ceblog.s3.amazonaws.com', 'secure.gravatar.com', 'images.pexels.com'],
+	},
 	env: {
 		customKey: 'my-value',
 	},

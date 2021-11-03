@@ -321,3 +321,214 @@ export const updateLayout = async (id, layout) => {
 	}
 	return bigIntToString(result);
 };
+
+export const publishBlog = async (body) => {
+	let result = null;
+	try {
+		const { content, status, published_status, blog_id } = body
+		let currentDate = new Date();
+		let request = {
+			status: status,
+			published: published_status,
+			published_on: currentDate,
+		};
+
+		if (content != undefined) {
+			request["content"] = content
+			request["publish_content"] = content
+		}
+
+		result = await prisma.blog.update({
+			where: {
+				blog_id: blog_id,
+			},
+			data: request
+		});
+	} catch (error) {
+		console.log('blog publish error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateTitle = async (id, title) => {
+	let result = null;
+	try {
+		let request = {
+			title: title,
+		};
+		result = await update(id, request)
+	} catch (error) {
+		console.log('title update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateSlug = async (id, slug) => {
+	let result = null;
+	try {
+		let request = {
+			slug: slug,
+		};
+		result = await update(id, request)
+	} catch (error) {
+		console.log('title update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateDescription = async (id, description) => {
+	let result = null;
+	try {
+		let request = {
+			description: description,
+		};
+		result = await update(id, request)
+	} catch (error) {
+		console.log('description update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateBlogDate = async (id, blogDate) => {
+	let result = null;
+	try {
+		let request = {
+			blog_date: blogDate,
+		};
+		result = await update(id, request)
+		console.log('blog date update response::', result);
+	} catch (error) {
+		console.log('blog date update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateAuthor = async (id, author) => {
+	let result = null;
+	try {
+		let request = {
+			author: author,
+		};
+		result = await update(id, request)
+	} catch (error) {
+		console.log('author update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateCategory = async (id, category) => {
+	let result = null;
+	try {
+		let request = {
+			category: category,
+		};
+		result = await update(id, request)
+	} catch (error) {
+		console.log('category update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateTag = async (id, tag) => {
+	let result = null;
+	try {
+		let request = {
+			tag: tag,
+		};
+		result = await update(id, request)
+	} catch (error) {
+		console.log('category update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+const update = async (id, request) => {
+	let result = null;
+	result = await prisma.blog.update({
+		where: {
+			id: Number(id),
+		},
+		data: request
+	});
+	return result;
+}
+
+export const validation = async (blog_id) => {
+	let blog = await getBlogByNanoId(blog_id);
+	let obj = {}
+	let error = []
+
+	if (blog.title === null || blog.title.match("Untitled -"))
+		error.push('title')
+	if (blog.description === undefined || blog.description === '' || blog.description === ' ')
+		error.push('description')
+	if (blog.author === undefined || blog.author === '' || blog.author === ' ')
+		error.push('author')
+	if (!blog.category.length)
+		error.push('category')
+	if (!blog.tag.length)
+		error.push('tag')
+
+	if (error.length > 0) {
+		obj["error"] = error;
+		obj["isError"] = true
+	} else {
+		obj["isError"] = false
+	}
+	return obj;
+}
+
+
+export const getBlogsByCategory = async (categoryId) => {
+	let response = null;
+	try {
+		const result = await prisma.blog.findMany({
+			where: {
+				category: {
+					has: Number(categoryId),
+				}
+			}
+		});
+		response = bigIntToString(result);
+
+	} catch (error) {
+		console.log("Error occurred in blog service getBlogsByCategory method ", error)
+	}
+	return response;
+}
+
+export const getBlogsByCompnay = async (company_id) => {
+	let response = null;
+	try {
+		const result = await prisma.blog.findMany({
+			where: {
+				company_id: Number(company_id)
+			}
+		});
+		response = bigIntToString(result);
+
+	} catch (error) {
+		console.log("Error occurred in blog service getBlogsByCategory method ", error)
+	}
+	return response;
+}
+
+
+export const deleteBlogById = async (id) => {
+	let result = null;
+	try {
+		let blogId = Number(id);
+
+		result = await prisma.blog.update({
+			where: {
+				id: blogId,
+			},
+			data: {
+				is_delete: 'Y',
+			},
+		});
+	} catch (error) {
+		console.log('content update error::' + error.message);
+	}
+	return bigIntToString(result);
+};
