@@ -63,7 +63,7 @@ const Blog = ({ blog }) => {
 
 			<div className={value}>
 				<div className='content'>
-					<iframe src={`http://localhost:3000/blog/${blog_id}`} style={{ width: '100%', border: 'none', height: '100%' }} />
+					<iframe src={`${process.env.CLIENT_URL}/blog/${blog_id}`} style={{ width: '100%', border: 'none', height: '100%' }} />
 				</div>
 			</div>
 		</div>

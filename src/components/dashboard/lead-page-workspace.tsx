@@ -37,7 +37,7 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 
 	const handleViewTemplate = () => {
 		setAnchorEl(null);
-		Router.push(`http://localhost:3000/lead-page/${leadPage.lead_page_id}`)
+		Router.push(`${process.env.CLIENT_URL}/lead-page/${leadPage.lead_page_id}`)
 
 	}
 
