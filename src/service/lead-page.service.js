@@ -103,6 +103,21 @@ export const getAllLeadPages = async () => {
 	return bigIntToString(result);
 };
 
+export const getAllPublishedLeadPages = async () => {
+	let result = null;
+	try {
+		result = await prisma.lead_page.findMany({
+			where: {
+				status: 'P',
+				published: 'Y'
+			},
+		});
+	} catch (error) {
+		console.log('getAllPublishedLeadPages error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
 export const deleteById = async (id) => {
 	let status = 'Y';
 	let result = null;
@@ -196,6 +211,26 @@ export const updateBlock = async (id, block) => {
 		});
 	} catch (error) {
 		console.log('update block error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const publishLead = async (id) => {
+	let result = null;
+	let status = 'Y';
+	try {
+		result = await prisma.lead_page.update({
+			where: {
+				lead_page_id: id
+				// id: BigInt(id)
+			},
+			data: {
+				status: 'P',
+				published: status,
+			},
+		});
+	} catch (error) {
+		console.log('publishLead error::' + error.message);
 	}
 	return bigIntToString(result);
 };

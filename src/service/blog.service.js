@@ -18,6 +18,21 @@ export const getAllBlogs = async () => {
 	return bigIntToString(result);
 };
 
+export const getAllPublishedBlog = async () => {
+	let result = null;
+	try {
+		result = await prisma.blog.findMany({
+			where: {
+				status: 'P',
+				published: 'Y'
+			}
+		});
+	} catch (error) {
+		console.log('getAllBlogs error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
 export const getBlogsByCompany = async (company_id) => {
 	let result = null;
 	try {

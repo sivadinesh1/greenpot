@@ -1,4 +1,4 @@
-import { getLeadPageByNano, getAllLeadPages } from '../../../service/lead-page.service';
+import { getLeadPageByNano, getAllPublishedLeadPages } from '../../../service/lead-page.service';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
@@ -16,7 +16,7 @@ export async function getStaticProps(context) {
 } 0
 
 export async function getStaticPaths() {
-    let leads = await getAllLeadPages();
+    let leads = await getAllPublishedLeadPages();
 
     const paths = leads.map((lead) => ({
         params: { lead_page_id: lead.lead_page_id.toString() },

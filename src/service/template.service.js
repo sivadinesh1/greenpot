@@ -13,6 +13,7 @@ export const create = async (body) => {
 		let is_delete = `N`;
 		let date = new Date();
 		let type = 'B';
+		let thumb = "https://res.cloudinary.com/sanjayaalam/image/upload/v1633349662/C1/B1/gieglefcwr3iu1xzjkoo.png";
 
 		const result = await prisma.template.create({
 			data: {
@@ -23,7 +24,7 @@ export const create = async (body) => {
 				blocks: blocks,
 				createdAt: date,
 				template_type: type,
-
+				thumbnail: thumb,
 				template_collection: {
 					create: tempGroupList,
 				},
@@ -194,6 +195,7 @@ export const search = async (data) => {
 					{
 						template_name: {
 							contains: data,
+							mode: "insensitive"
 						},
 					},
 					{

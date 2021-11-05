@@ -53,9 +53,17 @@ const Header = ({ username = '' }) => {
 		Router.push(`/lead-page/preview/${router.query.lead_page_id}`);
 	};
 
+	const handlePublishLead = async () => {
+		let resp = await axios.put(`/api/lead-page/publish/${router.query.lead_page_id}`);
+		if (resp.status === 200) {
+			setSnack(true);
+			setMessage('Lead page published successfully');
+			Router.push('/dashboard');
+		}
+
+	}
 
 	const handlePublish = async () => {
-		console.log('handle publish method call--->', snap.obj);
 		let requestBody = {
 			status: 'P',
 			published_status: 'Y',
@@ -108,6 +116,9 @@ const Header = ({ username = '' }) => {
 						<div style={{ display: 'flex' }}>
 							<div onClick={() => handleLeadView()} style={{ display: 'contents', cursor: 'pointer' }}>
 								<Image src='/static/images/preview.svg' alt='gallery' width='30px' height='30px' />
+							</div>
+							<div onClick={() => handlePublishLead()}>
+								<span className={styles.publish}>Publish</span>
 							</div>
 						</div>
 					)}

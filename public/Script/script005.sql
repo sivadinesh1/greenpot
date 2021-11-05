@@ -215,3 +215,7 @@ update "template" set blocks='[{"type": "Header", "items": [{"style": {"color": 
 INSERT INTO "template" (template_name,status,template_id,is_delete,blocks,template_type,created_by,updated_by,"createdAt","updatedAt",thumbnail) VALUES 
 ('Classic Pro','A','GnOiTVyZ_=3','N','[{"type": "Subscription", "items": [{"style": {"color": "black"}, "value": "SPEAK LOUDLY \n SPEAK VISUALLY", "formDetail": {"name": "title", "type": "text", "label": "Title"}}, {"style": {"color": "black"}, "value": "Receive practical tips on how to \n communicate visually, right in you \n inbox.", "formDetail": {"name": "subTitle", "type": "text", "label": "SubTitle"}}, {"style": {"color": "blue"}, "value": "https://res.cloudinary.com/sanjayaalam/image/upload/v1635415879/hashtag_hrd9jj.png", "formDetail": {"name": "logo", "type": "image", "label": "Logo"}}], "status": "Active", "isDelete": false, "sectionStyle": {"backgroundColor": "#c8cabb", "backgroundImage": null}}]',NULL,NULL,NULL,NULL,NULL,'https://res.cloudinary.com/sanjayaalam/image/upload/v1635762670/thumbnail_gghnpy.png')
 ;
+
+
+alter table lead_page add column published varchar(5);
+update lead_page  set published ='N';

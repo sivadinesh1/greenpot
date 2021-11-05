@@ -1,4 +1,4 @@
-import { getAllBlogs, getBlogByNanoId } from '../../service/blog.service';
+import { getAllBlogs, getBlogByNanoId, getAllPublishedBlog } from '../../service/blog.service';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import IconButton from '@mui/material/IconButton';
@@ -17,7 +17,7 @@ export async function getStaticProps(context) {
 }
 
 export async function getStaticPaths() {
-	let blogs = await getAllBlogs();
+	let blogs = await getAllPublishedBlog();
 
 	const paths = blogs.map((blog) => ({
 		params: { blog_id: blog.blog_id.toString() },

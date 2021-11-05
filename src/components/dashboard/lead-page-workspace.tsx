@@ -193,6 +193,7 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 										{item.template_type === 'L' && <div onClick={() => editCusTemp(item.lead_page_id)}>Landing Page</div>}
 										<div onClick={() => editCusTemp(item.lead_page_id)}>{dateAgo(item.createdAt)}</div>
 
+										{item.status === 'P' && <div className={styles.draft} onClick={() => editCusTemp(item.lead_page_id)}>Published</div>}
 										{item.status === 'A' && <div className={styles.draft} onClick={() => editCusTemp(item.lead_page_id)}>Active</div>}
 										{item.status === 'I' && <div className={styles.published} onClick={() => editCusTemp(item.lead_page_id)}>InActive</div>}
 										<div className={styles.actions} onClick={(event) => handleClick(event, item)}>

@@ -1,6 +1,6 @@
 import nc from 'next-connect';
 // import { getCollection, deleteById, getAllLeadPages } from '../../../service/template-collection.service';
-import { getLeadPageByRepo, updateBlock, deleteById } from '../../../service/lead-page.service';
+import { getLeadPageByRepo, updateBlock, deleteById, publishLead } from '../../../service/lead-page.service';
 import { auth } from '../../../middleware/auth';
 
 const handler = nc()
@@ -28,6 +28,9 @@ const handler = nc()
 		if (slug[0] === 'updateBlock') {
 			const { id, block } = req.body;
 			let result = await updateBlock(id, block);
+			res.status(200).json(result);
+		} else if (slug[0] === 'publish') {
+			let result = await publishLead(slug[1]);
 			res.status(200).json(result);
 		}
 	});
