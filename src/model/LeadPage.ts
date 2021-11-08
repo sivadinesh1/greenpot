@@ -14,4 +14,5 @@ export interface ILeadPage {
 	createdAt: Date;
 	updatedBy: number;
 	updatedAt: Date;
+	slug: string;
 }

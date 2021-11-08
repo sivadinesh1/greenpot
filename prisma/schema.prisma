@@ -80,9 +80,9 @@ model company {
   createdAt     DateTime?  @default(now()) @db.Timestamp(6)
   updatedAt     DateTime? @updatedAt
   blog_home_format     String?   @db.VarChar(50)
+  sub_domain    String?   @db.VarChar(100)
   repo         repo[]
   @@unique([company_id], name: "company_unique")
-
 }
 
 model role {
@@ -187,7 +187,8 @@ model lead_page{
     updated_by      BigInt?
     createdAt       DateTime? @db.Timestamp(6)
     updatedAt       DateTime? @db.Timestamp(6)
-    
+    slug            String?    @db.VarChar(350)
+
     repo            repo   @relation(fields: [repo_id], references: [id])
     @@unique([lead_page_id], name: "lead_page_id_unique")
 

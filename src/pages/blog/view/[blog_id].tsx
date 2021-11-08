@@ -1,5 +1,5 @@
-import { getBlogByNanoId } from "../../service/blog.service";
-import { jsonToHtml } from '../../components/utils/EditorJs/conversion'
+import { getBlogByNanoId } from "../../../service/blog.service";
+import { jsonToHtml } from '../../../components/utils/EditorJs/conversion'
 
 export const getServerSideProps = async (context) => {
 	const blog_id = context.params.blog_id as string;

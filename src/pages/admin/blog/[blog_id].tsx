@@ -1,20 +1,9 @@
-import Layout from '../../../components/Layout';
-
-import React, { useState, useEffect } from 'react';
-
-import SnackBar from '../../../components/elements/ui/Dialog/SnackBar';
-
-// import { Blog } from '../../../model/Blog';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import React, { useEffect } from 'react';
 import styles from '../../../styles/Blog.module.scss';
-import BlogList from '../../../components/crud/Blog/blog-list';
-
 import axios from 'axios';
-import useSWR, { mutate, trigger } from 'swr';
 import BlogView from '../../../components/crud/Blog/blog-view';
 import { forceLogout } from '../../../components/auth/auth';
 import { jsonToHtml } from '../../../components/utils/EditorJs/conversion'
-import Checkbox from '@mui/material/Checkbox';
 import Radio from '@mui/material/Radio';
 import RadioGroup from '@mui/material/RadioGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -37,7 +26,6 @@ export const getServerSideProps = async (context) => {
 			},
 		});
 		blog = resp.data;
-		console.log("test data ---->", blog.publish_content)
 		if (blog.publish_content == null)
 			isEmpty = true;
 		else
@@ -47,11 +35,9 @@ export const getServerSideProps = async (context) => {
 		console.log(`error in blog view ${error}`);
 		isError = true;
 	}
-
 	return {
 		props: { isError, blog, html, isEmpty },
 	};
-
 };
 
 export default function Index({ isError, blog, html, isEmpty }) {
@@ -84,7 +70,6 @@ export default function Index({ isError, blog, html, isEmpty }) {
 					</FormControl>
 				</div>
 				<BlogView blog={blog} html={html} isEmpty={isEmpty} view={value} />
-
 			</div>
 		</>
 	);

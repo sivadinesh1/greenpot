@@ -1,15 +1,12 @@
-import React, { useRef, useCallback, useState, useEffect } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import Router from 'next/router';
-import { useRouter } from 'next/router';
 import axios from 'axios';
-import { useForm, Controller, FieldErrors, useWatch } from 'react-hook-form';
+import { useForm, Controller, FieldErrors } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import dynamic from 'next/dynamic';
-import { makeStyles } from '@material-ui/core/styles';
-
 import TextField from '@material-ui/core/TextField';
-import { Button, Divider, Menu, MenuItem, withWidth, FormControl, Input } from '@material-ui/core';
+import { Button, Divider, Menu, MenuItem, FormControl, Input } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -19,42 +16,28 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Image } from 'cloudinary-react';
-
 import { useDropzone } from 'react-dropzone';
-
 import styles from '../../../../styles/Blog.module.scss';
-
 import styles_drop_zone from '../../../../styles/dropZone.module.css';
-
-import BlogPreview from '../../../../components/crud/Blog/blog-preview';
-
 import { getTags, getAllTags } from '../../../../service/tag.service';
-import { getCategories, getAllCategories } from '../../../../service/category.service';
-
+import { getCategories } from '../../../../service/category.service';
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
-
-import { format, parseISO, formatDistance, formatRelative, subDays } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 // do not delete this import, prevents warnings
 import { alpha } from '@material-ui/core/styles';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { getImages } from '../../../../service/cloudinary.service';
 import { ErrorMessage } from '@hookform/error-message';
-
 import { getRepo } from '../../../../service/repository.service';
-import { isEmpty } from '../../../../components/utils/util';
-import { getUserById } from '../../../../service/auth/auth.service';
-import ReactHookFormSelect from '../../../../components/ReactHookFormSelect';
 import { forceLogout } from '../../../../components/auth/auth';
 import { content } from '../../../../utils/content';
 import { useSnapshot } from 'valtio';
 import { FormInputText } from '../../../../components/forms/FormInputText';
 import { FormInputDropdown } from '../../../../components/forms/FormInputDropdown';
-import { FormInputDate } from '../../../../components/forms/FormInputDate';
 import ImageNext from 'next/image';
 import Switch from '@mui/material/Switch';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import AdUnitsIcon from '@mui/icons-material/AdUnits';
 import AdbIcon from '@mui/icons-material/Adb';
@@ -63,6 +46,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
+
 
 let MyEditor;
 if (typeof window !== 'undefined') {
@@ -260,7 +244,6 @@ export default function Index({
 		is_publish_date: yup.boolean().nullable().notRequired(),
 	});
 	const {
-		register,
 		handleSubmit,
 		watch,
 		formState: { isValid, errors },
@@ -282,7 +265,6 @@ export default function Index({
 	const handleDateChange = async (date) => {
 		setSelectedDate(date);
 		setFormattedDate(format(date, 'MMM dd, yyyy'));
-		console.log('Test date value -->', parseISO(selectedDate));
 		let request = {
 			id: currentBlog.id,
 			blogDate: parseISO(selectedDate),
@@ -295,6 +277,7 @@ export default function Index({
 		color: 'red',
 		content: '⚠ ',
 	};
+
 	//dialog box
 	const [openDialog, setOpenDialog] = React.useState(false);
 	const handleOpenDialog = () => {
@@ -349,7 +332,6 @@ export default function Index({
 	const snap = useSnapshot(content);
 
 	const onSubmit = async (formData, event) => {
-		console.log('check form data ---->', formData);
 		if (submitting) {
 			return false;
 		}
@@ -380,8 +362,6 @@ export default function Index({
 			is_author: formData.is_author,
 		};
 		if (snap.obj != null) values['content'] = snap.obj;
-		console.log('test values data---->', values);
-
 		setSubmitting(true);
 		setServerErrors([]);
 
@@ -575,28 +555,28 @@ export default function Index({
 	const handleCloseDeleteDialog = () => {
 		setOpenDeleteDialog(false);
 	};
+
+	//soft  delete blog with id and load dashboard
 	const confirmDelete = async () => {
 		let response = await axios.delete(`/api/blog/${currentBlog.id}`);
 		if (response.status === 200) {
 			Router.push(`/dashboard`);
 			handleCloseDeleteDialog();
 		}
-		//mutate();
 	};
 
-	// onClick={handleShowMetaSection} className={showMetaSection ? `${styles.menu_item} ${styles.selected}` : `${styles.menu_item}`
 	const [word, setWord] = useState("")
 	const [dictionaryResult, setDictionaryResult] = useState({})
 
+	//handle dictionary input box
 	const handleChange = async (searchKey) => {
-		console.log("test search word--->", searchKey)
 		setWord(searchKey)
 	};
 
+	// Dictionary api integration 
 	const search = async () => {
 		let result = await axios.get(`/api/dictionary/${word}`);
 		setDictionaryResult(result.data);
-		console.log("Check result---> 3", result.data)
 		setWord("")
 	}
 
@@ -609,14 +589,14 @@ export default function Index({
 	let page = 1;
 	let accesskey = 'xEgxLpBbjc6QDigyUa6pNU7dWdaA2HoQTE8bIGVSnkI'
 	let size = 30
+
+	//unsplash category(collection) based search  
 	const searchImage = async () => {
-		console.log("check search key--->", word)
 		let resp = await axios.get(`https://api.unsplash.com/collections?page=${page}&per_page=${size}&query=${word}&client_id=${accesskey}`)
-		// let resp = await axios.get(`https://api.unsplash.com/photos?page=${page}&per_page=${size}&query=${word}&client_id=${accesskey}`)
 		setUnsplashImage(resp.data)
 		setWord("")
-
 	}
+
 	const unsplashGallery = () => {
 		return (
 			<div>
@@ -962,20 +942,6 @@ export default function Index({
 								))}
 							</FormInputDropdown>
 						</div>
-						{/* <div className={styles.rowGap}>
-							<FormInputDropdown
-								name='layout'
-								control={control}
-								width={'100%'}
-								defaultValue={{ label: '', value: '' }}
-								label='Select Layout'>
-								{options.map((option: any) => (
-									<MenuItem key={option.value} value={option.value}>
-										{option.label}
-									</MenuItem>
-								))}
-							</FormInputDropdown>
-						</div> */}
 						<div className={styles.rowGap}>
 							<div className={styles.blog_switch}>
 								<div>
@@ -996,11 +962,6 @@ export default function Index({
 								</div>
 							</div>
 						</div>
-						{/* <div className={styles.flex_center}>
-							<Button variant='contained' color='primary' type='submit' id='save' style={{ marginRight: '10px' }}>
-								Save
-							</Button>
-						</div> */}
 					</form>
 					<div onClick={() => handleOpenDeleteDialog()} className={styles.blog_delete}>
 						<DeleteIcon /> Delete Article

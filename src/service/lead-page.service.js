@@ -5,7 +5,7 @@ import prisma from '../db-config/prisma';
 import { bigIntToString } from '../db-config/utils';
 
 export const create = async (body) => {
-	const { template_id, repo_id, blocks, name, company_id, thumbnail } = body;
+	const { template_id, repo_id, blocks, name, company_id, thumbnail, slug } = body;
 	let status = `A`;
 	let is_delete = `N`;
 	let date = new Date();
@@ -25,7 +25,8 @@ export const create = async (body) => {
 				createdAt: date,
 				template_type: type,
 				lead_page_name: name,
-				thumbnail: thumbnail
+				thumbnail: thumbnail,
+				slug: slug
 			},
 		});
 	} catch (error) {
@@ -149,6 +150,42 @@ export const getLeadPageByNano = async (nanoid) => {
 		response = bigIntToString(result.length > 0 ? result[0] : []);
 	} catch (error) {
 		console.log('getLeadPageByNano :: ', error.message);
+	}
+	return response;
+};
+
+export const getLeadPageBySlug = async (slug) => {
+	var response = null;
+	try {
+		const result = await prisma.lead_page.findMany({
+			where: {
+				slug: slug,
+				is_delete: 'N',
+			},
+			include: {
+				repo: true,
+			},
+		});
+		console.log("check data validation --->", result.length)
+		response = bigIntToString(result.length > 0 ? result[0] : []);
+	} catch (error) {
+		console.log('getLeadPage By Slug  :: ', error.message);
+	}
+	return response;
+};
+
+export const checkDuplicate = async (slug) => {
+	var response = null;
+	try {
+		const result = await prisma.lead_page.count({
+			where: {
+				slug: slug,
+				is_delete: 'N',
+			}
+		});
+		response = result;
+	} catch (error) {
+		console.log('checkDuplicate  :: ', error.message);
 	}
 	return response;
 };

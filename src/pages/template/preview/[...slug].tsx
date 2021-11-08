@@ -103,6 +103,9 @@ const TemplatePreview = ({ isError, template, repoId, repoNano, company_id }) =>
 	const [serverErrors, setServerErrors] = useState<Array<string>>([]);
 	const [error, setError] = useState(false);
 	const [openDialog, setOpenDialog] = useState(false);
+	const [isDuplicate, setIsDuplicate] = useState(false);
+	const [message, setMessage] = useState('')
+
 	const handleOpenDialog = () => {
 		setOpenDialog(true);
 	};
@@ -141,9 +144,20 @@ const TemplatePreview = ({ isError, template, repoId, repoNano, company_id }) =>
 			setOpenDialog(false);
 			handleCustomTemplate(response.data.lead_page_id);
 			event.target.reset();
+		} else if (response.status === 200) {
+			console.log("check duplicate ---->", response.data)
+			showError(true, response.data.message)
 		}
 	};
 
+
+	const showError = (flag, data) => {
+		setMessage(data);
+		setIsDuplicate(flag);
+		setTimeout(() => {
+			setIsDuplicate(false);
+		}, 5000);
+	};
 	return (
 		<>
 			<div className={styles.temp_wrap}>
@@ -217,6 +231,7 @@ const TemplatePreview = ({ isError, template, repoId, repoNano, company_id }) =>
 										style={{ borderRadius: '50px' }}
 										error={!!errors.name}
 									/>
+									{isDuplicate && <p>{message}</p>}
 								</div>
 								<div className='global_errors'>{errors && errors?.name?.message}</div>
 							</div>

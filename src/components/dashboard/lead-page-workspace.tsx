@@ -37,14 +37,8 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 
 	const handleViewTemplate = () => {
 		setAnchorEl(null);
-		Router.push(`${process.env.CLIENT_URL}/lead-page/${leadPage.lead_page_id}`)
-
+		Router.push(`/lead-page/pre-view/${leadPage.slug}`)
 	}
-
-	// const handleOpenTemplate = () => {
-	// 	// setTemplateDialog(true);
-	// 	Router.push(`/template/${selectedRepo.repo_id}`);
-	// };
 
 	const [anchorEl, setAnchorEl] = React.useState(null);
 

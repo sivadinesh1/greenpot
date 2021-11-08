@@ -89,6 +89,20 @@ export const getBlogByNanoId = async (blogId) => {
 	return bigIntToString(result);
 };
 
+
+export const getBlogBySlug = async (slug) => {
+	let result = null;
+	try {
+		result = await prisma.blog.findMany({
+			where: {
+				slug: slug,
+			},
+		});
+	} catch (error) {
+		console.log('getBlogBySlug error::' + error.message);
+	}
+	return bigIntToString(result[0]);
+};
 export const getRepoBlogSummary = async (company_id) => {
 	let result = null;
 	let returnArr = null;

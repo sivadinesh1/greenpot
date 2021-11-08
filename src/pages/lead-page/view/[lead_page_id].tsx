@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { getLeadPageByNano } from '../../service/lead-page.service';
-import Builder from '../../components/Builder'
+import { getLeadPageByNano } from '../../../service/lead-page.service';
+import Builder from '../../../components/Builder'
 
 export const getServerSideProps = async (context) => {
 	let isError = false;
@@ -10,6 +10,7 @@ export const getServerSideProps = async (context) => {
 
 	try {
 		cTempNano = context.params.lead_page_id;
+		console.log("check lead id ---->", cTempNano)
 		cookie = context?.req?.headers.cookie;
 		leadData = await getLeadPageByNano(cTempNano);
 	} catch (error) {
@@ -24,7 +25,7 @@ export const getServerSideProps = async (context) => {
 
 const LeadPageView = ({ isError, leadData }) => {
 	const [data, setData] = useState(leadData.blocks);
-
+	console.log("cross check data ---->", leadData)
 
 	return (
 		<div>

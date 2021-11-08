@@ -1,27 +1,33 @@
 import nc from 'next-connect';
-import { updateLeadPageById, getCollection } from '../../../service/lead-page.service';
+import { updateLeadPageById, getCollection, checkDuplicate } from '../../../service/lead-page.service';
 import { create } from "../../../service/lead-page.service";
 import { getById } from '../../../service/template.service';
+const slugify = require('slugify');
+
 
 const handler = nc()
 	.post(async (req, res) => {
 		const { templateId, repoId, name, company_id } = req.body;
 		const template = await getById(templateId);
+		let slug = slugify(name).toLowerCase();
+		let count = await checkDuplicate(slug);
+		console.log("check data ---> ", count)
 
-		if (template != null) {
+		if (template != null && !(count > 0)) {
 			let request = {
 				template_id: BigInt(templateId),
 				repo_id: BigInt(repoId),
 				blocks: template.blocks,
 				thumbnail: template.thumbnail,
 				name: name,
-				company_id: BigInt(company_id)
+				company_id: BigInt(company_id),
+				slug: slug
 			};
 
 			const result = await create(request);
 			res.status(201).send(result);
 		} else {
-			res.status(200).json({ message: 'template not found' });
+			res.status(200).json({ message: count > 0 ? 'Name already exist' : 'template not found' });
 			return;
 		}
 	})

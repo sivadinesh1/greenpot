@@ -15,7 +15,6 @@ import NextImage from 'next/image';
 
 
 const Subscription = (props) => {
-    // const { company_id, lead_id } = props;
     let section = 'Subscription';
     const { company_id, lead_id, title, subTitle, key, index, style, mode, logo } = props;
     const [animation, cycleAnimation] = useCycle("animationOne", "animationTwo");
@@ -105,8 +104,7 @@ const Subscription = (props) => {
     };
 
     const STATE_MACHINE_NAME = 'State Machine 1';
-    const ON_HOVER_INPUT_NAME = 'Hover';
-    const ON_PRESSED_INPUT_NAME = 'Pressed';
+
 
     const { RiveComponent, rive } = useRive({
         src: './../../../logistic_box.riv',
@@ -127,6 +125,7 @@ const Subscription = (props) => {
                     <RiveComponent />
                 </div>
             </div>
+            <GPBox>&nbsp;</GPBox>
             <GPBox>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <motion.h1
@@ -159,9 +158,6 @@ const Subscription = (props) => {
                     <div className={styles.helper_text}>{`We don't share email with anyone`}</div>
                 </form>
             </GPBox>
-            <div>
-
-            </div>
         </div>
 
     )
