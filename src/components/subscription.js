@@ -10,13 +10,16 @@ import { useRive, useStateMachineInput } from 'rive-react';
 import { motion } from "framer-motion";
 import { useCycle } from "framer-motion";
 import NextImage from 'next/image';
+import axios from 'axios'
 
 
 
 
 const Subscription = (props) => {
     let section = 'Subscription';
-    const { company_id, lead_id, title, subTitle, key, index, style, mode, logo } = props;
+    let company_id = 1;
+    let lead_id = 4;
+    const { title, subTitle, key, index, style, mode, logo } = props;
     const [animation, cycleAnimation] = useCycle("animationOne", "animationTwo");
 
     const handleEvent = (event, position, type) => {
@@ -40,14 +43,29 @@ const Subscription = (props) => {
         reset
     } = useForm();
 
+    // const onSubmit = async (data) => {
+    //     console.log("test form data----->", data)
+    // };
+
     const onSubmit = async (data) => {
         console.log("test form data----->", data)
+        let requestObj = { ...data, company_id, lead_id }
+        let response = await axios.post('/api/subscription', requestObj);
+        console.log("response data test--->", response)
+        if (response.status === 201) {
+            reset();
+            showMessage(true, "Subscription added successfully")
+        }
+        else if (response.status === 200) {
+            reset();
+            showMessage(true, response.data.errors[0])
+        }
     };
 
     const [isSuccess, setIsSuccess] = useState(false);
     const [message, setMessage] = useState('')
 
-    const showSuccess = (flag, data) => {
+    const showMessage = (flag, data) => {
         setMessage(data);
         setIsSuccess(flag);
         setTimeout(() => {
@@ -56,7 +74,7 @@ const Subscription = (props) => {
     };
 
     let successStyle = {
-        color: 'green',
+        color: 'red',
         content: '⚠ ',
     };
 

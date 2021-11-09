@@ -119,6 +119,22 @@ export const getAllPublishedLeadPages = async () => {
 	return bigIntToString(result);
 };
 
+export const getPublishedLeadPagesByCompany = async (id) => {
+	let result = null;
+	try {
+		result = await prisma.lead_page.findMany({
+			where: {
+				status: 'P',
+				published: 'Y',
+				company_id: Number(id)
+			},
+		});
+	} catch (error) {
+		console.log('getAllPublishedLeadPages error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
 export const deleteById = async (id) => {
 	let status = 'Y';
 	let result = null;

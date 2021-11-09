@@ -14,6 +14,8 @@ import styles from '../styles/dashboard.module.scss';
 import { getById } from '../service/company.service'
 
 export const getServerSideProps = async (context) => {
+	console.log("Check context data  --->1", context)
+
 	let isError = false;
 	let cookie = null;
 	let repos = null;

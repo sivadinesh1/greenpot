@@ -1,0 +1,3 @@
+INSERT INTO public.users (id,first_name,email,last_login_date,profile_pic,reset_token,salt,hashed_password,resetpasswordlink,created_by,created_date,modified_by,modified_date,last_name,phone,status,profile_url,company_id,"source",socialmedia_id,access_rights,user_id) VALUES 
+(1,'Squaple','sanjay@gmail.com',NULL,NULL,NULL,'c8d7e61e5ee94fa8c19c205c908ce6c3','5670d10b3a0277245e2fdf58323ec0a53d4a747d91b5dab71d54fc48a7ec05b04dd322f321706a8036dad6001b5e502859216aa6a3a8b43335c1567f27333510',NULL,NULL,'2021-09-27 07:00:13.677',NULL,NULL,NULL,NULL,'A','http://localhost:3000/profile/o_vyHE9rA4Z',1,NULL,NULL,'A','MLOYFCLEv4w')
+;

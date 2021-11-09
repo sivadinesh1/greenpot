@@ -1,41 +1,55 @@
 import { getLeadPageBySlug, getAllPublishedLeadPages } from '../../service/lead-page.service';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
-import IconButton from '@mui/material/IconButton';
-import styles from '../../styles/Blog.module.scss';
-import PhoneAndroidIcon from '@mui/icons-material/PhoneAndroid';
-import TabletAndroidIcon from '@mui/icons-material/TabletAndroid';
-import DesktopWindowsIcon from '@mui/icons-material/DesktopWindows';
-import Image from 'next/image';
+import styles from '../../styles/LeadPage.module.scss'
 import Builder from '../../components/Builder'
+import { getBySubDomain } from '../../service/company.service'
 
-export async function getStaticProps(context) {
-    console.log("Check response data  --->1")
-    let lead = await getLeadPageBySlug(context.params.slug);
+export async function getServerSideProps(context) {
+    let host = `test.${context.req.headers.host}`;
+    let isDev = host.includes(process.env.NODE_ENV === "development" ? "localhost" : "hashtagwebb");
+    let splitHost = host.split(".");
+    let subDomain = null;
+    let response = {};
+    if ((isDev && splitHost.length === 2) || (!isDev && splitHost.length === 3)) {
+        subDomain = splitHost[0];
+        if (subDomain != null) {
+            let company = await getBySubDomain(subDomain)
+            let lead = await getLeadPageBySlug(context.params.slug);
+            if (company) {
+                response["lead"] = lead
+                response["isError"] = false
+                response["message"] = ""
+            } else {
+                response["isError"] = true
+                response["lead"] = lead
+                response["message"] = "SubDomain Not Found"
+            }
+        }
+    }
     return {
-        props: { lead }
+        props: { ...response }
     };
 }
 
-export async function getStaticPaths() {
-    let leads = await getAllPublishedLeadPages();
-
-    const paths = leads.map((lead) => ({
-        params: { slug: lead.slug.toString() },
-    }));
-    return { paths, fallback: false };
-}
-
-const LeadPage = ({ lead }) => {
+const LeadPage = ({ lead, isError, message }) => {
     const router = useRouter();
     const [data, setData] = useState(lead.blocks);
-
-    return (
-        <div style={{ padding: "2rem" }}>
-            <div >
-                <Builder data={data} mode={'view'} />
+    if (isError) {
+        return (
+            <div className={styles.centered}>
+                <div>Something went wrong</div>
             </div>
-        </div>
-    );
+        )
+    } else {
+        return (
+            <div style={{ padding: "2rem" }}>
+                <div >
+                    <Builder data={data} mode={'view'} />
+                </div>
+            </div>
+        );
+    }
+
 };
 export default LeadPage;

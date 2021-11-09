@@ -83,6 +83,8 @@ model company {
   sub_domain    String?   @db.VarChar(100)
   repo         repo[]
   @@unique([company_id], name: "company_unique")
+  @@unique([sub_domain], name: "sub_domain_unique")
+
 }
 
 model role {
@@ -213,4 +215,15 @@ model template_collection{
     collection      collection  @relation(fields: [collection_id], references: [id])
     template        template  @relation(fields: [template_id], references: [id])
     @@id([collection_id, template_id]) 
+}
+
+model subscriptions{
+    id            BigInt    @id @default(autoincrement())
+    email          String?    @db.VarChar(150)
+    company_id   BigInt?  
+    repo_id   BigInt?  
+    lead_id   BigInt?
+    created_date  DateTime? @db.Timestamp(6)
+    @@unique([email,lead_id], name: "subscription_unique")
+
 }

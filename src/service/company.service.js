@@ -97,6 +97,23 @@ export const getByNanoWithAssociation = async (id) => {
 	return bigIntToString(result);
 };
 
+export const getBySubDomain = async (subDomain) => {
+	let result = false;
+	try {
+		result = await prisma.company.findUnique({
+			where: {
+				sub_domain: subDomain,
+			}
+		});
+		console.log("check sub domain data--->", result)
+		return result;
+	} catch (error) {
+		console.log('getBySubDomain error::' + error.message);
+		return result;
+	}
+	// return bigIntToString(result);
+};
+
 export const getList = async () => {
 	let result = null;
 	try {
