@@ -5,12 +5,15 @@ import TextField from '@material-ui/core/TextField';
 import { useForm } from 'react-hook-form';
 import styles from '../styles/Subscription.module.scss'
 import styled from 'styled-components';
-import Option from "../components/landing/option";
+import Option from "./library/option";
 import { useRive, useStateMachineInput } from 'rive-react';
 import { motion } from "framer-motion";
 import { useCycle } from "framer-motion";
 import NextImage from 'next/image';
 import axios from 'axios'
+import Dialog from '@material-ui/core/Dialog';
+import DialogContent from '@material-ui/core/DialogContent';
+import GpButton from '../components/library/CtaButton/GpButton'
 
 
 
@@ -19,7 +22,7 @@ const Subscription = (props) => {
     let section = 'Subscription';
     let company_id = 1;
     let lead_id = 4;
-    const { title, subTitle, key, index, style, mode, logo } = props;
+    const { title, subTitle, key, index, style, mode, logo, buttonLabel } = props;
     const [animation, cycleAnimation] = useCycle("animationOne", "animationTwo");
 
     const handleEvent = (event, position, type) => {
@@ -61,6 +64,8 @@ const Subscription = (props) => {
             showMessage(true, response.data.errors[0])
         }
     };
+
+
 
     const [isSuccess, setIsSuccess] = useState(false);
     const [message, setMessage] = useState('')
@@ -131,6 +136,17 @@ const Subscription = (props) => {
         autoplay: true,
     });
 
+    const [openDialog, setOpenDialog] = useState(false);
+
+    const handleOpenDialog = () => {
+        setOpenDialog(true);
+    };
+
+    const handleCloseDialog = () => {
+        reset();
+        setOpenDialog(false);
+    };
+
     return (
         <div className={styles.imageStack}>
             <div className={styles.subcontainer}>
@@ -169,14 +185,36 @@ const Subscription = (props) => {
                     </div>
                     {isSuccess && <p style={successStyle}>{message}</p>}
                     <div className={styles.form_gap}>
-                        <Button type='submit' variant="contained" color='primary' style={{ width: '100%' }}>
-                            Join us!
+
+                        <div onClick={(event) => handleEvent(event, 3, 'ctaButton')}>
+                            <GpButton type='submit' label={buttonLabel} />
+                        </div>
+                    </div>
+                    <div styles={{ paddingTop: "10px" }}>
+                        <Button variant="contained" onClick={handleOpenDialog} color='primary' style={{ width: '100%' }}>
+                            Schedule Meeting
 						</Button>
                     </div>
                     <div className={styles.helper_text}>{`We don't share email with anyone`}</div>
                 </form>
             </GPBox>
+
+            <Dialog open={openDialog} onClose={handleCloseDialog}>
+                <DialogContent style={{ width: '500px' }}>
+                    <div className={styles.dialog_pop}>
+                        <div style={{ fontSize: '20px' }}>Schedule Meeting</div>
+                        <div style={{ cursor: 'pointer' }}>
+                            <NextImage src='/static/images/close.svg' alt='edit' width='16px' height='16px' onClick={handleCloseDialog} />
+                        </div>
+                    </div>
+                    <div>
+                        <iframe src="http://localhost:3002/sanjay" frameborder="0" allowfullscreen></iframe>
+                    </div>
+
+                </DialogContent>
+            </Dialog>
         </div>
+
 
     )
 

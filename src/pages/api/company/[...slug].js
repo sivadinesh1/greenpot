@@ -1,6 +1,5 @@
 import nc from 'next-connect';
-import { getById, getByNano, deleteById, updateBlogFormat, getByNanoWithAssociation } from '../../../service/company.service';
-import { auth } from '../../../middleware/auth';
+import { getById, getByNano, deleteById, updateBlogFormat, getByNanoWithAssociation, getBySubDomain } from '../../../service/company.service';
 
 const handler = nc()
 	.get(async (req, res) => {
@@ -14,6 +13,12 @@ const handler = nc()
 			res.status(200).json(result);
 		} else if (slug[0] === 'getByNanoWithAssociation') {
 			const result = await getByNanoWithAssociation(slug[1]);
+			res.status(200).json(result);
+		} else if (slug[0] === 'getBySubDomain') {
+			console.log("data test ---->", slug)
+			const result = await getBySubDomain(slug[1]);
+			console.log("data test ---->2", result)
+
 			res.status(200).json(result);
 		}
 	})

@@ -5,7 +5,7 @@ const { db } = getDB();
 const { nanoid } = require('nanoid');
 
 export const createCompnay = async (data) => {
-	const { name } = data;
+	const { name, sub_domain } = data;
 	console.log('test company name--->', name);
 	let is_delete = 'N';
 	let status = 'A';
@@ -15,6 +15,7 @@ export const createCompnay = async (data) => {
 			data: {
 				company_id: nanoid(11),
 				name: name,
+				sub_domain: sub_domain,
 				status: status,
 				is_delete: is_delete,
 			},
@@ -106,12 +107,11 @@ export const getBySubDomain = async (subDomain) => {
 			}
 		});
 		console.log("check sub domain data--->", result)
-		return result;
+		return bigIntToString(result);
 	} catch (error) {
 		console.log('getBySubDomain error::' + error.message);
 		return result;
 	}
-	// return bigIntToString(result);
 };
 
 export const getList = async () => {

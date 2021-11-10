@@ -22,7 +22,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import FormControl from '@material-ui/core/FormControl';
 import Input from '@material-ui/core/Input';
-
+import CheckIcon from '@mui/icons-material/Check';
 const useStyles = makeStyles((theme) => ({
 	root: {
 		display: 'flex',
@@ -44,8 +44,8 @@ const SignupComponent = () => {
 	const [ErMessage, setErMessage] = useState('');
 	let schema = yup.object().shape({
 		name: yup.string().required(),
-
 		email: yup.string().email().required(),
+		sub_domain: yup.string().required().min(3).max(12),
 		password: yup.string().required().min(8).max(16),
 	});
 
@@ -58,9 +58,23 @@ const SignupComponent = () => {
 		register,
 		handleSubmit,
 		formState: { errors },
+		watch
 	} = useForm({
 		resolver: yupResolver(schema),
 	});
+	const [isValid, setIsValid] = useState(false);
+	const [isInValid, setIsInValid] = useState(false);
+
+	const checkAvailability = async () => {
+		setIsValid(false)
+		setIsInValid(false)
+		console.log("check Domain --->", watch("sub_domain"))
+		let response = await axios.get(`/api/company/getBySubDomain/${watch("sub_domain")}`)
+		if (response.data === '')
+			setIsValid(true)
+		else
+			setIsInValid(true)
+	}
 
 	const [showPassword, setShowPassword] = useState(false);
 
@@ -70,6 +84,7 @@ const SignupComponent = () => {
 			name: data.name,
 			password: data.password,
 			email: data.email,
+			sub_domain: data.sub_domain,
 			origin: 'lapa',
 		};
 
@@ -95,6 +110,8 @@ const SignupComponent = () => {
 	const handleMouseDownPassword = (event) => {
 		event.preventDefault();
 	};
+
+
 
 	const signupForm = () => {
 		return (
@@ -142,6 +159,29 @@ const SignupComponent = () => {
 								error={!!errors.name}
 								helperText={errors?.name?.message}
 							/>
+
+							<FormControl fullWidth className={clsx(classes.margin, classes.textField)}>
+								<InputLabel htmlFor='standard-adornment-password'>Enter SubDomain</InputLabel>
+								<Input
+									id='standard-adornment-password'
+									type='text'
+									name='sub_domain'
+									label='Enter SubDomain'
+									fullWidth
+									autoComplete='off'
+									margin='dense'
+									{...register('sub_domain')}
+									endAdornment={
+										<InputAdornment position='end'>
+											<Button variant='outlined' disabled={watch("sub_domain") === undefined || watch("sub_domain") === "" ? true : false} style={{ paddingBottom: '2.5px' }} onClick={checkAvailability}>{'Check Availability'}{isValid && < CheckIcon />}</Button>
+										</InputAdornment>
+									}
+									error={!!errors.sub_domain}
+								/>
+								<div className='global_errors'>{errors && errors?.sub_domain?.message}</div>
+								{isInValid && <div className='global_errors'>{`Sorry, this Sub Domain is already taken. `}</div>}
+
+							</FormControl>
 
 							<FormControl fullWidth className={clsx(classes.margin, classes.textField)}>
 								<InputLabel htmlFor='standard-adornment-password'>Enter Password</InputLabel>

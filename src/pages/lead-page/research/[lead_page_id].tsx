@@ -438,6 +438,27 @@ const LeadPage = ({ isError, collection }) => {
             </div>
         );
     };
+    const suggestions = [
+        {
+            label: "Get My 50% off"
+        },
+        {
+            label: "Download now"
+        },
+        {
+            label: "Start My Free Trial"
+        },
+    ]
+
+    const handleSuggestion = (val) => {
+        setContent(val);
+        debugger
+        console.log("test type --->", typeof position)
+        let cloneData = JSON.parse(JSON.stringify(data));
+        cloneData[currentIndex].items[position].value = val;
+        setData(cloneData);
+        handleSaveBlock();
+    }
 
     return (
         <div>
@@ -501,6 +522,13 @@ const LeadPage = ({ isError, collection }) => {
                                     fullWidth
                                 />
                             </div>}
+                            {contentType === 'ctaButton' && <div style={{ paddingTop: '10px' }}>
+                                <div>Test</div>
+                                {suggestions.map((s) => {
+                                    return (<div onClick={() => handleSuggestion(s.label)}>{s.label}</div>)
+                                })}
+                            </div>}
+
                             {contentType !== 'image' && (<div>
                                 <div className={styles.flex_start}>
                                     <div>Font Color:</div>
@@ -511,7 +539,6 @@ const LeadPage = ({ isError, collection }) => {
                                         <div style={style.cover} onClick={() => handleClosePicker("font")} />
                                         <SketchPicker color={fontColor.color} onChange={handleChangeFontColor} />
                                     </div> : null}
-
                                 </div>
                             </div>)}
 

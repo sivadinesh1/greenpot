@@ -19,7 +19,7 @@ import Image from 'next/image';
 import Breadcrumbs from '@material-ui/core/Breadcrumbs';
 import Link from '@material-ui/core/Link';
 import Typography from '@material-ui/core/Typography';
-import Header from '../../../components/landing/Header';
+import Header from '../../../components/library/Header';
 import Footer from '../../../components/Footer';
 import Builder from '../../../components/Builder';
 

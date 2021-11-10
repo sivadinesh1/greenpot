@@ -1,8 +1,8 @@
-import Header from '../components/landing/Header';
-import Footer from '../components/landing/Footer';
-import Hero from '../components/landing/Hero';
-import HeroPage from '../components/landing/HeroPage';
-import ContentPage from '../components/landing/Content';
+import Header from './library/Header';
+import Footer from './library/Footer';
+import Hero from './library/Hero';
+import HeroPage from './library/HeroPage';
+import ContentPage from './library/Content';
 import SubscriptionForm from '../components/subscription'
 
 const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
@@ -67,6 +67,7 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											title={{ value: obj.items[0].value, style: obj.items[0].style }}
 											subTitle={{ value: obj.items[1].value, style: obj.items[1].style }}
 											logo={obj.items[2].value}
+											buttonLabel={obj.items[3].value}
 											key={index}
 											index={index}
 											onHandle={onHandle}
@@ -158,6 +159,7 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											index={index}
 											style={obj.sectionStyle}
 											mode={mode}
+											buttonLabel={obj.items[3].value}
 										/>
 									);
 						}

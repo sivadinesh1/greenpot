@@ -6,7 +6,7 @@ import { createCompnay } from '../../../service/company.service';
 import { createRepo } from '../../../service/repository.service';
 
 export default nextConnect<NextApiRequest, NextApiResponse>().post(async (req, res) => {
-	const { name, email, password, origin } = req.body;
+	const { name, email, password, sub_domain, origin } = req.body;
 
 	let isEmailExists = await checkEmailExists(email);
 
@@ -14,7 +14,7 @@ export default nextConnect<NextApiRequest, NextApiResponse>().post(async (req, r
 		// return failure
 		return res.json({ error: 'email taken', status: false });
 	} else {
-		const company = await createCompnay({ name });
+		const company = await createCompnay({ name, sub_domain });
 		const data = await insertUser(name, email, password, origin, company.id);
 		const repo = await createRepo({ repo_name: 'My Workspace', status: 'A', company_id: company.id, repo_type: "B", user_id: data.id });
 
