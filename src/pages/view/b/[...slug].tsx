@@ -1,5 +1,6 @@
 import { getBySubDomain } from '../../../service/company.service'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios'
 import styles from '../../../styles/LeadPage.module.scss'
 import { getList } from '../../../service/company.service'
 import { getBlogBySlug, getPublishedBlogByCompany } from '../../../service/blog.service.js'
@@ -40,6 +41,16 @@ export async function getStaticPaths() {
 }
 
 const Blog = ({ blog, html, isError, message }) => {
+
+    useEffect(() => {
+        // The counter changed!
+        let values = {
+            id: blog.id,
+            count: blog.view_count + 1
+        }
+        axios.put(`/api/blog/updateViewCount`, values);
+
+    }, [])
     if (isError) {
         return (
             <div className={styles.centered}>

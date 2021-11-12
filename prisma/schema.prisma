@@ -50,6 +50,7 @@ model blog {
   is_publish_date     Boolean?
   word_count     String?    @db.VarChar(10)
   read_time     String?    @db.VarChar(15)
+  view_count      Int?
   @@unique([blog_id], name: "blog_unique")
 }
 
@@ -190,7 +191,7 @@ model lead_page{
     createdAt       DateTime? @db.Timestamp(6)
     updatedAt       DateTime? @db.Timestamp(6)
     slug            String?    @db.VarChar(350)
-
+    view_count      Int?
     repo            repo   @relation(fields: [repo_id], references: [id])
     @@unique([lead_page_id], name: "lead_page_id_unique")
 
@@ -217,13 +218,23 @@ model template_collection{
     @@id([collection_id, template_id]) 
 }
 
-model subscriptions{
+model lead_funnels{
     id            BigInt    @id @default(autoincrement())
     email          String?    @db.VarChar(150)
     company_id   BigInt?  
     repo_id   BigInt?  
     lead_id   BigInt?
+    first_name   String?    @db.VarChar(150)
+    last_name        String?   @db.VarChar(150)
+    mobile_no     String?   @db.VarChar(15)
     created_date  DateTime? @db.Timestamp(6)
-    @@unique([email,lead_id], name: "subscription_unique")
+    @@unique([email,lead_id], name: "lead_funnel_unique")
 
+}
+
+model cta_suggestion{
+    id            BigInt    @id @default(autoincrement())
+    cta_key          String?    @db.VarChar(150)
+    cta_label          String?    @db.VarChar(300)
+    created_date  DateTime? @db.Timestamp(6)
 }

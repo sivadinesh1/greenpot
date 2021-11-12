@@ -1,9 +1,10 @@
 import { getLeadPageBySlug, getAllPublishedLeadPages } from '../../service/lead-page.service';
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../../styles/LeadPage.module.scss'
 import Builder from '../../components/Builder'
 import { getBySubDomain } from '../../service/company.service'
+import axios from 'axios'
 
 export async function getServerSideProps(context) {
     let host = `test.${context.req.headers.host}`;
@@ -35,6 +36,16 @@ export async function getServerSideProps(context) {
 const LeadPage = ({ lead, isError, message }) => {
     const router = useRouter();
     const [data, setData] = useState(lead.blocks);
+    console.log("test router count data--->", router)
+    useEffect(() => {
+        // The counter changed!
+        let values = {
+            id: lead.id,
+            count: lead.view_count + 1
+        }
+        const response = axios.put(`/api/lead-page/updateViewCount`, values);
+
+    }, [])
     if (isError) {
         return (
             <div className={styles.centered}>

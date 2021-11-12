@@ -19,6 +19,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { HexColorPicker, HexColorInput, } from "react-colorful";
 import reactCSS from 'reactcss'
 import { SketchPicker } from 'react-color'
+import { getSuggestionByKey } from '../../../service/ctaSuggestion.service'
 
 
 const ColorButton = withStyles(() => ({
@@ -37,22 +38,25 @@ export const getServerSideProps = async (context) => {
     let cookie = null;
     let cTempNano = null;
     let collection = null;
+    let suggestions = null;
 
     try {
         cTempNano = context.params.lead_page_id;
         cookie = context?.req?.headers.cookie;
         collection = await getLeadPageByNano(cTempNano);
+        suggestions = await getSuggestionByKey("test")
+
     } catch (error) {
         console.log(`error in custom template ${error}`);
         isError = true;
     }
 
     return {
-        props: { isError, collection },
+        props: { isError, collection, suggestions },
     };
 };
 
-const LeadPage = ({ isError, collection }) => {
+const LeadPage = ({ isError, collection, suggestions }) => {
     const [data, setData] = useState(collection.blocks);
     // let objKeys = Object.keys(data[0]);
     let fData = [];
@@ -131,7 +135,7 @@ const LeadPage = ({ isError, collection }) => {
         debugger
         setBackgroundColor({ ...backGroundColor, color: color.hex })
         let cloneData = JSON.parse(JSON.stringify(data));
-        if (!section_data.isEdit)
+        if (!section_data.isEdit || contentType === 'ctaButton')
             cloneData[currentIndex].items[position].style["backgroundColor"] = color.hex;
         else
             cloneData[currentIndex].sectionStyle.backgroundColor = color.hex;
@@ -282,7 +286,6 @@ const LeadPage = ({ isError, collection }) => {
 
     const handleChange = (val) => {
         setContent(val);
-        //let cloneData = data;
         debugger
         console.log("test type --->", typeof position)
         let cloneData = JSON.parse(JSON.stringify(data));
@@ -438,17 +441,7 @@ const LeadPage = ({ isError, collection }) => {
             </div>
         );
     };
-    const suggestions = [
-        {
-            label: "Get My 50% off"
-        },
-        {
-            label: "Download now"
-        },
-        {
-            label: "Start My Free Trial"
-        },
-    ]
+
 
     const handleSuggestion = (val) => {
         setContent(val);
@@ -523,10 +516,22 @@ const LeadPage = ({ isError, collection }) => {
                                 />
                             </div>}
                             {contentType === 'ctaButton' && <div style={{ paddingTop: '10px' }}>
-                                <div>Test</div>
                                 {suggestions.map((s) => {
-                                    return (<div onClick={() => handleSuggestion(s.label)}>{s.label}</div>)
+                                    return (<div onClick={() => handleSuggestion(s.cta_label)}>{s.cta_label}</div>)
                                 })}
+
+                                <div className={styles.flex_start}>
+                                    <div>backGroundColor:</div>
+                                    <div>
+                                        <div style={style.swatch} onClick={() => handleClickPicker("background")}>
+                                            <div style={style.color} />
+                                        </div>
+                                        {backGroundColor.displayColorPicker ? <div style={style.popover}>
+                                            <div style={style.cover} onClick={() => handleClosePicker("background")} />
+                                            <SketchPicker color={backGroundColor.color} onChange={handleChangeBGColor} />
+                                        </div> : null}
+                                    </div>
+                                </div>
                             </div>}
 
                             {contentType !== 'image' && (<div>

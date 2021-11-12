@@ -71,7 +71,7 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											key={index}
 											index={index}
 											onHandle={onHandle}
-											style={obj.sectionStyle}
+											style={obj.items[3].style}
 											mode={mode}
 										/>
 									);
@@ -157,7 +157,7 @@ const BuilderComponent = ({ data, mode, onHandleChange = null }) => {
 											logo={obj.items[2].value}
 											key={index}
 											index={index}
-											style={obj.sectionStyle}
+											style={obj.items[3].style}
 											mode={mode}
 											buttonLabel={obj.items[3].value}
 										/>

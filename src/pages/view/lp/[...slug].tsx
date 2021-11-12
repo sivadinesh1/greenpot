@@ -1,9 +1,10 @@
 import { getLeadPageBySlug, getPublishedLeadPagesByCompany } from '../../../service/lead-page.service';
 import { getBySubDomain } from '../../../service/company.service'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Builder from '../../../components/Builder'
 import styles from '../../../styles/LeadPage.module.scss'
 import { getList } from '../../../service/company.service'
+import axios from 'axios'
 
 export async function getStaticProps(context) {
     let company = await getBySubDomain(context.params.slug[0])
@@ -37,6 +38,16 @@ export async function getStaticPaths() {
 }
 
 const LeadPage = ({ lead, isError, message }) => {
+    debugger
+    useEffect(() => {
+        // The counter changed!
+        let values = {
+            id: lead.id,
+            count: lead.view_count + 1
+        }
+        axios.put(`/api/lead-page/updateViewCount`, values);
+
+    }, [])
     const [data, setData] = useState(lead.blocks);
     if (isError) {
         return (

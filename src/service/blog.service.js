@@ -577,3 +577,18 @@ export const deleteBlogById = async (id) => {
 	}
 	return bigIntToString(result);
 };
+
+export const updateViewCount = async (id, count) => {
+	let result = null;
+	try {
+		result = await prisma.blog.update({
+			where: { id: BigInt(id) },
+			data: {
+				view_count: count,
+			},
+		});
+	} catch (error) {
+		console.log('updateViewCount error::' + error.message);
+	}
+	return bigIntToString(result);
+};

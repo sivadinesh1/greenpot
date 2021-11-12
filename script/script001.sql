@@ -12,3 +12,24 @@ Password
 --Cal@123
 --DATABASE_URL="postgres://red_apple:Redapple@123@192.168.2.26:5432/calendso_db"
 ---[{"type": "Subscription", "items": [{"style": {"color": "black"}, "value": "SPEAK LOUDLY \n SPEAK VISUALLY ", "formDetail": {"name": "title", "type": "text", "label": "Title"}}, {"style": {"color": "black"}, "value": "Receive practical tips on how to \n communicate visually, right in you \n inbox.", "formDetail": {"name": "subTitle", "type": "text", "label": "SubTitle"}}, {"style": {"color": "blue"}, "value": "https://res.cloudinary.com/sanjayaalam/image/upload/v1635415879/hashtag_hrd9jj.png", "formDetail": {"name": "logo", "type": "image", "label": "Logo"}}, {"style": {"color": "#14487c"}, "value": "Download now", "formDetail": {"name": "button", "type": "text", "label": "view"}}], "status": "Active", "isDelete": false, "sectionStyle": {"backgroundColor": "#c8cabb", "backgroundImage": null}}]
+
+
+INSERT INTO lead_page (lead_page_id,lead_page_name,template_id,status,blocks,is_delete,repo_id,template_type,blocks_clone,company_id,created_by,updated_by,"createdAt","updatedAt",thumbnail,published,slug) VALUES 
+('3QFH3by0ISe','Sass',6,'A','[{"type": "Subscription", "items": [{"style": {"color": "black"}, "value": "SPEAK LOUDLY \n SPEAK VISUALLY ", "formDetail": {"name": "title", "type": "text", "label": "Title"}}, {"style": {"color": "black"}, "value": "Receive practical tips on how to \n communicate visually, right in you \n inbox.", "formDetail": {"name": "subTitle", "type": "text", "label": "SubTitle"}}, {"style": {"color": "blue"}, "value": "https://res.cloudinary.com/sanjayaalam/image/upload/v1635415879/hashtag_hrd9jj.png", "formDetail": {"name": "logo", "type": "image", "label": "Logo"}}, {"style": {"color": "#14487c"}, "value": "Download now", "formDetail": {"name": "button", "type": "text", "label": "view"}}], "status": "Active", "isDelete": false, "sectionStyle": {"backgroundColor": "#c8cabb", "backgroundImage": null}}]','N',4,'B',NULL,1,NULL,NULL,'2021-11-02 06:32:23.090',NULL,'https://res.cloudinary.com/sanjayaalam/image/upload/v1635762670/thumbnail_gghnpy.png','N','sass')
+;
+
+
+ALTER TABLE subscriptions RENAME TO lead_funnels;
+ALTER TABLE lead_funnels drop CONSTRAINT subscription_unique;
+ALTER TABLE lead_funnels ADD CONSTRAINT lead_funnel_unique UNIQUE (email,lead_id);
+
+alter table lead_funnels
+add column first_name varchar(150),
+add column last_name varchar(150),
+add column mobile_no varchar(15);
+
+alter table lead_page add column view_count int;
+update lead_page set view_count = 0;
+
+alter table blog add column view_count int;
+update blog set view_count = 0;

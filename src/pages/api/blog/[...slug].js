@@ -20,7 +20,8 @@ import {
 	updateCategory,
 	updateTag,
 	getBlogsByCategory,
-	deleteBlogById
+	deleteBlogById,
+	updateViewCount
 } from '../../../service/blog.service';
 import { getRepos } from '../../../service/repository.service';
 import { bigIntToString } from '../../../db-config/utils';
@@ -113,6 +114,10 @@ const handler = nc()
 		} else if (slug[0] === 'autoSaveTag') {
 			const { id, tag } = req.body
 			const result = await updateTag(id, tag);
+			res.status(200).json(result);
+		} else if (slug[0] === 'updateViewCount') {
+			const { id, count } = req.body;
+			let result = await updateViewCount(id, count);
 			res.status(200).json(result);
 		}
 

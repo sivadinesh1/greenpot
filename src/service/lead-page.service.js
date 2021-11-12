@@ -287,3 +287,19 @@ export const publishLead = async (id) => {
 	}
 	return bigIntToString(result);
 };
+
+
+export const updateViewCount = async (id, count) => {
+	let result = null;
+	try {
+		result = await prisma.lead_page.update({
+			where: { id: BigInt(id) },
+			data: {
+				view_count: count,
+			},
+		});
+	} catch (error) {
+		console.log('updateViewCount error::' + error.message);
+	}
+	return bigIntToString(result);
+};

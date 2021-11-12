@@ -8,7 +8,7 @@ export const createSubscription = async (body) => {
     try {
         const { email, company_id, repo_id, lead_id } = body;
         let date = new Date();
-        const result = await prisma.subscriptions.create({
+        const result = await prisma.lead_funnels.create({
             data: {
                 email: email,
                 company_id: BigInt(company_id),
@@ -28,7 +28,7 @@ export const createSubscription = async (body) => {
 export const getByLeadId = async (leadId) => {
     var resp = null;
     try {
-        const result = await prisma.subscriptions.findMany({
+        const result = await prisma.lead_funnels.findMany({
             where: {
                 lead_id: BigInt(leadId)
             }
@@ -42,7 +42,7 @@ export const getByLeadId = async (leadId) => {
 
 
 export const checkDuplicateEmail = async (email, leadId) => {
-    const result = await prisma.subscriptions.count({
+    const result = await prisma.lead_funnels.count({
         where: {
             email: email,
             lead_id: BigInt(leadId),

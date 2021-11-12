@@ -23,6 +23,7 @@ const Subscription = (props) => {
     let company_id = 1;
     let lead_id = 4;
     const { title, subTitle, key, index, style, mode, logo, buttonLabel } = props;
+    console.log("check style data 2---->", style)
     const [animation, cycleAnimation] = useCycle("animationOne", "animationTwo");
 
     const handleEvent = (event, position, type) => {
@@ -163,7 +164,7 @@ const Subscription = (props) => {
             <GPBox>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <motion.h1
-                        initial={{ y: -1000 }}
+                        initial={mode === 'view' ? { y: -1000 } : false}
                         animate={{ y: 0 }}
                         transition={{
                             type: "tween",
@@ -187,7 +188,7 @@ const Subscription = (props) => {
                     <div className={styles.form_gap}>
 
                         <div onClick={(event) => handleEvent(event, 3, 'ctaButton')}>
-                            <GpButton type='submit' label={buttonLabel} />
+                            <GpButton type='submit' label={buttonLabel} style={style} />
                         </div>
                     </div>
                     <div styles={{ paddingTop: "10px" }}>

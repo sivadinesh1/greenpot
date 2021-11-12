@@ -1,29 +1,39 @@
-import { Button } from '@material-ui/core';
+// import { Button } from '@material-ui/core';
+import styled from 'styled-components'
 
 
 const GpButton = (props) => {
-    const { label, type, variant, color, width } = props
+
+    const { label, type, variant, color, width, style } = props
+    // background-color: black;
+    console.log("check style data ---->", style)
+
+    const Button = styled.button`
+            font-size: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0px;
+            cursor: pointer;
+            `;
     if (type === undefined) {
         return (
             <>
                 <Button
-                    variant={variant === undefined ? "contained" : variant}
-                    color={color === undefined ? "primary" : color}
                     style={{
-                        width: width === undefined ? '100%' : width,
-                        backgroundColor: "red"
+                        ...style,
+                        width: width === undefined ? '100%' : width
                     }}
                 >{label}</Button>
             </>
-
         )
     } else if (type === 'submit') {
         return (
             <>
                 <Button
-                    variant={variant === undefined ? "contained" : variant}
-                    color={color === undefined ? "primary" : color}
-                    style={{ width: width === undefined ? '100%' : width }}
+                    style={{
+                        ...style,
+                        width: width === undefined ? '100%' : width
+                    }}
                     type="submit"
                 >{label}</Button>
             </>
