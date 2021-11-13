@@ -39,11 +39,7 @@ const LeadPage = ({ lead, isError, message }) => {
     console.log("test router count data--->", router)
     useEffect(() => {
         // The counter changed!
-        let values = {
-            id: lead.id,
-            count: lead.view_count + 1
-        }
-        const response = axios.put(`/api/lead-page/updateViewCount`, values);
+        axios.put(`/api/lead-page/updateViewCount/${lead.id}`);
 
     }, [])
     if (isError) {

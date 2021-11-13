@@ -33,8 +33,7 @@ const handler = nc()
 			let result = await publishLead(slug[1]);
 			res.status(200).json(result);
 		} else if (slug[0] === 'updateViewCount') {
-			const { id, count } = req.body;
-			let result = await updateViewCount(id, count);
+			let result = await updateViewCount(slug[1]);
 			res.status(200).json(result);
 		}
 	});

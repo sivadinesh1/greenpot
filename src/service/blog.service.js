@@ -191,7 +191,8 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 				createdAt: currentDate,
 				blog_id: nanoid(11),
 				repo_id: Number(repo_id),
-				thumbnail: thumbnail
+				thumbnail: thumbnail,
+				view_count: 0
 
 			},
 		});
@@ -578,13 +579,15 @@ export const deleteBlogById = async (id) => {
 	return bigIntToString(result);
 };
 
-export const updateViewCount = async (id, count) => {
+export const updateViewCount = async (id) => {
 	let result = null;
 	try {
 		result = await prisma.blog.update({
 			where: { id: BigInt(id) },
 			data: {
-				view_count: count,
+				view_count: {
+					increment: 1,
+				},
 			},
 		});
 	} catch (error) {

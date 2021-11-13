@@ -40,11 +40,7 @@ const Blog = ({ blog, html, isError, message }) => {
 
     useEffect(() => {
         // The counter changed!
-        let values = {
-            id: blog.id,
-            count: blog.view_count + 1
-        }
-        axios.put(`/api/blog/updateViewCount`, values);
+        axios.put(`/api/blog/updateViewCount/${blog.id}`);
 
     }, [])
 

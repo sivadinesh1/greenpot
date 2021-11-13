@@ -26,7 +26,9 @@ export const create = async (body) => {
 				template_type: type,
 				lead_page_name: name,
 				thumbnail: thumbnail,
-				slug: slug
+				slug: slug,
+				view_count: 0
+
 			},
 		});
 	} catch (error) {
@@ -289,13 +291,15 @@ export const publishLead = async (id) => {
 };
 
 
-export const updateViewCount = async (id, count) => {
+export const updateViewCount = async (id) => {
 	let result = null;
 	try {
 		result = await prisma.lead_page.update({
 			where: { id: BigInt(id) },
 			data: {
-				view_count: count,
+				view_count: {
+					increment: 1,
+				},
 			},
 		});
 	} catch (error) {

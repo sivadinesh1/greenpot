@@ -41,11 +41,7 @@ const LeadPage = ({ lead, isError, message }) => {
     debugger
     useEffect(() => {
         // The counter changed!
-        let values = {
-            id: lead.id,
-            count: lead.view_count + 1
-        }
-        axios.put(`/api/lead-page/updateViewCount`, values);
+        axios.put(`/api/lead-page/updateViewCount/${lead.id}`);
 
     }, [])
     const [data, setData] = useState(lead.blocks);
