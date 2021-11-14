@@ -152,6 +152,10 @@ model repo{
     lead_page lead_page[]
      @@unique([repo_id], name: "repo_unique")
 }
+enum PaymentType {
+  FREE
+  PAID
+}
 
 model template{
     id                BigInt    @id @default(autoincrement())
@@ -167,6 +171,8 @@ model template{
     createdAt         DateTime? @db.Timestamp(6)
     updatedAt         DateTime? @db.Timestamp(6)
     template_collection template_collection[]
+    payment_type      PaymentType
+    amount            Decimal?  @default(0)
     @@unique([template_name], name: "template_name_unique")
     @@unique([template_id], name: "template_id_unique")
 

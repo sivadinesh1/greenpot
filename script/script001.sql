@@ -33,3 +33,15 @@ update lead_page set view_count = 0;
 
 alter table blog add column view_count int;
 update blog set view_count = 0;
+
+
+alter table "template"
+add column payment_type varchar(100),
+add column amount decimal;
+
+alter table "template" alter column amount set default 0.0;
+update template set amount = 0;
+
+update template set payment_type = 'FREE';
+update template set payment_type = 'PAID',amount=500 where id in (63,67,1,55,56,57,54,3,9,33,22);
+
