@@ -3,7 +3,8 @@ import { bigIntToString } from '../db-config/utils';
 import { getDB } from '../db-config/db';
 const { db } = getDB();
 const slugify = require('slugify');
-
+import { getBlogsByCategory } from './blog.service'
+import { promises } from 'dns';
 export const getAllCategories = async (company_id) => {
 	let result = [];
 	try {
@@ -138,4 +139,58 @@ export const getCategoryWithTemplate = async () => {
 	} catch (error) {
 		console.log('error in getCategoryWithTemplate', error.message);
 	}
+};
+
+
+
+export const getCategoriesByCompany = async (company_id) => {
+	let result = [];
+	try {
+		result = await prisma.category.findMany({
+			where: {
+				company_id: Number(company_id),
+			},
+			orderBy: {
+				id: 'desc',
+			},
+		});
+	} catch (error) {
+		console.log('getAllCategories error::' + error.message);
+	}
+
+	return bigIntToString(result);
+};
+
+export const getlatestCategoryWithBlog = async (company_id) => {
+	let result = [];
+	try {
+		let categories = await prisma.category.findMany({
+			where: {
+				company_id: Number(company_id),
+			},
+			orderBy: {
+				updatedAt: 'desc',
+			},
+			// take: 6,
+		});
+		let blogs = null;
+		let data = [];
+
+		if (categories.length > 0) {
+			await Promise.all(categories.map(async (cat, index) => {
+				let blog = null;
+				blog = await getBlogsByCategory(cat.id);
+				if (blog != null) {
+					let response = { blog: blog[0], category: cat }
+					data.push(response)
+				}
+			}))
+		}
+		console.log("check data =====>", data)
+		result = [...data]
+	} catch (error) {
+		console.log('getAllCategories error::' + error.message);
+	}
+
+	return bigIntToString(result);
 };

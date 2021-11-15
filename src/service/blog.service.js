@@ -533,7 +533,10 @@ export const getBlogsByCategory = async (categoryId) => {
 				category: {
 					has: Number(categoryId),
 				}
-			}
+			},
+			orderBy: {
+				updatedAt: 'desc',
+			},
 		});
 		response = bigIntToString(result);
 
