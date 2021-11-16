@@ -194,3 +194,24 @@ export const getlatestCategoryWithBlog = async (company_id) => {
 
 	return bigIntToString(result);
 };
+
+
+export const getCategoriesByIds = async (ids) => {
+	let result = [];
+	try {
+		result = await prisma.category.findMany({
+			where: {
+				id: {
+					in: [...ids],
+				}
+			},
+			select: {
+				name: true,
+			}
+		});
+	} catch (error) {
+		console.log('getCategoriesByIds error::' + error.message);
+	}
+
+	return bigIntToString(result);
+};

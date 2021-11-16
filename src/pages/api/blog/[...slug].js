@@ -21,7 +21,8 @@ import {
 	updateTag,
 	getBlogsByCategory,
 	deleteBlogById,
-	updateViewCount
+	updateViewCount,
+	updateFeature
 } from '../../../service/blog.service';
 import { getRepos } from '../../../service/repository.service';
 import { bigIntToString } from '../../../db-config/utils';
@@ -117,6 +118,10 @@ const handler = nc()
 			res.status(200).json(result);
 		} else if (slug[0] === 'updateViewCount') {
 			let result = await updateViewCount(slug[1]);
+			res.status(200).json(result);
+		} else if (slug[0] === 'updateFeature') {
+			const { id, is_feature } = req.body
+			let result = await updateFeature(id, is_feature);
 			res.status(200).json(result);
 		}
 

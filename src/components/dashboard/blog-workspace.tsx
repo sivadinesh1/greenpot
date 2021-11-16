@@ -24,7 +24,6 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 	useEffect(() => {
 		console.log('object... IN BLOG WORKSPACE');
 	}, []);
-
 	const [blogItem, setBlogItem] = useState<any>();
 	const [openDialog, setOpenDialog] = useState(false);
 
@@ -82,7 +81,18 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 
 	const dateAgo = (date) => {
 		return formatDistance(new Date(date), new Date(), { addSuffix: true });
+
 	};
+
+	const toggleFeature = async (item) => {
+		let blogRequest = {
+			id: item.id,
+			is_feature: !item.is_feature
+		}
+		await axios.put(`/api/blog/updateFeature`, blogRequest);
+		reload();
+
+	}
 
 	return (
 		<>
@@ -157,6 +167,7 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 						<div className={styles.table_header}>
 							<div>#</div>
 							<div>Title</div>
+							<div>Feature</div>
 							<div>Author</div>
 							<div>Created Date</div>
 							<div>Status</div>
@@ -169,6 +180,10 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 									<div key={index} className={styles.table_row} >
 										<div onClick={() => editBlog(item)}>{index + 1}</div>
 										<div onClick={() => editBlog(item)}>{item.title}</div>
+										<div onClick={() => toggleFeature(item)}>{item.is_feature ?
+											<Image src='/static/images/star.svg' alt='edit' width='24px' height='24px' />
+											: <Image src='/static/images/black-star.svg' alt='edit' width='24px' height='24px' />
+										}</div>
 										<div onClick={() => editBlog(item)}>{item.author}</div>
 
 										<div onClick={() => editBlog(item)}>{dateAgo(item.blog_date)}</div>

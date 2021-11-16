@@ -45,3 +45,7 @@ update template set amount = 0;
 update template set payment_type = 'FREE';
 update template set payment_type = 'PAID',amount=500 where id in (63,67,1,55,56,57,54,3,9,33,22);
 
+---16-11-2021
+
+alter table blog add column is_feature boolean;
+update blog set is_feature =false; 

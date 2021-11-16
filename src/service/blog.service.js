@@ -7,6 +7,7 @@ const { nanoid } = require('nanoid');
 import { smartTrim } from '../components/utils/util';
 const { stripHtml } = require('string-strip-html');
 import { getUserById } from '../service/auth/auth.service';
+import { getCategoriesByIds } from '../service/category.service'
 
 export const getAllBlogs = async () => {
 	let result = null;
@@ -66,11 +67,26 @@ export const getBlogsByCompany = async (company_id) => {
 export const getBlogsByRepo = async (repo_id) => {
 	let result = [];
 	try {
+		let blogs = [];
 		result = await prisma.blog.findMany({
 			where: {
 				AND: [{ repo_id: { equals: Number(repo_id) || undefined } }, { is_delete: { equals: 'N' || undefined } }],
 			},
+			orderBy: {
+				updatedAt: 'desc',
+			}
 		});
+
+		// if (blogs.length > 0) {
+		// 	result = blogs.map(async (blog) => {
+		// 		let catList = null;
+		// 		catList = await getCategoriesByIds(blog.categories);
+		// 		blog["catList"] = catList
+		// 		return blog;
+		// 	})
+		// }
+		// console.log("check combine data--->", result)
+
 	} catch (error) {
 		console.log('getBlogsByRepo error::' + error.message);
 	}
@@ -192,7 +208,8 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 				blog_id: nanoid(11),
 				repo_id: Number(repo_id),
 				thumbnail: thumbnail,
-				view_count: 0
+				view_count: 0,
+				is_feature: false
 
 			},
 		});
@@ -595,6 +612,22 @@ export const updateViewCount = async (id) => {
 		});
 	} catch (error) {
 		console.log('updateViewCount error::' + error.message);
+	}
+	return bigIntToString(result);
+};
+
+export const updateFeature = async (id, flag) => {
+	let result = null;
+
+	try {
+		result = await prisma.blog.update({
+			where: { id: BigInt(id) },
+			data: {
+				is_feature: flag
+			},
+		});
+	} catch (error) {
+		console.log('updateFeature error::' + error.message);
 	}
 	return bigIntToString(result);
 };
