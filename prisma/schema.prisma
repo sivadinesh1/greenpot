@@ -51,7 +51,8 @@ model blog {
   word_count     String?    @db.VarChar(10)
   read_time     String?    @db.VarChar(15)
   view_count      Int?
-  is_feature     Boolean?   
+  is_feature     Boolean? 
+  hero_image     String?    @db.VarChar(500)
   @@unique([blog_id], name: "blog_unique")
 }
 

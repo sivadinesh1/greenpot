@@ -179,7 +179,17 @@ const BlogWorkspace = ({ selectedRepo, blogs, reload }) => {
 								return (
 									<div key={index} className={styles.table_row} >
 										<div onClick={() => editBlog(item)}>{index + 1}</div>
-										<div onClick={() => editBlog(item)}>{item.title}</div>
+										<div onClick={() => editBlog(item)} className={styles.blog_title_block}>
+											<div className={styles.blog_title}>{item.title}</div>
+											<div>{item.categories?.map((cat, index) => {
+
+												return (<span>
+													<span>{cat}</span>
+													{item.categories.length != (index + 1) && <span>{", "}</span>}
+												</span>
+												)
+											})}</div>
+										</div>
 										<div onClick={() => toggleFeature(item)}>{item.is_feature ?
 											<Image src='/static/images/star.svg' alt='edit' width='24px' height='24px' />
 											: <Image src='/static/images/black-star.svg' alt='edit' width='24px' height='24px' />

@@ -131,6 +131,18 @@
 	border-bottom: 1px solid #e5e5e5;
 }
 
+.blog_title_block {
+	display: flex;
+	flex-direction: column;
+	text-transform: uppercase;
+
+}
+
+.blog_title{
+	font-weight: 200;
+     font-size:18px;
+}
+
 .published {
 	color: green;
 	background-color: beige;

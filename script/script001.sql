@@ -49,3 +49,17 @@ update template set payment_type = 'PAID',amount=500 where id in (63,67,1,55,56,
 
 alter table blog add column is_feature boolean;
 update blog set is_feature =false; 
+
+---17/11/21
+SELECT b.id, b.title, b.excerpt, array_agg(distinct(c.name)) as categories, 
+array_agg(distinct(t.name)) as tags
+FROM blog b
+LEFT outer JOIN category as c ON c.id = SOME(b.category)
+LEFT  JOIN tag as t ON t.id = SOME(b.tag)
+where b.company_id=1
+GROUP BY title, b.id ORDER BY id
+
+
+alter table blog add column hero_image varchar(500);
+update blog set hero_image='https://res.cloudinary.com/sanjayaalam/image/upload/v1636976325/flow1_awvs1s.png'
+

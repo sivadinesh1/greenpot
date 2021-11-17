@@ -64,33 +64,49 @@ export const getBlogsByCompany = async (company_id) => {
 	return bigIntToString(result);
 };
 
+export const getBlogsByRepoId = async (repo_id) => {
+	let query = `SELECT b.id,b.blog_id ,b.title,b.description ,b.slug , b.excerpt,b.layout ,b.category , array_agg(distinct(c.name)) as categories, b.tag ,
+		array_agg(distinct(t.name)) as tags,b.company_id ,b.repo_id ,b.author ,b.is_delete ,b.blog_date ,b.status,b.published ,b.published_on ,b.created_by ,
+		b."createdAt" ,b.updated_by ,b."updatedAt" , b.thumbnail ,b.publish_content ,b."content" ,b.is_author ,b.is_publish_date ,b.word_count ,
+		b.read_time ,b.view_count ,b.is_feature ,b.hero_image
+		FROM blog b
+		LEFT outer JOIN category as c ON c.id = SOME(b.category)
+		LEFT  JOIN tag as t ON t.id = SOME(b.tag)
+		where b.repo_id =${repo_id}
+		GROUP BY title, b.id ORDER BY b."updatedAt" desc `;
+
+	return new Promise(function (resolve, reject) {
+		db.any(query, []).then((data) => {
+			if (data.length > 0)
+				resolve(data);
+			else
+				reject({ message: "something went wrong" })
+		});
+	});
+
+};
+
 export const getBlogsByRepo = async (repo_id) => {
 	let result = [];
 	try {
-		let blogs = [];
-		result = await prisma.blog.findMany({
-			where: {
-				AND: [{ repo_id: { equals: Number(repo_id) || undefined } }, { is_delete: { equals: 'N' || undefined } }],
-			},
-			orderBy: {
-				updatedAt: 'desc',
-			}
-		});
+		// result = await prisma.blog.findMany({
+		// 	where: {
+		// 		AND: [{ repo_id: { equals: Number(repo_id) || undefined } }, { is_delete: { equals: 'N' || undefined } }],
+		// 	},
+		// 	orderBy: {
+		// 		updatedAt: 'desc',
+		// 	}
+		// });
 
-		// if (blogs.length > 0) {
-		// 	result = blogs.map(async (blog) => {
-		// 		let catList = null;
-		// 		catList = await getCategoriesByIds(blog.categories);
-		// 		blog["catList"] = catList
-		// 		return blog;
-		// 	})
-		// }
-		// console.log("check combine data--->", result)
+		let response = await getBlogsByRepoId(repo_id);
+		console.log("check blog data in data format", response)
+		result = [...response]
 
 	} catch (error) {
 		console.log('getBlogsByRepo error::' + error.message);
 	}
-	return bigIntToString(result);
+	// return bigIntToString(result);
+	return result;
 };
 
 export const getBlogById = async (blogId) => {
@@ -209,7 +225,8 @@ export const createBlogEntry = async (company_id, repo_id, user_id) => {
 				repo_id: Number(repo_id),
 				thumbnail: thumbnail,
 				view_count: 0,
-				is_feature: false
+				is_feature: false,
+				hero_image: 'https://res.cloudinary.com/sanjayaalam/image/upload/v1636976325/flow1_awvs1s.png'
 
 			},
 		});
@@ -569,6 +586,9 @@ export const getBlogsByCompnay = async (company_id) => {
 		const result = await prisma.blog.findMany({
 			where: {
 				company_id: Number(company_id)
+			},
+			orderBy: {
+				updatedAt: "desc"
 			}
 		});
 		response = bigIntToString(result);

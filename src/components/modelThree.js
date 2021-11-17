@@ -5,7 +5,10 @@ import { useState } from 'react';
 
 
 const Format3 = ({ blog_format, blogs, categories, data }) => {
-    console.log("check data ----->", categories)
+    console.log("check blog  data----->1", blogs[0])
+
+    console.log("check data filtered data----->", data[0])
+
 
     return (
         <>
@@ -23,12 +26,6 @@ const Format3 = ({ blog_format, blogs, categories, data }) => {
                     </div>
                 </div>
                 <div className={styles.categories}>
-                    {/* {categories.map((category, index) => {
-                        if (index < 6)
-                            return (
-                                <div key={index} className={styles.cat_head}>{category.name}</div>
-                            )
-                    })} */}
                     {data.map(({ category }, index) => {
                         if (index < 6)
                             return (
@@ -96,6 +93,32 @@ const Format3 = ({ blog_format, blogs, categories, data }) => {
                                     </div>
                                 )
                         })}
+                    </div>
+
+                </div>
+                <div>
+                    <div className={styles.heading} style={{ padding: "20px 0" }}>FEATURED COLLECTIONS</div>
+                    <div className={styles.featured_collection}>
+                        <div style={{ padding: "1rem" }}>
+                            <div className={styles.main_title}>Bring Your Full Self to Work</div>
+                            <div style={{ padding: "20px 0", fontSize: "18px" }}>Teams are made up of individuals, and they function best when each member is happy, healthy, and productive. These stories will show you how to grow your skills, make your own path, and become the best version of yourself.</div>
+                            <div className={styles.last}>
+                                <div className={styles.link}> see all stories in this collection </div>
+                            </div>
+                        </div>
+                        <div className={styles.blog_feature}>{blogs.filter(d => d?.is_feature).map((blog, index) => {
+                            if (index < 4)
+                                return (
+                                    <div className={styles.blog_feature_view}>
+                                        <Image
+                                            src='https://res.cloudinary.com/sanjayaalam/image/upload/v1637134502/feature1_d1wud8.jpg'
+                                            // className={styles.main_img}
+                                            width='400px'
+                                            height='150px'></Image>
+                                        <div className={styles.blog_heading} style={{ padding: "10px", textAlign: "center" }}>{blog?.title === undefined ? "The new rules of building business relationships virtually" : blog?.title}</div>
+                                    </div>
+                                )
+                        })}</div>
                     </div>
 
                 </div>

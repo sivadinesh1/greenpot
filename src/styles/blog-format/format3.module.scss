@@ -153,3 +153,33 @@
     text-transform: uppercase;
     font-weight: lighter;
 }
+.featured_collection {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    padding:1.5rem;
+    padding-bottom: 3rem;
+    border-bottom-style: groove;
+
+}
+.blog_feature_view{
+    width:50%;
+    height: 60%;;
+}
+
+.blog_feature{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
+}
+
+.last {
+	margin-top: auto;
+}
+
+.link {
+    padding-top: 15px;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: #006dd0;
+}
