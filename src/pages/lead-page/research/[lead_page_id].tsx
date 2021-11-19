@@ -586,7 +586,7 @@ const LeadPage = ({ isError, collection, suggestions }) => {
                     {message}
                 </MuiAlert>
             </Snackbar>
-            <YoutubePlayer />
+            {/* <YoutubePlayer /> */}
         </div>
     );
 };

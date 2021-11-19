@@ -5,6 +5,7 @@ import Rive from 'rive-react'
 import SubscriptionForm from "../subscription";
 // import { useRive, Layout, Fit, Alignment } from 'rive-react';
 import { useRive, useStateMachineInput } from 'rive-react';
+import Template from "../library/GPTemplate-001";
 
 const HeaderCom = (props) => {
 	// const [data,setData]=useState(props.data)
@@ -150,7 +151,7 @@ const HeaderCom = (props) => {
 			<div id='image'>
 				<Image src={imageUrl === undefined ? defaultUrl : imageUrl} alt='Picture of the author' width={300} height={300} />
 			</div>
-
+			{/* <Template /> */}
 		</div>
 	);
 };
