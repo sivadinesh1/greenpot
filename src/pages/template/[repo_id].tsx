@@ -68,7 +68,7 @@ export const getServerSideProps = async (context) => {
 };
 
 const ListTemplate = ({ isError, collections, templates, repoId }) => {
-	console.log('test repo id', repoId);
+	console.log('test repo id', templates[0]);
 
 	const [tempArr, setTempArr] = useState(templates);
 	useEffect(() => {
@@ -182,6 +182,7 @@ const ListTemplate = ({ isError, collections, templates, repoId }) => {
 										<div>
 											<div className={styles.footer_header}>{temp.template_name}</div>
 										</div>
+										<div>{temp.payment_type}</div>
 
 									</div>
 								</div>

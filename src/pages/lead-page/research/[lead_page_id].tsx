@@ -20,6 +20,8 @@ import { HexColorPicker, HexColorInput, } from "react-colorful";
 import reactCSS from 'reactcss'
 import { SketchPicker } from 'react-color'
 import { getSuggestionByKey } from '../../../service/ctaSuggestion.service'
+import YoutubePlayer from '../../../components/YoutubePlayer'
+
 
 
 const ColorButton = withStyles(() => ({
@@ -576,12 +578,15 @@ const LeadPage = ({ isError, collection, suggestions }) => {
                     )}
                     {mode === 'edit' && sectionDetail()}
                 </div>
+
+
             </div>
             <Snackbar open={snack} autoHideDuration={3000} onClose={() => setSnack(false)}>
                 <MuiAlert elevation={6} onClose={() => setSnack(false)} variant='filled'>
                     {message}
                 </MuiAlert>
             </Snackbar>
+            {/* <YoutubePlayer /> */}
         </div>
     );
 };

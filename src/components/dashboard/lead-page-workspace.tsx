@@ -168,10 +168,10 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 				</div>
 			) : (
 					<div className={styles.table}>
-						<div className={styles.table_header}>
+						<div className={styles.lead_page_table_header}>
 							<div>#</div>
 							<div>Name</div>
-							<div style={{ paddingLeft: "10px" }}>Type</div>
+							{/* <div style={{ paddingLeft: "10px" }}>Type</div> */}
 							<div>Created Date</div>
 							<div style={{ paddingLeft: "15px" }}>Status</div>
 							<div>&nbsp;</div>
@@ -180,11 +180,11 @@ const TemplateWorkspace = ({ selectedRepo, lead_pages, reload }) => {
 						{lead_pages &&
 							lead_pages?.map((item, index) => {
 								return (
-									<div key={index} className={styles.table_row} >
+									<div key={index} className={styles.lead_page_table_row} >
 										<div onClick={() => editCusTemp(item.lead_page_id)}>{index + 1}</div>
 										<div onClick={() => editCusTemp(item.lead_page_id)}>{item.lead_page_name}</div>
-										{item.template_type === 'B' && <div onClick={() => editCusTemp(item.lead_page_id)}>Blog</div>}
-										{item.template_type === 'L' && <div onClick={() => editCusTemp(item.lead_page_id)}>Landing Page</div>}
+										{/* {item.template_type === 'B' && <div onClick={() => editCusTemp(item.lead_page_id)}>Blog</div>}
+										{item.template_type === 'L' && <div onClick={() => editCusTemp(item.lead_page_id)}>Landing Page</div>} */}
 										<div onClick={() => editCusTemp(item.lead_page_id)}>{dateAgo(item.createdAt)}</div>
 
 										{item.status === 'P' && <div className={styles.draft} onClick={() => editCusTemp(item.lead_page_id)}>Published</div>}
